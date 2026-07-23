@@ -25,8 +25,8 @@ final class ServerApp {
     var account: Account?
 
     /// `shortcut` is the user's keyboard shortcut for this app, if any; deleting the app cascades to it.
-    @Relationship(deleteRule: .cascade, inverse: \AppShortcut.app)
-    var shortcut: AppShortcut?
+    @Relationship(deleteRule: .cascade, inverse: \KeyboardShortcut.app)
+    var shortcut: KeyboardShortcut?
 
     init(appID: String, order: Int, href: String, name: String, account: Account? = nil) {
         self.appID = appID

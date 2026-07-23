@@ -3,10 +3,10 @@
 
 import AppKit
 
-/// `AppShortcutTransferObject` is a value-type snapshot of a user-assigned key equivalent for a server app, persisted by `AccountStore` as a `AppShortcut` and applied to the app's menu items.
+/// `KeyboardShortcutTransferObject` is a value-type snapshot of a user-assigned key equivalent for a server app, persisted by `AccountStore` as a `KeyboardShortcut` and applied to the app's menu items.
 ///
 /// It stores the key equivalent character and the raw value of the `NSEvent.ModifierFlags`; `ShortcutRecorderView` produces it and the menu builder applies it to `NSMenuItem.keyEquivalent` and `keyEquivalentModifierMask`. It is `Sendable` so it can cross actors without exposing a managed `@Model` object.
-struct AppShortcutTransferObject: Codable, Equatable, Sendable {
+struct KeyboardShortcutTransferObject: Codable, Equatable, Sendable {
     /// `keyEquivalent` is the character that triggers the shortcut, as assigned to `NSMenuItem.keyEquivalent`.
     let keyEquivalent: String
 

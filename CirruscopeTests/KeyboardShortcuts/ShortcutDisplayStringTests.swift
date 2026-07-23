@@ -12,7 +12,7 @@ import Testing
 struct ShortcutDisplayStringTests {
     @Test
     func `Modifiers are rendered in the order macOS uses`() {
-        let all = AppShortcutTransferObject(keyEquivalent: "f", modifierFlags: NSEvent.ModifierFlags([.command, .option, .control, .shift]).rawValue)
+        let all = KeyboardShortcutTransferObject(keyEquivalent: "f", modifierFlags: NSEvent.ModifierFlags([.command, .option, .control, .shift]).rawValue)
         #expect(ShortcutRecorderView.displayString(for: all) == "⌃⌥⇧⌘F")
     }
 

@@ -81,10 +81,10 @@ SPDX-License-Identifier = "MIT"
 
 # Miscellaneous Xcode-GUI-editable or generated files, all added in 2026:
 # Interface Builder storyboard, the Privacy Manifest editor's file, the
-# Info tab's file, the three String Catalogs (JSON, one for Swift strings, one
-# for storyboard strings since migrating off per-locale Main.strings files, and
-# one for the Info.plist usage descriptions), the bare version file SwiftFormat
-# itself parses, and the root LICENSE text.
+# Info tab's file, the four String Catalogs (JSON: one for Swift strings, one
+# for storyboard strings since migrating off per-locale Main.strings files, one
+# for the Info.plist usage descriptions, and one for App Shortcut phrases), the
+# bare version file SwiftFormat itself parses, and the root LICENSE text.
 [[annotations]]
 path = [
     ".swift-version",
@@ -94,6 +94,7 @@ path = [
     "Cirruscope/Info.plist",
     "Cirruscope/InfoPlist.xcstrings",
     "Cirruscope/PrivacyInfo.xcprivacy",
+    "Cirruscope/AppShortcuts.xcstrings",
     "Cirruscope/Localizable.xcstrings",
     "Cirruscope/mul.lproj/Main.xcstrings",
 ]

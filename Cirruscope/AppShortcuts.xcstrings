@@ -1,0 +1,51 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Open an app in ${applicationName}" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Öffne eine App in ${applicationName}",
+              "Öffne ${applicationName} ${target}",
+              "Öffne ${target} in ${applicationName}"
+            ]
+          }
+        },
+        "en" : {
+          "stringSet" : {
+            "state" : "new",
+            "values" : [
+              "Open an app in ${applicationName}",
+              "Open ${applicationName} ${target}",
+              "Open ${target} in ${applicationName}"
+            ]
+          }
+        },
+        "es" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Abrir una app en ${applicationName}",
+              "Abrir ${applicationName} ${target}",
+              "Abrir ${target} en ${applicationName}"
+            ]
+          }
+        },
+        "fr" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Ouvrir une app dans ${applicationName}",
+              "Ouvrir ${applicationName} ${target}",
+              "Ouvrir ${target} dans ${applicationName}"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

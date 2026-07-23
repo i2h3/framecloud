@@ -17,7 +17,7 @@ final class AccountStoreHarness {
     let container: ModelContainer
 
     /// `reservedShortcuts` are the combinations this harness reports as already occupied by one of Cirruscope's own fixed menu items.
-    private let reservedShortcuts: [AppShortcutTransferObject]
+    private let reservedShortcuts: [KeyboardShortcutTransferObject]
 
     /// `notificationCount` is how many times `store` has announced that the server apps or their shortcuts changed.
     private(set) var notificationCount = 0
@@ -30,7 +30,7 @@ final class AccountStoreHarness {
     /// `init(reserving:)` opens a fresh in-memory container over the app's current schema and reports `reserving` as occupied by Cirruscope's own menu items.
     ///
     /// Building the container is force-tried: an in-memory container over the very schema the app opens on every launch cannot fail for a reason a test should report as an expectation, so a throw here is a broken harness rather than a finding — the same call `KeyEquivalentProbe.keyDown(for:)`'s force-unwrap makes.
-    init(reserving reservedShortcuts: [AppShortcutTransferObject] = []) {
+    init(reserving reservedShortcuts: [KeyboardShortcutTransferObject] = []) {
         container = try! ModelContainer(for: AppDatabase.schema, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
         self.reservedShortcuts = reservedShortcuts
     }
@@ -38,7 +38,7 @@ final class AccountStoreHarness {
     /// `isReserved(_:)` is what the store's `isReservedShortcut` seam answers with here.
     ///
     /// It compares through `ShortcutMatching.areEquivalent(_:_:)` rather than by equality so that this harness's notion of "reserved" is the app's: reserving ⌘Z also reserves ⇧⌘Z, exactly as `AppDelegate.reservedShortcutName(for:)` does against a real menu item.
-    private func isReserved(_ shortcut: AppShortcutTransferObject) -> Bool {
+    private func isReserved(_ shortcut: KeyboardShortcutTransferObject) -> Bool {
         reservedShortcuts.contains { ShortcutMatching.areEquivalent($0, shortcut) }
     }
 
