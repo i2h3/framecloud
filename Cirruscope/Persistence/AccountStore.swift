@@ -10,7 +10,7 @@ import SwiftData
 ///
 /// It replaces the server-related values the app used to keep in `UserDefaults` via `Settings`. Consumers reach it as `AccountStore.shared`, mirroring the `AssetCache.shared` / `NotificationMonitor.shared` conventions, and it keeps posting `Notification.Name.serverAppsDidChange` so the existing AppKit menus and settings tab refresh exactly as before. As further domains arrive (files, notes, …) they gain methods here, or sibling main-actor stores sharing the same container.
 ///
-/// Reads return value-type DTOs (`ServerAppTransferObject`, `AppShortcutTransferObject`), never managed `@Model` objects, so AppKit table views and menus hold snapshots that stay valid across an upsert. Every access is confined to the main actor and only `Sendable` values ever cross the boundary to the nonisolated `ServerConnection`, which is what keeps the store race-free under Swift 6 complete concurrency. Autosave is disabled and each mutator saves explicitly, so every change commits atomically and is on disk by the time a future extension process reads it.
+/// Reads return value-type DTOs (`ServerAppTransferObject`, `KeyboardShortcutTransferObject`), never managed `@Model` objects, so AppKit table views and menus hold snapshots that stay valid across an upsert. Every access is confined to the main actor and only `Sendable` values ever cross the boundary to the nonisolated `ServerConnection`, which is what keeps the store race-free under Swift 6 complete concurrency. Autosave is disabled and each mutator saves explicitly, so every change commits atomically and is on disk by the time a future extension process reads it.
 ///
 /// The container, and the two things this store reaches outside itself for, arrive through `init(container:isReservedShortcut:notifyServerAppsDidChange:)` so its logic can be exercised against an in-memory store; `CirruscopeTests/Account/` does exactly that. Production builds exactly one instance, `shared`.
 @MainActor
@@ -31,7 +31,7 @@ final class AccountStore {
     /// `isReservedShortcut` reports whether a shortcut is already occupied by one of Cirruscope's own fixed menu items, which `shortcut(forAppID:)` consults to keep such a stored shortcut off the menus.
     ///
     /// It wraps `AppDelegate.reservedShortcutName(for:)` rather than calling it directly because that lookup answers from the live `NSApp.mainMenu`, and the test bundle is hosted by the app: the real `Main.storyboard` menu bar is loaded for the whole test run, so a case using ⌘Z — which both "Undo" and "Redo" declare — would be measuring the storyboard instead of this store. A test hands in a closure naming exactly the combinations it means to reserve.
-    private let isReservedShortcut: @MainActor (AppShortcutTransferObject) -> Bool
+    private let isReservedShortcut: @MainActor (KeyboardShortcutTransferObject) -> Bool
 
     /// `notifyServerAppsDidChange` announces that the account's apps or their shortcuts changed, so the View and Dock menus and the Apps settings tab refresh.
     ///
@@ -51,7 +51,7 @@ final class AccountStore {
     /// `init(container:isReservedShortcut:notifyServerAppsDidChange:)` builds a store over `container`, defaulting the two dependencies it reaches outside itself for to their production behaviour.
     ///
     /// A `ModelContainer` rather than a `ModelContext` is the parameter so that "the container's main-actor context" stays an invariant this store enforces, rather than something a caller could subvert by handing in a background context.
-    init(container: ModelContainer, isReservedShortcut: @escaping @MainActor (AppShortcutTransferObject) -> Bool = { AppDelegate.reservedShortcutName(for: $0) != nil }, notifyServerAppsDidChange: @escaping @MainActor () -> Void = { AccountStore.postServerAppsDidChange() }) {
+    init(container: ModelContainer, isReservedShortcut: @escaping @MainActor (KeyboardShortcutTransferObject) -> Bool = { AppDelegate.reservedShortcutName(for: $0) != nil }, notifyServerAppsDidChange: @escaping @MainActor () -> Void = { AccountStore.postServerAppsDidChange() }) {
         self.container = container
         self.isReservedShortcut = isReservedShortcut
         self.notifyServerAppsDidChange = notifyServerAppsDidChange
@@ -222,6 +222,17 @@ final class AccountStore {
             .map { ServerAppTransferObject(id: $0.appID, order: $0.order, href: $0.href, name: $0.name) }
     }
 
+    /// `serverApp(forID:)` is the connected server's app with `appID` as a value snapshot, or `nil` when the account offers no such app.
+    ///
+    /// It is the single-app counterpart of `serverApps`, added for the App Intents layer: `ServerAppEntityQuery.entities(for:)` and `OpenServerAppIntent.perform()` resolve a donated or saved app id back to a `ServerAppTransferObject`. Like every other read here it returns a value-type DTO, never the managed `ServerApp`, and reuses the same `currentAccount` cache and `first(where:)` lookup as `shortcut(forAppID:)`.
+    func serverApp(forID appID: String) -> ServerAppTransferObject? {
+        guard let app = currentAccount(createIfNeeded: false)?.apps.first(where: { $0.appID == appID }) else {
+            return nil
+        }
+
+        return ServerAppTransferObject(id: app.appID, order: app.order, href: app.href, name: app.name)
+    }
+
     /// `persist(serverApps:)` upserts the server's apps: existing rows are updated in place, new ones inserted, and ones the server no longer offers deleted — which cascades to their shortcuts.
     ///
     /// Matching by `id` rather than replacing the list wholesale is what lets a user's keyboard shortcut survive an app-list refresh; a shortcut is pruned only when its app actually disappears. `ServerConnection.refreshNavigationApps(using:)` calls it with the `Rainmaker.NavigationItem`s it fetched already mapped to this app's own value type, so the store's write side speaks the same type its read side returns and neither depends on the shape of the network library — which is also what lets a test seed an app list without the test target linking that library.
@@ -267,7 +278,7 @@ final class AccountStore {
     /// `storedShortcuts` are the shortcuts currently stored for the connected account's apps, each paired with the app it belongs to, in the order the menus list those apps.
     ///
     /// The order is `serverApps`' own, ascending by `order`, with `appID` breaking a tie so that it is total: `appHolding(_:)` reads the first match from it to decide which single app a shared shortcut belongs to, and that answer has to be the same on every call rather than depend on an unstable sort.
-    private var storedShortcuts: [(appID: String, name: String, shortcut: AppShortcutTransferObject)] {
+    private var storedShortcuts: [(appID: String, name: String, shortcut: KeyboardShortcutTransferObject)] {
         guard let account = currentAccount(createIfNeeded: false) else {
             return []
         }
@@ -279,26 +290,26 @@ final class AccountStore {
                     return nil
                 }
 
-                return (app.appID, app.name, AppShortcutTransferObject(keyEquivalent: stored.keyEquivalent, modifierFlags: stored.modifierFlags))
+                return (app.appID, app.name, KeyboardShortcutTransferObject(keyEquivalent: stored.keyEquivalent, modifierFlags: stored.modifierFlags))
             }
     }
 
     /// `appHolding(_:)` is the one app a keystroke matching `shortcut` actually reaches — the first entry in `storedShortcuts` carrying an equivalent shortcut — or `nil` when no app carries it at all.
     ///
     /// Answering both `shortcut(forAppID:)` and `nameOfApp(usingShortcut:otherThanAppID:)` from this same entry is what keeps the two from contradicting each other where a duplicate is stored: were the latter to consider every stored shortcut instead, an app whose duplicate the former suppresses would still be named as the occupant of a combination the settings tab shows as unassigned for it, and the app visibly holding that combination could not even re-record it.
-    private func appHolding(_ shortcut: AppShortcutTransferObject) -> (appID: String, name: String, shortcut: AppShortcutTransferObject)? {
+    private func appHolding(_ shortcut: KeyboardShortcutTransferObject) -> (appID: String, name: String, shortcut: KeyboardShortcutTransferObject)? {
         storedShortcuts.first { ShortcutMatching.areEquivalent($0.shortcut, shortcut) }
     }
 
     /// `shortcut(forAppID:)` is the user's keyboard shortcut for the app with `appID`, or `nil` when none is assigned, the app is unknown, the stored shortcut collides with one of Cirruscope's own reserved shortcuts (see `AppDelegate.reservedShortcutName(for:)`), or another app already holds the same one (see `appHolding(_:)`).
     ///
     /// Both collisions can only come from data recorded before their respective checks existed, since `ShortcutRecorderView` now refuses to record either going forward; suppressing them here as well means such a shortcut is not applied to a menu item — and is shown as unassigned in the settings tab, so the user can see it is not in effect and record another — rather than being deleted behind the user's back.
-    func shortcut(forAppID appID: String) -> AppShortcutTransferObject? {
+    func shortcut(forAppID appID: String) -> KeyboardShortcutTransferObject? {
         guard let stored = currentAccount(createIfNeeded: false)?.apps.first(where: { $0.appID == appID })?.shortcut else {
             return nil
         }
 
-        let shortcut = AppShortcutTransferObject(keyEquivalent: stored.keyEquivalent, modifierFlags: stored.modifierFlags)
+        let shortcut = KeyboardShortcutTransferObject(keyEquivalent: stored.keyEquivalent, modifierFlags: stored.modifierFlags)
 
         guard isReservedShortcut(shortcut) == false else {
             return nil
@@ -316,7 +327,7 @@ final class AccountStore {
     /// `nameOfApp(usingShortcut:otherThanAppID:)` is the name of the server app that the same keystroke as `shortcut` already reaches, or `nil` when that app is the one with `appID` itself or no app holds the combination.
     ///
     /// `ServerAppsViewController` hands it to each row's `ShortcutRecorderView` as its `conflictingAppName`, so a combination another app already uses is rejected while recording — naming that app — instead of leaving two menu items to share one key equivalent, exactly as `AppDelegate.reservedShortcutName(for:)` does for Cirruscope's own fixed items. Excluding the app being edited is what lets a row re-record the shortcut it already displays without being told it conflicts with itself.
-    func nameOfApp(usingShortcut shortcut: AppShortcutTransferObject, otherThanAppID appID: String) -> String? {
+    func nameOfApp(usingShortcut shortcut: KeyboardShortcutTransferObject, otherThanAppID appID: String) -> String? {
         guard let holder = appHolding(shortcut) else {
             return nil
         }
@@ -329,7 +340,7 @@ final class AccountStore {
     /// `ServerAppsViewController` calls it from each row's `ShortcutRecorderView`. It does nothing when the app is unknown, which cannot happen for a row the settings tab is showing.
     ///
     /// It deliberately stores whatever it is given: rejecting a shortcut another app or a fixed menu item already occupies is the caller's job, done while recording (see `nameOfApp(usingShortcut:otherThanAppID:)` and `AppDelegate.reservedShortcutName(for:)`), so the settings tab can explain the rejection where the user is looking instead of a write silently doing nothing. Should a future caller — an App Intent, a widget — write a duplicate anyway, `shortcut(forAppID:)` still keeps it off the menus.
-    func setShortcut(_ shortcut: AppShortcutTransferObject?, forAppID appID: String) {
+    func setShortcut(_ shortcut: KeyboardShortcutTransferObject?, forAppID appID: String) {
         guard let app = currentAccount(createIfNeeded: false)?.apps.first(where: { $0.appID == appID }) else {
             return
         }
@@ -339,7 +350,7 @@ final class AccountStore {
                 existing.keyEquivalent = shortcut.keyEquivalent
                 existing.modifierFlags = shortcut.modifierFlags
             } else {
-                context.insert(AppShortcut(keyEquivalent: shortcut.keyEquivalent, modifierFlags: shortcut.modifierFlags, app: app))
+                context.insert(KeyboardShortcut(keyEquivalent: shortcut.keyEquivalent, modifierFlags: shortcut.modifierFlags, app: app))
             }
         } else if let existing = app.shortcut {
             context.delete(existing)

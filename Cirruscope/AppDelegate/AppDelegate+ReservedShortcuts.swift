@@ -10,12 +10,12 @@ extension AppDelegate {
     /// A server app's shortcut can never shadow one of Cirruscope's own fixed menu items this way — including ones in a completely different menu than the View menu's server app section, since AppKit resolves a key equivalent against the whole menu bar, not just one submenu, and there is no reliable, documented tie-break for two enabled items that share one. Reading the live menu, rather than a hand-maintained duplicate of `Main.storyboard`'s shortcuts, means this can never drift out of sync with it, and reports the item's actual (already-localized) title for free.
     ///
     /// Dynamic server app items are recognized by their action, `performServerApp(_:)`, and skipped: otherwise an already-assigned server app shortcut would collide with its own menu item (or, once two apps briefly share a shortcut mid-edit, with each other) instead of only with Cirruscope's fixed ones. Collisions *between* two server apps are therefore not this method's concern at all; `AccountStore.nameOfApp(usingShortcut:otherThanAppID:)` answers those from the stored shortcuts instead, where each app's identity is unambiguous.
-    static func reservedShortcutName(for shortcut: AppShortcutTransferObject) -> String? {
+    static func reservedShortcutName(for shortcut: KeyboardShortcutTransferObject) -> String? {
         firstConflictingItem(in: NSApp.mainMenu, matching: shortcut)?.title
     }
 
     /// `firstConflictingItem(in:matching:)` recursively searches `menu` and its submenus for the first non-server-app item whose key equivalent `candidate` collides with, per `ShortcutMatching.areEquivalent(_:_:)`.
-    private static func firstConflictingItem(in menu: NSMenu?, matching candidate: AppShortcutTransferObject) -> NSMenuItem? {
+    private static func firstConflictingItem(in menu: NSMenu?, matching candidate: KeyboardShortcutTransferObject) -> NSMenuItem? {
         guard let menu else {
             return nil
         }
@@ -31,7 +31,7 @@ extension AppDelegate {
                 continue
             }
 
-            let itemShortcut = AppShortcutTransferObject(keyEquivalent: item.keyEquivalent, modifierFlags: item.keyEquivalentModifierMask.rawValue)
+            let itemShortcut = KeyboardShortcutTransferObject(keyEquivalent: item.keyEquivalent, modifierFlags: item.keyEquivalentModifierMask.rawValue)
 
             if ShortcutMatching.areEquivalent(itemShortcut, candidate) {
                 return item

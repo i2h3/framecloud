@@ -16,7 +16,10 @@ You are an experienced software engineer specialized on native apps for macOS wr
     - `Settings/` contains `Settings.swift`, which defines the app's persisted settings, the general and server-apps settings view controllers with their table extensions, and `ShortcutRecorderView`.
     - `ServerAddress/` contains `ServerAddressViewController` with its text-field-delegate and web-authentication extensions used to sign in.
     - `Views/` contains custom views shared across features, such as `BackgroundImageView`.
-    - `Models/` contains the shared value types: `Credentials` (the login name and app password from Login Flow v2), `CirruscopeError` (the shared error type thrown by app-level facilities), `AppShortcutTransferObject` (a user-assigned shortcut for a server app), and `ServerAppTransferObject` (a Nextcloud server app shown in the menus and settings) — the latter two being the snapshots `AccountStore` returns in place of its SwiftData records.
+    - `Models/` contains the shared value types: `Credentials` (the login name and app password from Login Flow v2), `CirruscopeError` (the shared error type thrown by app-level facilities), `ServerAppTransferObject` (a value snapshot of a Nextcloud server app shown in the menus and settings), and `KeyboardShortcutTransferObject` (a value snapshot of a user-assigned keyboard shortcut for a server app). These are the `Sendable` data transfer objects `AccountStore` vends in place of its SwiftData records; they carry no business logic.
+    - `Persistence/` contains the SwiftData stack: `AppDatabase` (owns the process-wide `ModelContainer` in the shared App Group container and opens it through the migration plan), `AccountStore` (the `@MainActor` repository that is the sole reader and writer of the connected account's data and maps its `@Model` records to the value types in `Models/`), the versioned schemas `SchemaV1` (a frozen snapshot of the schema shipped in `1.0.0`, whose model copies are nested in the enum via per-model `SchemaV1+<Model>.swift` extension files) and `SchemaV2` (the current schema, referencing the live models), `CirruscopeMigrationPlan` (the custom `SchemaV1`→`SchemaV2` migration that renames the `AppShortcut` record to `KeyboardShortcut` without losing users' keyboard shortcuts), and `Models/` with the current `@Model` records: `Account`, `ServerApp`, and `KeyboardShortcut`.
+    - `AppEntities/` contains the App Intents entity types and their queries that project persisted data for Spotlight, Siri, and the Shortcuts app: `ServerAppEntity` (a Nextcloud server app) and `ServerAppEntityQuery`.
+    - `AppIntents/` contains the App Intents themselves and their supporting types: `OpenServerAppIntent` (opens a server app in a web window), `ServerAppShortcuts` (the `AppShortcutsProvider` declaring the Siri phrases), and `ServerAppIndexer` (donates the entities to Spotlight and refreshes the App Shortcut parameters when the app list changes).
     - `AssetCache.swift` manages on-disk copies of remote assets in the app's caches directory.
     - `Keychain.swift` stores the Login Flow v2 credentials in the macOS Keychain.
     - `Logging.swift` adds the `Logger(for:)` and `OSSignposter(for:)` convenience initializers that every behavioural type uses to build its own `os` logger and signposter under the app's bundle-identifier subsystem, categorized by type name.
@@ -130,20 +133,21 @@ This project is checked for [REUSE](https://reuse.software/) Specification 3.3 c
 
 English is the app's base (development) language, and the project is additionally localized into a set of languages configured in the Xcode project. Do not hardcode or assume that set — detect the enabled localizations programmatically so this workflow keeps working as languages are added or removed.
 
-Both localization stores are now String Catalogs, so there are no more per-locale `.lproj` resource folders to enumerate for this (only `Base.lproj`, the source, and `mul.lproj` — "multiple languages" — which holds the storyboard's catalog file itself, not a per-language folder). The canonical, and now only, source for the enabled locales is `knownRegions` in the project file; read it directly, filtering out `en` and `Base`, which are not translation targets:
+The localization stores are now String Catalogs, so there are no more per-locale `.lproj` resource folders to enumerate for this (only `Base.lproj`, the source, and `mul.lproj` — "multiple languages" — which holds the storyboard's catalog file itself, not a per-language folder). The canonical, and now only, source for the enabled locales is `knownRegions` in the project file; read it directly, filtering out `en` and `Base`, which are not translation targets:
 
 ```bash
 plutil -convert json -o - Cirruscope.xcodeproj/project.pbxproj \
   | python3 -c 'import sys, json; d = json.load(sys.stdin); print([r for r in [o["knownRegions"] for o in d["objects"].values() if o.get("isa") == "PBXProject"][0] if r not in ("en", "Base")])'
 ```
 
-Localization lives in three String Catalogs (JSON, all with the same shape: each key maps to a `comment` plus a `localizations` dict of `<locale>: {"stringUnit": {"state": ..., "value": ...}}`), and all of them must stay complete for every detected localization:
+Localization lives in four String Catalogs (JSON, all with the same shape: each key maps to a `comment` plus a `localizations` dict of `<locale>: {"stringUnit": {"state": ..., "value": ...}}`), and all of them must stay complete for every detected localization:
 
-- **Swift strings** are wrapped in `String(localized:comment:)` — never hardcoded — and backed by `Cirruscope/Localizable.xcstrings`. Each key is the literal source string.
+- **Swift strings** are wrapped in `String(localized:comment:)` — never hardcoded — and backed by `Cirruscope/Localizable.xcstrings`. Each key is the literal source string. App Intents strings (a `LocalizedStringResource` such as an intent title/description, a `@Parameter` title or `requestValueDialog`, or an entity's `DisplayRepresentation` subtitle / `TypeDisplayRepresentation`) resolve from the same `Localizable` table and so live in this catalog too; their keys are likewise the literal source string, but they take no `comment:` argument in code, so add the catalog comment by hand.
 - **Storyboard strings** in `Cirruscope/Base.lproj/Main.storyboard` are backed by `Cirruscope/mul.lproj/Main.xcstrings` (migrated off the old per-locale `Main.strings` files — do not reintroduce those). Each key is `<objectID>.<property>`, e.g. `"5xm-BD-bvl.title"`, and the `comment` field still carries the generated `Class = …; title = …; ObjectID = …;` context Xcode always regenerates from the storyboard's current content.
-- **Info.plist strings** — the usage descriptions macOS shows in its permission prompts — are backed by `Cirruscope/InfoPlist.xcstrings`. Here each key is the property-list key name (e.g. `NSCameraUsageDescription`), *not* the English text, so unlike the other two catalogs this one carries an explicit `en` `stringUnit` as well. Its English source of truth is the matching `INFOPLIST_KEY_*` build setting on the Cirruscope target, set identically in both the Debug and Release configuration: change one and mirror it in the catalog's `en` value and in the other configuration. These prompts name no brand — neither the "Nextcloud" trademark nor "Cirruscope" — and describe the capability generically instead ("during video calls", not "during Nextcloud Talk calls"). That restriction is specific to these prompts: `Localizable.xcstrings` deliberately names both where the message is *about* the server product, as in "Cirruscope requires Nextcloud server version %lld or later."
+- **Info.plist strings** — the usage descriptions macOS shows in its permission prompts — are backed by `Cirruscope/InfoPlist.xcstrings`. Here each key is the property-list key name (e.g. `NSCameraUsageDescription`), *not* the English text, so unlike the other catalogs this one carries an explicit `en` `stringUnit` as well. Its English source of truth is the matching `INFOPLIST_KEY_*` build setting on the Cirruscope target, set identically in both the Debug and Release configuration: change one and mirror it in the catalog's `en` value and in the other configuration. These prompts name no brand — neither the "Nextcloud" trademark nor "Cirruscope" — and describe the capability generically instead ("during video calls", not "during Nextcloud Talk calls"). That restriction is specific to these prompts: `Localizable.xcstrings` deliberately names both where the message is *about* the server product, as in "Cirruscope requires Nextcloud server version %lld or later."
+- **App Shortcut phrases** declared in `ServerAppShortcuts` are backed by `Cirruscope/AppShortcuts.xcstrings` (the `AppShortcuts` table Xcode extracts from the `AppShortcutsProvider`). Xcode collapses every phrase variation into a single key whose localizations are a `stringSet` — a list of `values` rather than one `value` — so a translation must supply the whole set, one entry per source phrase and in the same order. Each phrase's `${applicationName}` and `${target}` placeholders must be preserved verbatim, and every phrase must contain `${applicationName}`.
 
-In all three catalogs, a `stringUnit`'s `state` is the completeness/staleness signal Xcode itself tracks: a freshly added or changed source string starts at `"new"` for each locale and only reaches `"translated"` once a value is filled in, and Xcode flags a locale for re-review on its own when the source text changes later. **`state` alone is necessary but not sufficient, though** — proven the hard way: migrating off the old per-locale `Main.strings` files carried every existing value straight into the catalog and marked it `"translated"` per locale, even for the ~130 entries that were never actually translated and were just sitting there as English text. So also compare each locale's value against the `en` value, and treat a match as a real gap *unless* the key is a deliberately English/unchanged case — the brand name (`Cirruscope`), a placeholder example URL, a storyboard object whose text is fully overwritten at runtime and never shown (see the placeholder-skipping rule below), or a genuine cognate where that language's correct word simply is spelled the same (e.g. French `Services`/`Format`/`Ligatures`, German `Text`, Spanish `General` are all correct translations, not oversights):
+In all four catalogs, a `stringUnit`'s — or, for App Shortcut phrases, a `stringSet`'s — `state` is the completeness/staleness signal Xcode itself tracks: a freshly added or changed source string starts at `"new"` for each locale and only reaches `"translated"` once a value is filled in, and Xcode flags a locale for re-review on its own when the source text changes later. **`state` alone is necessary but not sufficient, though** — proven the hard way: migrating off the old per-locale `Main.strings` files carried every existing value straight into the catalog and marked it `"translated"` per locale, even for the ~130 entries that were never actually translated and were just sitting there as English text. So also compare each locale's value against the `en` value, and treat a match as a real gap *unless* the key is a deliberately English/unchanged case — the brand name (`Cirruscope`), a placeholder example URL, a storyboard object whose text is fully overwritten at runtime and never shown (see the placeholder-skipping rule below), or a genuine cognate where that language's correct word simply is spelled the same (e.g. French `Services`/`Format`/`Ligatures`, German `Text`, Spanish `General` are all correct translations, not oversights):
 
 ```bash
 plutil -convert json -o - Cirruscope.xcodeproj/project.pbxproj | python3 -c '
@@ -153,17 +157,28 @@ pbxproj = json.load(sys.stdin)
 known_regions = next(o["knownRegions"] for o in pbxproj["objects"].values() if o.get("isa") == "PBXProject")
 locales = [r for r in known_regions if r not in ("en", "Base")]
 
-for catalog in ["Cirruscope/Localizable.xcstrings", "Cirruscope/mul.lproj/Main.xcstrings", "Cirruscope/InfoPlist.xcstrings"]:
+for catalog in ["Cirruscope/Localizable.xcstrings", "Cirruscope/mul.lproj/Main.xcstrings", "Cirruscope/InfoPlist.xcstrings", "Cirruscope/AppShortcuts.xcstrings"]:
     data = json.load(open(catalog))
     for key, entry in data["strings"].items():
+        if entry.get("shouldTranslate") is False:
+            continue  # e.g. a pure format passthrough like "%@", marked Don't Translate
         localizations = entry.get("localizations", {})
         en_value = localizations.get("en", {}).get("stringUnit", {}).get("value")
         for locale in locales:
-            unit = localizations.get(locale, {}).get("stringUnit", {})
+            loc = localizations.get(locale, {})
+            # App Shortcut phrases localize as a `stringSet` (a set of spoken variations) rather than a single
+            # `stringUnit`, and a numeric format (e.g. an entity type's `numericFormat`) as plural `variations`.
+            unit = loc.get("stringUnit") or loc.get("stringSet") or {}
+            if not unit:
+                plural = loc.get("variations", {}).get("plural", {})
+                units = [v.get("stringUnit", {}) for v in plural.values()]
+                if units and all(u.get("state") == "translated" for u in units):
+                    continue  # every plural category is translated
+                unit = units[0] if units else {}
             state, value = unit.get("state"), unit.get("value")
             if state != "translated":
                 print(f"{catalog}: {key!r} [{locale}] state={state!r}")
-            elif en_value is not None and value == en_value:
+            elif value is not None and en_value is not None and value == en_value:
                 print(f"{catalog}: {key!r} [{locale}] still identical to English: {value!r} (confirm this is a deliberate exception, not a missed translation)")
 '
 ```

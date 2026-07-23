@@ -5,6 +5,7 @@
 *.dSYM.zip
 *.dSYM
 *.hmap
+*.log
 .swiftpm
 .build
 DerivedData

@@ -12,7 +12,7 @@ struct ShortcutFixture: Sendable, CustomStringConvertible {
     let name: String
 
     /// `shortcut` is the fixture's value as the app stores and compares it.
-    let shortcut: AppShortcutTransferObject
+    let shortcut: KeyboardShortcutTransferObject
 
     var description: String {
         name
@@ -20,7 +20,7 @@ struct ShortcutFixture: Sendable, CustomStringConvertible {
 
     private init(_ name: String, _ keyEquivalent: String, _ modifiers: NSEvent.ModifierFlags) {
         self.name = name
-        shortcut = AppShortcutTransferObject(keyEquivalent: keyEquivalent, modifierFlags: modifiers.rawValue)
+        shortcut = KeyboardShortcutTransferObject(keyEquivalent: keyEquivalent, modifierFlags: modifiers.rawValue)
     }
 
     /// `f5` is the Private Use Area scalar AppKit reserves for F5 (`NSF5FunctionKey`), which is what a recorded F5 stores as its key equivalent.

@@ -4,11 +4,11 @@
 import Foundation
 import SwiftData
 
-/// `AppShortcut` is the SwiftData record for the keyboard shortcut a user assigns to a `ServerApp`, persisted so shortcuts survive relaunches and app-list refreshes.
+/// `KeyboardShortcut` is the SwiftData record for the keyboard shortcut a user assigns to a `ServerApp`, persisted so shortcuts survive relaunches and app-list refreshes.
 ///
-/// It is the persistent counterpart of the value-type `AppShortcutTransferObject` DTO; `AccountStore` maps between them. It hangs off its `app` with a cascade delete rule, so removing the app removes the shortcut and there is no separate pruning step.
+/// It is the persistent counterpart of the value-type `KeyboardShortcutTransferObject` DTO; `AccountStore` maps between them. It hangs off its `app` with a cascade delete rule, so removing the app removes the shortcut and there is no separate pruning step.
 @Model
-final class AppShortcut {
+final class KeyboardShortcut {
     /// `keyEquivalent` is the character that triggers the shortcut, as assigned to `NSMenuItem.keyEquivalent`.
     var keyEquivalent: String
 

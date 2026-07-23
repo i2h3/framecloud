@@ -22,7 +22,7 @@ final class KeyEquivalentProbe: NSObject {
     /// `fires(keystroke:againstItemDeclaring:)` is `true` when a menu item declaring `item` is triggered by the keystroke a user pressing `keystroke` produces.
     ///
     /// The item is force-enabled and `autoenablesItems` turned off because AppKit will not perform a key equivalent for an item it considers disabled, and a throwaway menu has no responder chain to validate against — without that, every probe answers `false` and the oracle would vacuously agree with anything.
-    static func fires(keystroke: AppShortcutTransferObject, againstItemDeclaring item: AppShortcutTransferObject) -> Bool {
+    static func fires(keystroke: KeyboardShortcutTransferObject, againstItemDeclaring item: KeyboardShortcutTransferObject) -> Bool {
         let probe = KeyEquivalentProbe()
         let menu = NSMenu()
         menu.autoenablesItems = false
@@ -39,8 +39,8 @@ final class KeyEquivalentProbe: NSObject {
 
     /// `keyDown(for:)` synthesizes the key-down event AppKit would deliver for `shortcut`.
     ///
-    /// `.function` is added for a function-region key because AppKit sets that flag on every key-down in that region regardless of the physical fn key, while `AppShortcutTransferObject` never stores it (`ShortcutRecorderView.handle(keyCode:modifierFlags:charactersIgnoringModifiers:)` keeps only Command, Option, Control, and Shift) — so leaving it out would make the probe measure an event the user cannot actually produce. `charactersIgnoringModifiers` equals `characters` here because that is what the recorder stored the key equivalent from in the first place, Shift included.
-    private static func keyDown(for shortcut: AppShortcutTransferObject) -> NSEvent {
+    /// `.function` is added for a function-region key because AppKit sets that flag on every key-down in that region regardless of the physical fn key, while `KeyboardShortcutTransferObject` never stores it (`ShortcutRecorderView.handle(keyCode:modifierFlags:charactersIgnoringModifiers:)` keeps only Command, Option, Control, and Shift) — so leaving it out would make the probe measure an event the user cannot actually produce. `charactersIgnoringModifiers` equals `characters` here because that is what the recorder stored the key equivalent from in the first place, Shift included.
+    private static func keyDown(for shortcut: KeyboardShortcutTransferObject) -> NSEvent {
         var flags = shortcut.modifierMask
 
         if ShortcutMatching.isFunctionRegionKey(shortcut.keyEquivalent) {

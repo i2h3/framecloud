@@ -41,6 +41,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(downloadDidStart), name: .downloadDidStart, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(serverCredentialsRejected), name: .serverCredentialsRejected, object: nil)
         rebuildServerAppsMenu()
+        // Keep Spotlight and the Siri/Shortcuts app-parameter options in step with the server's app list.
+        ServerAppIndexer.shared.start()
         presentInitialWindow(forLaunch: true)
     }
 
@@ -73,6 +75,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         return true
+    }
+
+    /// `application(_:continue:restorationHandler:)` opens the Nextcloud server app a user selected from a Spotlight result.
+    ///
+    /// macOS delivers the selection here as a `CSSearchableItemActionType` activity (Core Spotlight's AppKit contract). The handling lives in `openServerAppFromSpotlight(_:)` in the `AppDelegate+Spotlight` extension, so this file stays free of App Intents and Core Spotlight imports.
+    func application(_: NSApplication, continue userActivity: NSUserActivity, restorationHandler _: @escaping ([any NSUserActivityRestoring]) -> Void) -> Bool {
+        openServerAppFromSpotlight(userActivity)
     }
 
     func applicationWillTerminate(_: Notification) {

@@ -6,12 +6,12 @@ import os
 
 /// `ShortcutRecorderView` is a focusable, text-field-style control that records a single keyboard shortcut.
 ///
-/// Clicking it makes it the first responder, which is the visual cue that it is recording; the next key combination the user presses becomes its value, provided it includes at least one of Command, Option, or Control, or is itself a function-region key (F-keys, arrows, Home/End, Page Up/Down, etc.) that can safely be recorded bare, and is occupied by neither one of Cirruscope's own menu items (`AppDelegate.reservedShortcutName(for:)`) nor another server app (`conflictingAppName`). A trailing clear button, shown only while a shortcut is assigned, removes the shortcut. `ServerAppsViewController` places one per row in its apps table and observes `onChange` to persist the recorded `AppShortcutTransferObject`, or `nil` when the user clears it, via `AccountStore.setShortcut(_:forAppID:)`.
+/// Clicking it makes it the first responder, which is the visual cue that it is recording; the next key combination the user presses becomes its value, provided it includes at least one of Command, Option, or Control, or is itself a function-region key (F-keys, arrows, Home/End, Page Up/Down, etc.) that can safely be recorded bare, and is occupied by neither one of Cirruscope's own menu items (`AppDelegate.reservedShortcutName(for:)`) nor another server app (`conflictingAppName`). A trailing clear button, shown only while a shortcut is assigned, removes the shortcut. `ServerAppsViewController` places one per row in its apps table and observes `onChange` to persist the recorded `KeyboardShortcutTransferObject`, or `nil` when the user clears it, via `AccountStore.setShortcut(_:forAppID:)`.
 class ShortcutRecorderView: NSTableCellView {
     /// `shortcut` is the currently recorded shortcut, or `nil` when none is assigned.
     ///
     /// Setting it shows or hides the clear button and refreshes the displayed text; the user changes it by recording a new combination, pressing Delete while recording, or clicking the clear button.
-    var shortcut: AppShortcutTransferObject? {
+    var shortcut: KeyboardShortcutTransferObject? {
         didSet {
             clearButton.isHidden = shortcut == nil
             updateDisplay()
@@ -21,12 +21,12 @@ class ShortcutRecorderView: NSTableCellView {
     /// `onChange` is invoked whenever the user records a new shortcut or clears the existing one.
     ///
     /// It is a `@MainActor` closure because it is only ever invoked from this main-actor control and `ServerAppsViewController` uses it to call the main-actor `AccountStore` synchronously.
-    var onChange: (@MainActor (AppShortcutTransferObject?) -> Void)?
+    var onChange: (@MainActor (KeyboardShortcutTransferObject?) -> Void)?
 
     /// `conflictingAppName` is asked, before a freshly recorded combination is accepted, for the name of another server app that already uses it, and returns `nil` when none does.
     ///
     /// `ServerAppsViewController` wires it to `AccountStore.nameOfApp(usingShortcut:otherThanAppID:)` for the row's own app, since only that controller knows which app a row stands for; this control stays unaware of the store, exactly as it is for `onChange`. A control left without it — as in a context where no other shortcut can be occupied — simply records anything not reserved.
-    var conflictingAppName: (@MainActor (AppShortcutTransferObject) -> String?)?
+    var conflictingAppName: (@MainActor (KeyboardShortcutTransferObject) -> String?)?
 
     /// `displayField` is the bezeled, non-editable text field that gives the control its text-field appearance and shows the placeholder, the recording prompt, or the recorded shortcut.
     private let displayField = NSTextField()
@@ -256,7 +256,7 @@ class ShortcutRecorderView: NSTableCellView {
         // keystroke whether or not the mask names Shift, while a lowercase one matches only the keystroke without
         // it, no matter what the mask says). `ShortcutMatching` documents the full rule, including why that bit is
         // significant after all for the caseless function-region keys.
-        let recorded = AppShortcutTransferObject(keyEquivalent: characters, modifierFlags: modifiers.rawValue)
+        let recorded = KeyboardShortcutTransferObject(keyEquivalent: characters, modifierFlags: modifiers.rawValue)
 
         // Reject a shortcut that already appears elsewhere in the menu bar (e.g. ⌃⌘S for "Show/Hide Sidebar") —
         // recording it here would let it silently shadow the fixed item once AppKit's key-equivalent lookup falls
@@ -337,7 +337,7 @@ class ShortcutRecorderView: NSTableCellView {
     /// `functionRegionKeyNames` maps the Unicode Private Use Area scalars AppKit reserves for function-region keys
     /// (e.g. `NSF4FunctionKey` at U+F707, `NSHomeFunctionKey` at U+F729) to a friendly name for `displayString(for:)`.
     ///
-    /// `AppShortcutTransferObject.keyEquivalent` stores these scalars unchanged for such keys, since that raw value is what
+    /// `KeyboardShortcutTransferObject.keyEquivalent` stores these scalars unchanged for such keys, since that raw value is what
     /// `NSMenuItem.keyEquivalent` needs; this mapping only affects what is displayed, never what is stored.
     ///
     /// It names the scalars a user can actually record here, which is a subset of the Private Use Area region
@@ -376,7 +376,7 @@ class ShortcutRecorderView: NSTableCellView {
     ]
 
     /// `displayString(for:)` renders a shortcut as its symbolic representation, e.g. `⌃⌥⇧⌘F`.
-    static func displayString(for shortcut: AppShortcutTransferObject) -> String {
+    static func displayString(for shortcut: KeyboardShortcutTransferObject) -> String {
         let flags = shortcut.modifierMask
         var result = ""
 
