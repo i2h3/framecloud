@@ -3,16 +3,84 @@
  * SPDX-License-Identifier: MIT
  */
 
+/*
+ * Appearance is driven by boolean data attributes that WebViewController sets on
+ * the <html> element from the account's appearance settings and from the macOS
+ * appearance:
+ *
+ *   data-cirruscope-translucency  — let the macOS window material show through
+ *   data-cirruscope-full-width    — expand content to the window edges
+ *   data-cirruscope-accent        — an app accent color is available to apply
+ *   data-cirruscope-accent-bright — that accent color takes black text, not white
+ *
+ * Rules that follow a setting are scoped to the matching attribute so they can
+ * be switched on and off live, without reloading the web view. Rules outside
+ * those scopes apply unconditionally.
+ *
+ * The accent color itself arrives alongside its attributes as the
+ * --cirruscope-accent-color custom property, set inline on <html>, because CSS
+ * cannot read a value out of an attribute.
+ */
+
+/* Always applied, independent of any setting. */
 :root {
     overscroll-behavior: none;
 }
 
+/* Clear the macOS traffic-light window controls that overlap the header. */
 #header .header-start {
     margin-left: 80px;
 }
 
-#content,
-#content-vue {
+html[data-cirruscope-translucency="true"] #header .header-start {
+    margin-left: 90px;
+}
+
+html[data-cirruscope-translucency="true"] .header-start #nextcloud,
+html[data-cirruscope-translucency="true"] .header-start .app-menu__current-app {
+    display: none !important;
+}
+
+/*
+ * Translucency: drop the Nextcloud backgrounds so the native window material
+ * behind the web view shows through. When off, Nextcloud paints its own opaque
+ * background and hides the material (WebViewController also hides its native
+ * background image only while translucency is on).
+ */
+html[data-cirruscope-translucency="true"],
+html[data-cirruscope-translucency="true"] body,
+html[data-cirruscope-translucency="true"] .content {
+    backdrop-filter: none !important;
+    background: none !important;
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+/*
+ * With the material showing through, the header no longer sits on the theme's
+ * primary color, so its icons and text — which resolve fill="currentColor"
+ * from color: var(--color-background-plain-text) — must contrast the macOS
+ * material instead. Track the macOS light/dark appearance via
+ * prefers-color-scheme: dark icons on the light material, light icons on the
+ * dark one. (When translucency is off, Nextcloud's own white-on-primary
+ * default is left untouched.)
+ */
+html[data-cirruscope-translucency="true"] #header {
+    --color-background-plain-text: #000;
+}
+
+@media (prefers-color-scheme: dark) {
+    html[data-cirruscope-translucency="true"] #header {
+        --color-background-plain-text: #fff;
+    }
+}
+
+/*
+ * Full width: remove the margins and rounded corners Nextcloud puts around the
+ * content area so it reaches the window edges.
+ */
+html[data-cirruscope-full-width="true"] #content,
+html[data-cirruscope-full-width="true"] #content-vue {
     height: calc(100% - var(--header-height)) !important;
     margin-bottom: 0 !important;
     margin-left: 0 !important;
@@ -20,8 +88,113 @@
     width: 100% !important;
 }
 
-#content,
-#content-vue,
-#app-content-vue {
+html[data-cirruscope-full-width="true"] #content,
+html[data-cirruscope-full-width="true"] #content-vue,
+html[data-cirruscope-full-width="true"] #app-content-vue {
     border-radius: 0 !important;
+}
+
+/*
+ * Accent color: WebViewController resolves NSColor.controlAccentColor — the app's
+ * own AccentColor asset while the user's macOS accent is "Multicolor", the chosen
+ * system accent otherwise — for the appearance its window draws with, and hands it
+ * over as --cirruscope-accent-color plus the brightness flag.
+ *
+ * All of it is scoped to the translucent appearance. Recoloring the interface is
+ * only appropriate once the page has already given up its own backgrounds to the
+ * native window material; with translucency off the page is Nextcloud's theme
+ * exactly as the server sent it, and nothing below applies. Scoping it here rather
+ * than withholding the value from Swift is also what makes the setting switch
+ * live, since reapplyAppearance() already rewrites data-cirruscope-translucency.
+ *
+ * Nextcloud computes its whole primary color family in PHP and emits ten literal
+ * hex values, so overriding --color-primary-element alone would leave every hover
+ * state, text-on-primary color, and light tint at the server's own color. The
+ * declarations below re-derive the family from the injected color instead, and each
+ * one names the PHP it ports: Util::mix() is a weighted average in gamma-encoded
+ * sRGB, which color-mix(in srgb, …) reproduces exactly, its weight for the first
+ * color being (factor + 100) / 200; Util::lighten()/darken() offset sRGB-HSL
+ * lightness in percentage points, which is hsl(from … calc(l ± n)); and
+ * Util::invertTextColor() flips black/white within 0.4% luminance of
+ * contrast-color(). Nextcloud's own --color-primary-element-light, -light-text, and
+ * -light-hover are var() aliases of the --color-primary-light trio, and
+ * --gradient-primary-background and --color-background-selection are expressions
+ * over these, so all of those follow without being named here.
+ *
+ * The derivations reference --color-main-background, which Nextcloud sets per
+ * theme, so they self-correct across its light, dark, and high-contrast
+ * stylesheets — hand-computed literals would not.
+ *
+ * Both <html> and body are named on purpose. Nextcloud declares the family on
+ * :root from its media-query stylesheets and again on body from its
+ * [data-theme-*] ones, and a declaration on an element always beats a value
+ * inherited from an ancestor — specificity and !important do not cross element
+ * boundaries — so overriding <html> alone would be ignored for the entire page as
+ * soon as the user enables a theme explicitly. !important is not needed to
+ * out-specify today's selectors, but this stylesheet is injected at document start
+ * and therefore sits earlier in the cascade than Nextcloud's own, which means it
+ * loses every equal-specificity tie on document order.
+ *
+ * data-cirruscope-accent gates the whole thing. CSS cannot test whether a custom
+ * property is set, and a var() reference to an unset one is invalid at
+ * computed-value time — --color-primary-element would compute to nothing at all
+ * and every primary button would lose its color, which is far worse than leaving
+ * Nextcloud's own color alone.
+ */
+html[data-cirruscope-translucency="true"][data-cirruscope-accent="true"],
+html[data-cirruscope-translucency="true"][data-cirruscope-accent="true"] body {
+    --cirruscope-accent-text: contrast-color(var(--cirruscope-accent-color));
+
+    /* $this->primaryColor, and $colorPrimaryElement without the contrast correction. */
+    --color-primary: var(--cirruscope-accent-color) !important;
+    --color-primary-element: var(--cirruscope-accent-color) !important;
+
+    /* getTextColor() — black or white by a 4.5:1 gate against white. */
+    --color-primary-text: var(--cirruscope-accent-text) !important;
+    --color-primary-element-text: var(--cirruscope-accent-text) !important;
+
+    /* mix($primary, $background, 60). */
+    --color-primary-hover: color-mix(in srgb, var(--cirruscope-accent-color) 80%, var(--color-main-background)) !important;
+
+    /* mix($element, $background, -80). */
+    --color-primary-light: color-mix(in srgb, var(--cirruscope-accent-color) 10%, var(--color-main-background)) !important;
+
+    /* mix($primary, getTextColor($light), -20). */
+    --color-primary-light-text: color-mix(in srgb, var(--cirruscope-accent-color) 40%, contrast-color(var(--color-primary-light))) !important;
+
+    /* mix($light, getTextColor($light), 90). */
+    --color-primary-light-hover: color-mix(in srgb, var(--color-primary-light) 95%, contrast-color(var(--color-primary-light))) !important;
+}
+
+/*
+ * The remaining three values follow Nextcloud's brightness branch, which CSS
+ * cannot evaluate: it selects the sign of a lightness step and two filter
+ * keywords, and no CSS function turns a color into a keyword. WebViewController
+ * therefore resolves it natively and reports it as data-cirruscope-accent-bright.
+ * All three attributes are repeated in these selectors because "false" on the
+ * brightness attribute means a dark accent rather than an absent one, so it cannot
+ * stand in for the availability gate.
+ */
+html[data-cirruscope-translucency="true"][data-cirruscope-accent="true"][data-cirruscope-accent-bright="true"],
+html[data-cirruscope-translucency="true"][data-cirruscope-accent="true"][data-cirruscope-accent-bright="true"] body {
+    /* lighten($element, 7) — Nextcloud steps the hover state away from the text color. */
+    --color-primary-element-hover: hsl(from var(--cirruscope-accent-color) h s calc(l + 7)) !important;
+
+    /* lighten(#000000, 7). */
+    --color-primary-element-text-dark: #121212 !important;
+
+    --primary-invert-if-bright: invert(100%) !important;
+    --primary-invert-if-dark: no !important;
+}
+
+html[data-cirruscope-translucency="true"][data-cirruscope-accent="true"][data-cirruscope-accent-bright="false"],
+html[data-cirruscope-translucency="true"][data-cirruscope-accent="true"][data-cirruscope-accent-bright="false"] body {
+    /* darken($element, 7). */
+    --color-primary-element-hover: hsl(from var(--cirruscope-accent-color) h s calc(l - 7)) !important;
+
+    /* darken(#ffffff, 7). */
+    --color-primary-element-text-dark: #ededed !important;
+
+    --primary-invert-if-bright: no !important;
+    --primary-invert-if-dark: invert(100%) !important;
 }

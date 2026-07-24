@@ -43,6 +43,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         rebuildServerAppsMenu()
         // Keep Spotlight and the Siri/Shortcuts app-parameter options in step with the server's app list.
         ServerAppIndexer.shared.start()
+        // Watch the macOS accent color and appearance so open web views keep matching the app's own accent.
+        AccentColorMonitor.shared.start()
         presentInitialWindow(forLaunch: true)
     }
 

@@ -19,8 +19,11 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
     @IBOutlet
     var backgroundImageView: NSImageView!
 
+    /// `stateOverlay` is the rounded card shown over the themed backdrop while a page loads or after a load fails, holding `progressIndicator`, `headline`, `explanation`, and `retry`.
+    ///
+    /// `showLoadingState()`, `handleNavigationFailure(_:)`, and `revealLoadedContent()` switch it between its two states and hide it once the web view is revealed, and `updateStateOverlayBackground()` clears its opaque fill while the translucent appearance is enabled.
     @IBOutlet
-    var stateOverlay: NSStackView!
+    var stateOverlay: StateOverlayStackView!
 
     ///
     /// An animated activity indicator.
@@ -148,13 +151,18 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
         webView.isInspectable = true
         webView.navigationDelegate = self
         webView.uiDelegate = self
+        makeWebViewBackgroundTransparent()
         observeWebViewTitle()
         observeWebViewURL()
         injectCustomStyleSheet()
+        installAppearanceAttributes()
         installWindowDragBridge()
         installSidebarToggleBridge()
         installNotificationBridge()
+        observeAppearanceSettings()
+        observeAccentColor()
         updateBackgroundImage()
+        updateStateOverlayBackground()
 
         showLoadingState()
     }
@@ -182,7 +190,7 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
         explanation.isHidden = true
         retry.isHidden = true
         webView.isHidden = true
-        backgroundImageView.isHidden = false
+        updateBackgroundImageVisibility()
         stateOverlay.isHidden = false
     }
 
@@ -214,7 +222,7 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
         explanation.isHidden = false
         retry.isHidden = false
         webView.isHidden = true
-        backgroundImageView.isHidden = false
+        updateBackgroundImageVisibility()
         stateOverlay.isHidden = false
     }
 
@@ -224,8 +232,8 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
     func revealLoadedContent() {
         progressIndicator.stopAnimation(self)
         stateOverlay.isHidden = true
-        backgroundImageView.isHidden = true
         webView.isHidden = false
+        updateBackgroundImageVisibility()
         view.window?.makeFirstResponder(webView)
     }
 
@@ -409,6 +417,15 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
 
     // MARK: - Web View Styling
 
+    /// `makeWebViewBackgroundTransparent()` stops `webView` from painting an opaque background of its own, so the host window's material shines through wherever the loaded page leaves its background transparent.
+    ///
+    /// `viewDidLoad()` calls it once while configuring the web view. `WKWebView` on macOS exposes no public equivalent of iOS's `isOpaque`, but its `drawsBackground` property is reachable through key-value coding and is the established way to disable the opaque backing. `underPageBackgroundColor` is cleared as well so the area revealed by rubber-band scrolling beyond the page bounds stays transparent too, instead of falling back to a color derived from the page.
+    /// Note that the page itself still paints whatever background its own styles declare; `Cirruscope.css`, injected by `injectCustomStyleSheet()`, is the place to make page backgrounds transparent where desired.
+    private func makeWebViewBackgroundTransparent() {
+        webView.setValue(false, forKey: "drawsBackground")
+        webView.underPageBackgroundColor = .clear
+    }
+
     private func injectCustomStyleSheet() {
         guard
             let url = Bundle.main.url(forResource: "Cirruscope", withExtension: "css"),
@@ -432,6 +449,96 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
         let script = WKUserScript(source: source, injectionTime: .atDocumentStart, forMainFrameOnly: false)
 
         webView.configuration.userContentController.addUserScript(script)
+    }
+
+    // MARK: - Appearance
+
+    /// `prefersTranslucentAppearance` is `true` when the account has enabled the translucent appearance; it defaults to `false` until the user chooses, matching `AppearanceSettingsViewController`.
+    private var prefersTranslucentAppearance: Bool {
+        AccountStore.shared.translucentAppearance ?? false
+    }
+
+    /// `installAppearanceAttributes()` injects a document-start script that seeds `data-cirruscope-translucency`, `data-cirruscope-full-width`, and the accent-color state on `<html>`, so the injected stylesheet's translucency, full-width, and accent rules apply from the first paint without a flash.
+    ///
+    /// `viewDidLoad()` calls it alongside `injectCustomStyleSheet()`. Like every user script it re-runs on each full document load, carrying the values resolved when this controller loaded; `reapplyAppearance()` corrects them should a setting or the macOS accent color change between loads.
+    /// That leaves one accepted rough edge. A window that was already open when the accent color changed paints the old color once on its next *full* document load, before `didFinish` re-applies the current one — a window opened after the change is correct from its first paint, and Nextcloud's single-page interface makes full loads after the initial one rare. Removing the flash entirely is not worth its cost: `WKUserContentController` offers only `removeAllUserScripts()`, so re-seeding means re-registering all five scripts, and `add(_:name:)` raises on a duplicate message-handler name, so `viewDidLoad()`'s interleaved script and handler registration would first have to be split into a re-runnable half and a run-once half. The cheap improvement, should it ever matter, is to call `reapplyAppearance()` from a `webView(_:didCommit:)` as well.
+    private func installAppearanceAttributes() {
+        guard let source = appearanceAttributeScript() else {
+            return
+        }
+
+        let script = WKUserScript(source: source, injectionTime: .atDocumentStart, forMainFrameOnly: false)
+        webView.configuration.userContentController.addUserScript(script)
+    }
+
+    /// `observeAppearanceSettings()` subscribes to `Notification.Name.appearanceSettingsDidChange` so a change made in the Appearance settings tab is applied to this already-open web view without a reload.
+    ///
+    /// `viewDidLoad()` calls it once. The observer needs no explicit removal: `NotificationCenter` drops selector-based observers automatically when the observing object is deallocated.
+    private func observeAppearanceSettings() {
+        NotificationCenter.default.addObserver(self, selector: #selector(appearanceSettingsDidChange), name: .appearanceSettingsDidChange, object: nil)
+    }
+
+    @objc
+    private func appearanceSettingsDidChange() {
+        reapplyAppearance()
+    }
+
+    /// `reapplyAppearance()` re-applies the account's appearance settings and the app's effective accent color to the live web view: it rewrites the `<html>` data attributes and the accent custom property the stylesheet keys off — switching translucency, full-width, and the accent color without a reload — and updates the native background image's visibility.
+    ///
+    /// It runs when the settings change (`appearanceSettingsDidChange`), when macOS changes the appearance or the accent-color preference (`accentColorDidChange`, posted by `AccentColorMonitor`), and after every navigation finishes (`WebViewController+WKNavigationDelegate`'s `didFinish`), because the document-start seed carries the values captured when the controller loaded and a change made afterwards would otherwise reappear on the next full reload.
+    func reapplyAppearance() {
+        if let source = appearanceAttributeScript() {
+            webView.evaluateJavaScript(source)
+        }
+
+        updateBackgroundImageVisibility()
+        updateStateOverlayBackground()
+    }
+
+    /// `appearanceAttributeScript()` builds the JavaScript that mirrors the account's current appearance settings and the app's effective accent color onto `<html>` — as the `data-cirruscope-translucency`, `data-cirruscope-full-width`, `data-cirruscope-accent`, and `data-cirruscope-accent-bright` attributes `Cirruscope.css` scopes its rules to, plus the `--cirruscope-accent-color` custom property it reads the color out of — or `nil` if the bundled `AppearanceAttributes.js` resource is missing.
+    ///
+    /// It invokes the bundled `WebViewScript.appearanceAttributes` function expression with the current values as its arguments. The same script backs both the document-start seed (`installAppearanceAttributes()`) and the live re-application (`reapplyAppearance()`), so the two paths never diverge. Translucency defaults off and full-width on until the account records a choice, and the accent argument is `null` when the color cannot be expressed in sRGB, which closes the stylesheet's gate and leaves Nextcloud's own primary color in place.
+    /// The accent color is resolved against `webView.effectiveAppearance` rather than the application's, because that is the appearance the page is rendered under, and it carries the increased-contrast axis as well as light and dark. It is interpolated into a JavaScript string literal without escaping, which is safe because `WebAccentColor.hexString` can only ever be `#` followed by six hexadecimal digits — an invariant `WebAccentColorTests` pins for exactly this reason. Any future value that is not machine-generated in that form would need proper encoding instead.
+    /// Note that nothing here consults the translucency setting before resolving the accent color: the value is always forwarded and `Cirruscope.css` decides whether it applies, so switching translucency on picks up the accent that is current at that moment rather than one cached from whenever it was last on.
+    private func appearanceAttributeScript() -> String? {
+        guard let function = WebViewScript.appearanceAttributes.source else {
+            return nil
+        }
+
+        let translucency = prefersTranslucentAppearance
+        let fullWidth = AccountStore.shared.removeGaps ?? true
+        let accentColor = WebAccentColor.effective(in: webView.effectiveAppearance)
+        let accentColorArgument = accentColor.map { "'\($0.hexString)'" } ?? "null"
+        let accentIsBright = accentColor?.isBright ?? false
+        return "\(function)(\(translucency), \(fullWidth), \(accentColorArgument), \(accentIsBright));"
+    }
+
+    /// `updateBackgroundImageVisibility()` hides the cached theming background whenever the translucent appearance is enabled — so the window material shows through instead of the server's background image — or once the web view has been revealed, leaving it visible only behind the loading and failure overlays when translucency is off.
+    private func updateBackgroundImageVisibility() {
+        backgroundImageView.isHidden = prefersTranslucentAppearance || webView.isHidden == false
+    }
+
+    /// `updateStateOverlayBackground()` drops the loading and failure card's opaque fill whenever the translucent appearance is enabled, so the window material shows through it as well.
+    ///
+    /// `viewDidLoad()` calls it for the initial state and `reapplyAppearance()` again whenever the setting changes, which is enough: the card's fill follows the account's translucency setting alone, not the load state that `updateBackgroundImageVisibility()` also tracks.
+    /// The card keeps its rounded corners and its padding either way — only the fill goes, because an opaque card sitting on the material would hide exactly what the setting exists to reveal.
+    private func updateStateOverlayBackground() {
+        stateOverlay.drawsBackground = prefersTranslucentAppearance == false
+    }
+
+    // MARK: - Accent Color
+
+    /// `observeAccentColor()` subscribes to `Notification.Name.accentColorDidChange` so a new macOS accent-color preference, or a switch between the light and dark appearance, reaches this already-open web view without a reload.
+    ///
+    /// `viewDidLoad()` calls it once, alongside `observeAppearanceSettings()`, which covers the account's own settings; between them every input to `appearanceAttributeScript()` is observed. `AccentColorMonitor` owns the two system observations behind the notification and posts it from the main actor, so this observer needs neither a `nonisolated` handler nor a hop of its own, and it needs no explicit removal: `NotificationCenter` drops selector-based observers automatically when the observing object is deallocated.
+    /// It deliberately does not check whether the translucent appearance is enabled first. The accent color only *applies* while translucency is on — `Cirruscope.css` scopes its accent rules to `data-cirruscope-translucency` — but it is still forwarded while translucency is off, so switching the setting on shows the accent that is current at that moment. Guarding here would let the forwarded value go stale instead, and would save nothing measurable: the work is one `evaluateJavaScript(_:)` on an event a human triggers by clicking in System Settings.
+    private func observeAccentColor() {
+        NotificationCenter.default.addObserver(self, selector: #selector(accentColorDidChange), name: .accentColorDidChange, object: nil)
+    }
+
+    @objc
+    private func accentColorDidChange() {
+        reapplyAppearance()
     }
 
     // MARK: - Script Bridge

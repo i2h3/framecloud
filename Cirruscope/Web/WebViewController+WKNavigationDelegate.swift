@@ -216,6 +216,11 @@ extension WebViewController: WKNavigationDelegate {
         // whether any content has ever been shown, which `closeWindowIfNeverRevealed()` relies on.
         hasRevealedAfterInitialLoad = true
         revealLoadedContent()
+
+        // Re-assert the appearance data attributes with the account's current values: the document-start seed script
+        // re-runs on every full load carrying the values captured when the controller loaded, so a setting changed
+        // since then (in a window that stayed open) would otherwise reappear stale after a reload.
+        reapplyAppearance()
     }
 
     func webView(_: WKWebView, didFail _: WKNavigation!, withError error: any Error) {

@@ -1111,30 +1111,6 @@
         }
       }
     },
-    "bXF-PU-HJx.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Text Cell\"; ObjectID = \"bXF-PU-HJx\";",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Text Cell"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Text Cell"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Text Cell"
-          }
-        }
-      }
-    },
     "c8a-y6-VQd.title" : {
       "comment" : "Class = \"NSMenu\"; title = \"Transformations\"; ObjectID = \"c8a-y6-VQd\";",
       "extractionState" : "extracted_with_value",
@@ -1491,6 +1467,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Obtenir de l'aide…"
+          }
+        }
+      }
+    },
+    "ev0-sj-rD3.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Remove gaps around content\"; ObjectID = \"ev0-sj-rD3\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abstände um den Inhalt entfernen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Remove gaps around content"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar los espacios alrededor del contenido"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer les espaces autour du contenu"
           }
         }
       }
@@ -1885,6 +1891,36 @@
         }
       }
     },
+    "h9w-eM-leH.label" : {
+      "comment" : "Class = \"NSTabViewItem\"; label = \"Appearance\"; ObjectID = \"h9w-eM-leH\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Darstellung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Appearance"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apariencia"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apparence"
+          }
+        }
+      }
+    },
     "HFo-cy-zxI.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Show Spelling and Grammar\"; ObjectID = \"HFo-cy-zxI\";",
       "extractionState" : "extracted_with_value",
@@ -2245,26 +2281,32 @@
         }
       }
     },
-    "icp-2h-3sS.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Text Cell\"; ObjectID = \"icp-2h-3sS\";",
-      "extractionState" : "manual",
+    "icn-Mn-mn4.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Liquid Glass appearance\"; ObjectID = \"icn-Mn-mn4\";",
+      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Text Cell"
+            "value" : "Liquid-Glass-Darstellung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Liquid Glass appearance"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Text Cell"
+            "value" : "Apariencia Liquid Glass"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Text Cell"
+            "value" : "Apparence Liquid Glass"
           }
         }
       }
@@ -2295,54 +2337,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ligne de base"
-          }
-        }
-      }
-    },
-    "IQv-IB-iLA.title" : {
-      "comment" : "Class = \"NSWindow\"; title = \"Window\"; ObjectID = \"IQv-IB-iLA\";",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Window"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Window"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Window"
-          }
-        }
-      }
-    },
-    "j5b-U1-845.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Text Cell\"; ObjectID = \"j5b-U1-845\";",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Text Cell"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Text Cell"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Text Cell"
           }
         }
       }
@@ -2797,6 +2791,36 @@
         }
       }
     },
+    "NdO-tL-Tk7.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Expand Nextcloud content to the window edges by removing insets.\"; ObjectID = \"NdO-tL-Tk7\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erweitert den Nextcloud-Inhalt bis an die Fensterränder, indem die Abstände entfernt werden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Expand Nextcloud content to the window edges by removing insets."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amplía el contenido de Nextcloud hasta los bordes de la ventana eliminando los márgenes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Étend le contenu de Nextcloud jusqu'aux bords de la fenêtre en supprimant les marges."
+          }
+        }
+      }
+    },
     "NMo-om-nkz.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Services\"; ObjectID = \"NMo-om-nkz\";",
       "extractionState" : "extracted_with_value",
@@ -3157,30 +3181,6 @@
         }
       }
     },
-    "Phu-Ny-sSI.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"Phu-Ny-sSI\";",
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Table View Cell"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Table View Cell"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Table View Cell"
-          }
-        }
-      }
-    },
     "Ptp-SP-VEL.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Bigger\"; ObjectID = \"Ptp-SP-VEL\";",
       "extractionState" : "extracted_with_value",
@@ -3511,6 +3511,36 @@
         }
       }
     },
+    "rHv-JZ-22d.title" : {
+      "comment" : "Class = \"NSViewController\"; title = \"Appearance\"; ObjectID = \"rHv-JZ-22d\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Darstellung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Appearance"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apariencia"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apparence"
+          }
+        }
+      }
+    },
     "rJd-2U-O7V.label" : {
       "comment" : "Class = \"NSTabViewItem\"; label = \"Speed Dials\"; ObjectID = \"rJd-2U-O7V\";",
       "extractionState" : "extracted_with_value",
@@ -3717,6 +3747,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fenêtre"
+          }
+        }
+      }
+    },
+    "TgD-Ie-mez.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Let your desktop show through the window instead of Nextcloud's background colors and images. The app's accent color is applied as well, as long as System Settings leaves the choice to apps.\"; ObjectID = \"TgD-Ie-mez\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lässt den Schreibtisch durch das Fenster durchscheinen, statt die Hintergrundfarben und -bilder von Nextcloud anzuzeigen. Die Akzentfarbe der App wird ebenfalls übernommen, solange die Systemeinstellungen die Wahl den Apps überlassen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Let your desktop show through the window instead of Nextcloud's background colors and images. The app's accent color is applied as well, as long as System Settings leaves the choice to apps."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deja que tu escritorio se vea a través de la ventana en lugar de los colores e imágenes de fondo de Nextcloud. También se aplica el color de acento de la app, siempre que Ajustes del Sistema deje la elección a las apps."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laisse votre bureau transparaître à travers la fenêtre au lieu des couleurs et images d'arrière-plan de Nextcloud. La couleur d'accentuation de l'app est également appliquée, tant que Réglages Système laisse le choix aux apps."
           }
         }
       }
@@ -4352,25 +4412,31 @@
       }
     },
     "XFy-oL-ctO.title" : {
-      "comment" : "Class = \"NSWindow\"; title = \"Window\"; ObjectID = \"XFy-oL-ctO\";",
-      "extractionState" : "manual",
+      "comment" : "Class = \"NSWindow\"; title = \"Cirruscope\"; ObjectID = \"XFy-oL-ctO\";",
+      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Window"
+            "value" : "Cirruscope"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cirruscope"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Window"
+            "value" : "Cirruscope"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Window"
+            "value" : "Cirruscope"
           }
         }
       }

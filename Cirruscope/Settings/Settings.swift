@@ -84,4 +84,12 @@ extension Notification.Name {
 
     /// `serverCredentialsRejected` is posted by `NotificationMonitor` when its event stream reports the stored app password was revoked so `AppDelegate` can clear the keychain and require a new sign-in.
     static let serverCredentialsRejected = Notification.Name("ServerCredentialsRejected")
+
+    /// `appearanceSettingsDidChange` is posted by `AccountStore` whenever the account's appearance settings (translucency, remove-gaps) change so every open `WebViewController` re-applies them to its live web view without a reload.
+    static let appearanceSettingsDidChange = Notification.Name("AppearanceSettingsDidChange")
+
+    /// `accentColorDidChange` is posted by `AccentColorMonitor` whenever the macOS accent color or the light/dark appearance changes so every open `WebViewController` re-resolves the accent color for its own web view and forwards it into the page without a reload.
+    ///
+    /// It is the system-driven counterpart to `appearanceSettingsDidChange`, which carries the account's own appearance settings; both funnel into `WebViewController.reapplyAppearance()`.
+    static let accentColorDidChange = Notification.Name("AccentColorDidChange")
 }
