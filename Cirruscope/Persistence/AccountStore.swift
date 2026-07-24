@@ -105,6 +105,15 @@ final class AccountStore {
         }
     }
 
+    /// `postAppearanceSettingsDidChange()` posts `Notification.Name.appearanceSettingsDidChange` on the next main-thread turn so every open `WebViewController` re-applies the appearance without a reload.
+    ///
+    /// The async hop mirrors `postServerAppsDidChange()`: it keeps the observers from running reentrantly inside the `NSSwitch` action handler in `AppearanceSettingsViewController` that triggered the write.
+    private func postAppearanceSettingsDidChange() {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .appearanceSettingsDidChange, object: nil)
+        }
+    }
+
     // MARK: - Server Address
 
     /// `serverAddress` is the URL of the connected server, or `nil` while none is configured.
@@ -190,6 +199,36 @@ final class AccountStore {
         } catch {
             logger.notice("Could not cache theming logo: \(error.localizedDescription)")
         }
+    }
+
+    // MARK: - Appearance
+
+    /// `translucentAppearance` is the user's choice to let the macOS window material show through the web view, or `nil` when the user has not chosen — in which case callers apply the app default (off). `WebViewController` reads it to drive both the injected stylesheet and the native background image's visibility.
+    var translucentAppearance: Bool? {
+        currentAccount(createIfNeeded: false)?.translucentAppearance
+    }
+
+    /// `setTranslucentAppearance(_:)` records whether the translucent appearance is enabled, then notifies open web views so they re-apply it without a reload.
+    ///
+    /// `AppearanceSettingsViewController` calls it from the translucent-appearance switch.
+    func setTranslucentAppearance(_ enabled: Bool) {
+        currentAccount(createIfNeeded: true)?.translucentAppearance = enabled
+        save()
+        postAppearanceSettingsDidChange()
+    }
+
+    /// `removeGaps` is the user's choice to expand Nextcloud's content to the window edges, or `nil` when the user has not chosen — in which case callers apply the app default (on).
+    var removeGaps: Bool? {
+        currentAccount(createIfNeeded: false)?.removeGaps
+    }
+
+    /// `setRemoveGaps(_:)` records whether the content gaps are removed, then notifies open web views so they re-apply it without a reload.
+    ///
+    /// `AppearanceSettingsViewController` calls it from the remove-gaps switch.
+    func setRemoveGaps(_ enabled: Bool) {
+        currentAccount(createIfNeeded: true)?.removeGaps = enabled
+        save()
+        postAppearanceSettingsDidChange()
     }
 
     // MARK: - Server Version

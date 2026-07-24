@@ -877,6 +877,7 @@
                 <tabViewController selectedTabViewItemIndex="0" tabStyle="toolbar" id="Krt-iQ-b8b" userLabel="Settings Tab View" sceneMemberID="viewController">
                     <tabViewItems>
                         <tabViewItem label="General" identifier="" image="gear" catalog="system" id="7IU-fb-S0w"/>
+                        <tabViewItem label="Appearance" image="paintpalette" catalog="system" id="h9w-eM-leH"/>
                         <tabViewItem label="Speed Dials" identifier="" image="hare" catalog="system" id="rJd-2U-O7V"/>
                     </tabViewItems>
                     <tabView key="tabView" type="noTabsNoBorder" id="C5g-9C-yaP">
@@ -890,6 +891,7 @@
                     <connections>
                         <outlet property="tabView" destination="C5g-9C-yaP" id="mtd-BQ-BbT"/>
                         <segue destination="M8w-Tj-wCV" kind="relationship" relationship="tabItems" id="3q6-yk-PQ3"/>
+                        <segue destination="rHv-JZ-22d" kind="relationship" relationship="tabItems" id="MJq-Kj-9RL"/>
                         <segue destination="ZAg-dq-Ifn" kind="relationship" relationship="tabItems" id="Ei3-mR-8uS"/>
                     </connections>
                 </tabViewController>
@@ -1089,7 +1091,7 @@
                 </viewController>
                 <customObject id="Ddr-cy-etH" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1532" y="-9"/>
+            <point key="canvasLocation" x="1446" y="200"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="6RG-IT-9tY">
@@ -1296,6 +1298,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="1200" height="800"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
+                            <visualEffectView blendingMode="behindWindow" material="sidebar" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="rVl-e1-PW7">
+                                <rect key="frame" x="0.0" y="0.0" width="1200" height="800"/>
+                            </visualEffectView>
                             <wkWebView hidden="YES" wantsLayer="YES" translatesAutoresizingMaskIntoConstraints="NO" id="edZ-kL-6y2">
                                 <rect key="frame" x="0.0" y="0.0" width="1200" height="800"/>
                                 <wkWebViewConfiguration key="configuration" applicationNameForUserAgent="Version/18.0 Safari/605.1.15">
@@ -1358,10 +1363,14 @@
                             <constraint firstAttribute="bottom" secondItem="9eM-UK-O0L" secondAttribute="bottom" id="2QN-Zl-J7a"/>
                             <constraint firstAttribute="bottom" secondItem="edZ-kL-6y2" secondAttribute="bottom" id="3oX-aL-2yM"/>
                             <constraint firstItem="TQI-hA-Tf7" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="4dN-qN-nxZ"/>
+                            <constraint firstItem="rVl-e1-PW7" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="AWO-hg-bDH"/>
                             <constraint firstAttribute="trailing" secondItem="edZ-kL-6y2" secondAttribute="trailing" id="B47-ee-AH0"/>
+                            <constraint firstItem="rVl-e1-PW7" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="FC3-J0-q3V"/>
                             <constraint firstItem="9eM-UK-O0L" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="HCg-xc-Zsa"/>
+                            <constraint firstAttribute="bottom" secondItem="rVl-e1-PW7" secondAttribute="bottom" id="JdW-fN-hBm"/>
                             <constraint firstAttribute="trailing" secondItem="9eM-UK-O0L" secondAttribute="trailing" id="Jxx-YS-gGF"/>
                             <constraint firstItem="9eM-UK-O0L" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="SRa-sg-UKz"/>
+                            <constraint firstAttribute="trailing" secondItem="rVl-e1-PW7" secondAttribute="trailing" id="UAf-v8-TD2"/>
                             <constraint firstItem="edZ-kL-6y2" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="WGc-BC-SiP"/>
                             <constraint firstItem="TQI-hA-Tf7" firstAttribute="centerY" secondItem="m2S-Jp-Qdl" secondAttribute="centerY" id="Xql-gI-t51"/>
                             <constraint firstItem="edZ-kL-6y2" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="lQF-QF-lhq"/>
@@ -1381,6 +1390,89 @@
             </objects>
             <point key="canvasLocation" x="74" y="1587"/>
         </scene>
+        <!--Appearance-->
+        <scene sceneID="Ux8-uY-twb">
+            <objects>
+                <viewController title="Appearance" id="rHv-JZ-22d" customClass="AppearanceSettingsViewController" customModule="Cirruscope" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" misplaced="YES" id="wf9-Q6-gmA">
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="204"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <switch horizontalHuggingPriority="750" verticalHuggingPriority="750" baseWritingDirection="leftToRight" alignment="left" state="on" translatesAutoresizingMaskIntoConstraints="NO" id="EiD-rk-xlU">
+                                <rect key="frame" x="406" y="146" width="54" height="24"/>
+                                <connections>
+                                    <action selector="translucentAppearanceSwitched:" target="rHv-JZ-22d" id="0We-Qb-hCi"/>
+                                </connections>
+                            </switch>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9JU-gj-NqR">
+                                <rect key="frame" x="18" y="150" width="153" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Liquid Glass appearance" id="icn-Mn-mn4">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Geh-Xm-DIK">
+                                <rect key="frame" x="18" y="96" width="444" height="42"/>
+                                <textFieldCell key="cell" id="TgD-Ie-mez">
+                                    <font key="font" textStyle="subheadline" name=".SFNS-Regular"/>
+                                    <string key="title">Let your desktop show through the window instead of Nextcloud's background colors and images. The app's accent color is applied as well, as long as System Settings leaves the choice to apps.</string>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <switch horizontalHuggingPriority="750" verticalHuggingPriority="750" baseWritingDirection="leftToRight" alignment="left" state="on" translatesAutoresizingMaskIntoConstraints="NO" id="PUZ-Ej-goe">
+                                <rect key="frame" x="406" y="42" width="54" height="24"/>
+                                <connections>
+                                    <action selector="gapsSwitched:" target="rHv-JZ-22d" id="g2p-Xo-z42"/>
+                                </connections>
+                            </switch>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="shM-qC-Mzz">
+                                <rect key="frame" x="18" y="46" width="182" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Remove gaps around content" id="ev0-sj-rD3">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="XE8-Ig-WLU">
+                                <rect key="frame" x="18" y="20" width="360" height="14"/>
+                                <textFieldCell key="cell" title="Expand Nextcloud content to the window edges by removing insets." id="NdO-tL-Tk7">
+                                    <font key="font" textStyle="subheadline" name=".SFNS-Regular"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="XE8-Ig-WLU" firstAttribute="top" secondItem="PUZ-Ej-goe" secondAttribute="bottom" constant="8" symbolic="YES" id="0sJ-NJ-L6C"/>
+                            <constraint firstItem="shM-qC-Mzz" firstAttribute="centerY" secondItem="PUZ-Ej-goe" secondAttribute="centerY" id="3Cm-0L-Yd8"/>
+                            <constraint firstItem="9JU-gj-NqR" firstAttribute="leading" secondItem="wf9-Q6-gmA" secondAttribute="leading" constant="20" symbolic="YES" id="BC1-V7-rbI"/>
+                            <constraint firstItem="PUZ-Ej-goe" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="shM-qC-Mzz" secondAttribute="trailing" constant="8" symbolic="YES" id="DXe-Je-b8g"/>
+                            <constraint firstAttribute="trailing" secondItem="PUZ-Ej-goe" secondAttribute="trailing" constant="20" symbolic="YES" id="Gxx-E2-tPw"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Geh-Xm-DIK" secondAttribute="trailing" constant="20" symbolic="YES" id="Mjh-5J-rdT"/>
+                            <constraint firstItem="Geh-Xm-DIK" firstAttribute="leading" secondItem="9JU-gj-NqR" secondAttribute="leading" id="Wk9-86-jiM"/>
+                            <constraint firstItem="XE8-Ig-WLU" firstAttribute="leading" secondItem="shM-qC-Mzz" secondAttribute="leading" id="dwA-0V-u50"/>
+                            <constraint firstAttribute="bottom" secondItem="XE8-Ig-WLU" secondAttribute="bottom" constant="20" symbolic="YES" id="gPP-xv-CGw"/>
+                            <constraint firstItem="shM-qC-Mzz" firstAttribute="leading" secondItem="wf9-Q6-gmA" secondAttribute="leading" constant="20" symbolic="YES" id="gWd-67-65V"/>
+                            <constraint firstAttribute="trailing" secondItem="EiD-rk-xlU" secondAttribute="trailing" constant="20" symbolic="YES" id="hc2-ig-067"/>
+                            <constraint firstItem="9JU-gj-NqR" firstAttribute="centerY" secondItem="EiD-rk-xlU" secondAttribute="centerY" id="jwu-bo-caT"/>
+                            <constraint firstItem="PUZ-Ej-goe" firstAttribute="top" secondItem="Geh-Xm-DIK" secondAttribute="bottom" constant="30" id="nIc-8w-R6y"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="XE8-Ig-WLU" secondAttribute="trailing" constant="20" symbolic="YES" id="obH-m4-npq"/>
+                            <constraint firstItem="EiD-rk-xlU" firstAttribute="top" secondItem="wf9-Q6-gmA" secondAttribute="top" constant="20" symbolic="YES" id="tx4-ev-VRu"/>
+                            <constraint firstItem="EiD-rk-xlU" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="9JU-gj-NqR" secondAttribute="trailing" constant="8" symbolic="YES" id="y3v-iO-jdk"/>
+                            <constraint firstItem="Geh-Xm-DIK" firstAttribute="top" secondItem="EiD-rk-xlU" secondAttribute="bottom" constant="8" symbolic="YES" id="zTw-tV-xtU"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="removeGaps" destination="PUZ-Ej-goe" id="vK5-te-QB0"/>
+                        <outlet property="translucentAppearance" destination="EiD-rk-xlU" id="Ju1-zC-5t1"/>
+                    </connections>
+                </viewController>
+                <customObject id="UNm-QU-lsf" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1936" y="-178"/>
+        </scene>
     </scenes>
     <resources>
         <image name="Logo" width="1024" height="1024"/>
@@ -1390,6 +1482,7 @@
         <image name="gear" catalog="system" width="17" height="16"/>
         <image name="hare" catalog="system" width="23" height="17"/>
         <image name="magnifyingglass.circle.fill" catalog="system" width="20" height="20"/>
+        <image name="paintpalette" catalog="system" width="18" height="15"/>
         <image name="plus" catalog="system" width="14" height="13"/>
         <image name="xmark.circle.fill" catalog="system" width="20" height="20"/>
     </resources>

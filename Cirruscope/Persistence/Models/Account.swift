@@ -28,6 +28,12 @@ final class Account {
     /// `themeBackgroundPlain` is the `backgroundPlain` flag from the server's `Theming` capability, indicating whether the background is a plain color rather than an image.
     var themeBackgroundPlain: Bool?
 
+    /// `translucentAppearance` is the user's choice, from the Appearance settings tab, to let the macOS window material show through the web view instead of Nextcloud's own backgrounds; `nil` means the user has not chosen and the app default (off) applies.
+    var translucentAppearance: Bool?
+
+    /// `removeGaps` is the user's choice, from the Appearance settings tab, to expand Nextcloud's content to the window edges by removing the surrounding margins; `nil` means the user has not chosen and the app default (on) applies.
+    var removeGaps: Bool?
+
     /// `apps` are the Nextcloud server apps offered by this account's server; deleting the account cascades to them and, through them, their shortcuts.
     @Relationship(deleteRule: .cascade, inverse: \ServerApp.account)
     var apps: [ServerApp] = []
@@ -37,12 +43,16 @@ final class Account {
         serverVersion: String? = nil,
         themeBackground: String? = nil,
         themeLogo: URL? = nil,
-        themeBackgroundPlain: Bool? = nil
+        themeBackgroundPlain: Bool? = nil,
+        translucentAppearance: Bool? = nil,
+        removeGaps: Bool? = nil
     ) {
         self.serverAddress = serverAddress
         self.serverVersion = serverVersion
         self.themeBackground = themeBackground
         self.themeLogo = themeLogo
         self.themeBackgroundPlain = themeBackgroundPlain
+        self.translucentAppearance = translucentAppearance
+        self.removeGaps = removeGaps
     }
 }

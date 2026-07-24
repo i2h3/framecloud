@@ -29,6 +29,11 @@ enum WebViewScript: String {
     /// `WebViewController.installNotificationBridge()` installs it as a user script that runs at the start of every document load, before the page's own scripts read the API.
     case notificationBridge = "NotificationBridge"
 
+    /// `appearanceAttributes` sets the `data-cirruscope-translucency`, `data-cirruscope-full-width`, `data-cirruscope-accent`, and `data-cirruscope-accent-bright` attributes on `<html>` that `Cirruscope.css` scopes its translucency, full-width, and accent-color rules to, along with the `--cirruscope-accent-color` custom property those accent rules re-derive Nextcloud's primary color family from.
+    ///
+    /// Unlike the other cases its resource is a function expression rather than a self-invoking script: `WebViewController.appearanceAttributeScript()` invokes it with the account's current appearance settings and the app's effective accent color, both to install it as a document-start user script and to re-apply it on demand with `WKWebView.evaluateJavaScript(_:)`.
+    case appearanceAttributes = "AppearanceAttributes"
+
     /// `logger` records failures to load a bundled script under the `WebViewScript` category.
     private static let logger = Logger(for: WebViewScript.self)
 
