@@ -9,6 +9,10 @@ Thanks for your interest in contributing.
 This document is written for developers, in the same spirit as [README.md](./README.md).
 For a more general introduction, see [the official website](https://cirruscope.app).
 
+## Before You Start
+
+For anything beyond a small fix, please open an issue first and check it against the project's scope in [GOVERNANCE.md](./GOVERNANCE.md) before writing code. Cirruscope is a single-maintainer project with a deliberately focused scope, so a pull request that falls outside it may be declined regardless of how well it's built — opening an issue first saves you that wasted effort. Small, obvious fixes (typos, clear bugs) are fine to send directly.
+
 ## Developer Certificate of Origin
 
 Every contribution to Cirruscope must be signed off under the [Developer Certificate of Origin](https://developercertificate.org/) (DCO).

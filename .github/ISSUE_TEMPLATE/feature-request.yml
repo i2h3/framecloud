@@ -6,6 +6,10 @@ description: Share an idea or improvement for Cirruscope.
 labels:
   - enhancement
 body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to suggest something! Ideas are genuinely welcome. A heads-up on how these are handled: See [GOVERNANCE.md](https://github.com/i2h3/cirruscope/blob/main/GOVERNANCE.md) for how decisions on them get made.
   - type: checkboxes
     id: search
     attributes:

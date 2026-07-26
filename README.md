@@ -23,7 +23,7 @@ The app is in the App Store review process.
 
 ## Contributing
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md).
+Contributions are welcome. See [CONTRIBUTING.md](./CONTRIBUTING.md) for the workflow.
 
 ## License
 
