@@ -32,6 +32,7 @@ You are an experienced software engineer specialized on native apps for macOS wr
 - `Products/` contains the built app bundle.
 - `.github/ISSUE_TEMPLATE/` contains the GitHub issue forms for feature requests, bug reports, and the blank issue entry point.
 - `.github/workflows/` contains the GitHub Actions workflows used for DCO checks, formatting, website checks, REUSE compliance, CI builds, and release SBOM generation.
+- `DECISIONS.md` is the project's design-decisions FAQ: a plain-language record of why key architecture and product choices were made, maintained per the "Design Decisions" instructions below.
 
 ## Code Style
 
@@ -76,6 +77,16 @@ This project is checked for [REUSE](https://reuse.software/) Specification 3.3 c
 - Always check existing documentation comments for validity and update, if necessary.
 - Whenever the files and folders within the repository change, update the "Repository Structure" section of this document accordingly.
 - Always check `./Website` for necessary updates in regard to localization, feature description, changes in supported target platforms, Nextcloud server releases or Nextcloud server apps.
+
+## Design Decisions
+
+`DECISIONS.md` is a technical FAQ recording *why* the project is built the way it is — its design and architecture choices and the reasoning behind each. It complements this document, which covers *how* to work in the codebase, and is the developer-facing counterpart to the public FAQ on `./Website`.
+
+- Whenever a change makes, changes, or reverses a non-obvious or hard-to-reverse choice — a UI framework, target platform, dependency, persistence layer, or authentication flow, or a deliberate decision *not* to build something — add or update the matching entry in `DECISIONS.md` without being asked.
+- Write each entry as a plain-language `## Why …?` question followed by a short answer that explains the reasoning and the trade-off accepted, matching the FAQ style of the existing entries.
+- Do not record routine implementation details or bug fixes — only choices with lasting design consequence. Nothing enforces this mechanically the way `reuse lint` enforces licensing; it relies on recognizing when a change embodies a decision, so err toward recording it when unsure.
+- When a decision changes, edit or remove its answer rather than preserving the old text — the file is version-controlled, so its history lives in git.
+- Keep the reasoning consistent wherever it also appears: if a decision is likewise explained in a Swift documentation comment, `README.md`, or elsewhere in this document, update those together, and, per "Documentation Instructions" above, check `./Website` when a decision affects the public story such as supported platforms or features.
 
 ## Localization Instructions
 
