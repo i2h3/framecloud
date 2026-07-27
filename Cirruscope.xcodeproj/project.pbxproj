@@ -35,6 +35,7 @@
 		AA059CF62FE5301C00DE3094 /* Exceptions for "Cirruscope" folder in "Cirruscope" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Cirruscope.xcconfig,
 				Info.plist,
 			);
 			target = AA059CA22FE407A700DE3094 /* Cirruscope */;
