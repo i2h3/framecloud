@@ -24,20 +24,43 @@ final class AssetCache: Sendable {
     /// `session` is the `URLSession` used to download assets.
     private let session: URLSession
 
-    /// `init()` creates the cache and ensures its on-disk directory exists.
-    ///
-    /// The directory is the `Assets` subdirectory of `AppGroup.containerURL`'s `Library/Caches`, so a future app extension sharing the same App Group can reach the same cached assets, and is created on first use.
+    /// `init()` creates the cache over the directory `assetsDirectory()` resolved.
     init() {
-        let cachesRoot = AppGroup.containerURL.appending(path: "Library/Caches", directoryHint: .isDirectory)
-        directory = cachesRoot.appending(component: "Assets", directoryHint: .isDirectory)
+        directory = Self.assetsDirectory()
         session = .shared
+    }
+
+    /// `assetsDirectory()` is the directory cached payloads and their `ETag` sidecars live in, created if it does not exist yet.
+    ///
+    /// It is the `Assets` subdirectory of the shared App Group container's `Library/Caches`, so a future app extension sharing the same App Group reaches the same cached assets. A build that cannot reach that container — an ad-hoc one, which carries no App Group entitlement and is what a fresh clone, a fork, and CI produce — falls back to the app's own caches directory instead, so branding assets still cache for it rather than the whole feature failing. The fallback is chosen by *attempting* the shared location rather than by inspecting `AppGroup.containerURL`, because the container path can resolve while the sandbox still refuses to create anything under it, and only the attempt tells those two apart.
+    private static func assetsDirectory() -> URL {
+        let logger = Logger(for: AssetCache.self)
+        let sharedDirectory = AppGroup.containerURL?
+            .appending(path: "Library/Caches", directoryHint: .isDirectory)
+            .appending(component: "Assets", directoryHint: .isDirectory)
+
+        if let sharedDirectory {
+            do {
+                try FileManager.default.createDirectory(at: sharedDirectory, withIntermediateDirectories: true)
+                logger.debug("Cache directory ready in the App Group container")
+                return sharedDirectory
+            } catch {
+                logger.error("Could not create the cache directory in the App Group container; falling back to this build's own: \(error.localizedDescription)")
+            }
+        } else {
+            logger.notice("No App Group container resolved; caching assets in this build's own container")
+        }
+
+        let ownDirectory = URL.cachesDirectory.appending(component: "Assets", directoryHint: .isDirectory)
 
         do {
-            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-            logger.debug("Cache directory ready")
+            try FileManager.default.createDirectory(at: ownDirectory, withIntermediateDirectories: true)
+            logger.debug("Cache directory ready in this build's own container")
         } catch {
-            logger.error("Could not create cache directory: \(error.localizedDescription)")
+            logger.error("Could not create the cache directory: \(error.localizedDescription)")
         }
+
+        return ownDirectory
     }
 
     /// `clear()` removes every cached payload and `ETag` sidecar stored by this cache.
