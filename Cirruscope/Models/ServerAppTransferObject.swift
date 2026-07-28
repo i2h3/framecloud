@@ -5,7 +5,7 @@ import Foundation
 
 /// `ServerAppTransferObject` is a value-type snapshot of a Nextcloud server app the user can navigate to, used to populate the View and Dock menus and the Apps settings tab.
 ///
-/// It is the immutable projection `AccountStore` returns from its `ServerApp` records, keeping just the fields the UI needs: the `id` used to detect which app a window shows, the `order` used to sort the menus, the `href` used to build the app's URL, and the `name` used as the menu label. It is `Sendable` so it can be passed freely between actors without exposing a managed `@Model` object.
+/// It is the immutable projection `AccountStore` returns from its `ServerApp` records — and, since `persist(serverApps:)` takes it too, also the type an app list is written back with, so nothing about the store's surface depends on the network library's own models. It keeps just the fields the app needs: the `id` used to detect which app a window shows and to match a row across a refresh, the `order` used to sort the menus, the `href` used to build the app's URL, and the `name` used as the menu label. It is `Sendable` so it can be passed freely between actors without exposing a managed `@Model` object.
 struct ServerAppTransferObject: Codable, Identifiable, Sendable {
     /// `id` is the Nextcloud app identifier (e.g. `"files"`), matched against the `/apps/<id>/` path of a web view's URL to detect which app a window currently shows.
     let id: String

@@ -63,13 +63,16 @@ enum ServerConnection {
         return .supported(capabilities)
     }
 
-    /// `refreshNavigationApps(using:)` fetches the server's navigation apps with the authenticated `server` and persists them via `AccountStore.persist(navigationApps:)`.
+    /// `refreshNavigationApps(using:)` fetches the server's navigation apps with the authenticated `server` and persists them via `AccountStore.persist(serverApps:)`.
     ///
     /// Failures are ignored because the apps list is non-critical: when it cannot be fetched the previously persisted list is simply left in place.
+    ///
+    /// Mapping `Rainmaker.NavigationItem` to `ServerAppTransferObject` happens here, at the boundary where the network library is already in scope, rather than inside the store or on the transfer object itself — the store then depends on nothing but the app's own value types, and the transfer object stays free of logic.
     static func refreshNavigationApps(using server: Server) async {
         do {
-            let apps = try await server.navigation()
-            await AccountStore.shared.persist(navigationApps: apps)
+            let items = try await server.navigation()
+            let apps = items.map { ServerAppTransferObject(id: $0.id, order: $0.order, href: $0.href, name: $0.name) }
+            await AccountStore.shared.persist(serverApps: apps)
         } catch {
             logger.notice("Could not refresh navigation apps; keeping the previous list: \(error.localizedDescription)")
         }
