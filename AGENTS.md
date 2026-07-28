@@ -16,10 +16,11 @@ You are an experienced software engineer specialized on native apps for macOS wr
     - `Settings/` contains `Settings.swift`, which defines the app's persisted settings, the general and server-apps settings view controllers with their table extensions, and `ShortcutRecorderView`.
     - `ServerAddress/` contains `ServerAddressViewController` with its text-field-delegate and web-authentication extensions used to sign in.
     - `Views/` contains custom views shared across features, such as `BackgroundImageView`.
-    - `Models/` contains the shared model types: `Credentials` (the login name and app password from Login Flow v2), `CirruscopeError` (the shared error type thrown by app-level facilities), `KeyboardShortcut` (a user-assigned shortcut for a server app), and `ServerApp` (a persisted Nextcloud server app shown in the menus and settings).
+    - `Models/` contains the shared value types: `Credentials` (the login name and app password from Login Flow v2), `CirruscopeError` (the shared error type thrown by app-level facilities), `AppShortcutTransferObject` (a user-assigned shortcut for a server app), and `ServerAppTransferObject` (a Nextcloud server app shown in the menus and settings) — the latter two being the snapshots `AccountStore` returns in place of its SwiftData records.
     - `AssetCache.swift` manages on-disk copies of remote assets in the app's caches directory.
     - `Keychain.swift` stores the Login Flow v2 credentials in the macOS Keychain.
     - `Logging.swift` adds the `Logger(for:)` and `OSSignposter(for:)` convenience initializers that every behavioural type uses to build its own `os` logger and signposter under the app's bundle-identifier subsystem, categorized by type name.
+    - `ShortcutMatching.swift` defines when two key equivalents mean the same keystroke to AppKit, the single comparison both the reserved-shortcut lookup in `AppDelegate` and the duplicate-shortcut lookups in `AccountStore` use.
     - `ServerConnection.swift` builds and validates `Rainmaker.Server` instances and fetches the server apps.
     - `UserNotifier.swift` presents notifications from the web interface, and download-completion notifications from `DownloadManager`, in the macOS Notification Center.
     - `Assets.xcassets` contains image and color assets.
@@ -28,10 +29,12 @@ You are an experienced software engineer specialized on native apps for macOS wr
     - `Cirruscope.css` is the stylesheet injected into the web view.
     - `Scripts/` contains the JavaScript resources injected into or evaluated within the web view.
     - `Info.plist` is the app's information property list, and `PrivacyInfo.xcprivacy` is its privacy manifest.
+- `CirruscopeTests/` contains the app's unit tests (see "Testing" below), grouped into one subfolder per feature domain, alongside the target's own `CirruscopeTests.xcconfig`.
+    - `KeyboardShortcuts/` covers the keyboard shortcut domain: the shortcut-matching and display-string suites, the `ShortcutFixture` corpus they share, and `KeyEquivalentProbe`, the AppKit oracle one of them measures against.
 - `Frameworks/` contains the bundled frameworks the app links against.
 - `Products/` contains the built app bundle.
 - `.github/ISSUE_TEMPLATE/` contains the GitHub issue forms for feature requests, bug reports, and the blank issue entry point.
-- `.github/workflows/` contains the GitHub Actions workflows used for DCO checks, formatting, website checks, REUSE compliance, CI builds, and release SBOM generation.
+- `.github/workflows/` contains the GitHub Actions workflows used for DCO checks, formatting, website checks, REUSE compliance, unit tests and CI builds (`test.yml`, which runs the tests and then a Release build — it replaced the former build-only `build.yml`), and release SBOM generation.
 - `DECISIONS.md` is the project's design-decisions FAQ: a plain-language record of why key architecture and product choices were made, maintained per the "Design Decisions" instructions below.
 
 ## Code Style
@@ -50,10 +53,37 @@ You are an experienced software engineer specialized on native apps for macOS wr
 
 ## Building and Signing
 
-- Code signing defaults to ad-hoc: `Cirruscope.xcconfig` sets `CODE_SIGN_IDENTITY = -`, `CODE_SIGN_STYLE = Automatic`, and carries no `DEVELOPMENT_TEAM`, and `Cirruscope/Cirruscope.xcconfig` sets neither `CODE_SIGN_ENTITLEMENTS` nor `PROVISIONING_PROFILE_SPECIFIER` — so a fresh clone, a fork, or CI (`.github/workflows/build.yml`) builds and links with no Apple Developer account, certificate, or provisioning profile installed at all. This is deliberate (since commit `4d7db7f`): the project used to require the maintainer's own real credentials for every build, which is exactly why CI itself couldn't build.
+- Code signing defaults to ad-hoc: `Cirruscope.xcconfig` sets `CODE_SIGN_IDENTITY = -`, `CODE_SIGN_STYLE = Automatic`, and carries no `DEVELOPMENT_TEAM`, and neither `Cirruscope/Cirruscope.xcconfig` nor `CirruscopeTests/CirruscopeTests.xcconfig` sets `CODE_SIGN_ENTITLEMENTS` — so a fresh clone, a fork, or CI (`.github/workflows/test.yml`) builds, tests, and links with no Apple Developer account, certificate, or provisioning profile installed at all. This is deliberate (since commit `4d7db7f`): the project used to require the maintainer's own real credentials for every build, which is exactly why CI itself couldn't build. Both per-target xcconfigs do name a `PROVISIONING_PROFILE_SPECIFIER` (`Cirruscope` and `Cirruscope Tests`), which is inert under ad-hoc signing and needs no local counterpart — verified by building and testing a clone with no `Local.xcconfig` present.
 - `Cirruscope/Cirruscope.entitlements`' App Group and Keychain-sharing capabilities need a real, provisioned certificate to sign — ad-hoc signing cannot embed them — so the default/CI build carries none of them and only verifies the app still compiles and links, not that every capability works end to end.
 - To build and run with those capabilities, and with a real "Apple Development" identity, copy `Local.xcconfig.example` to `Local.xcconfig` next to it (gitignored, never committed — this is where the maintainer's own team ID and profile now live, not in the tracked xcconfig files) and fill in your own team. `Cirruscope.xcconfig` includes it last (`#include? "Local.xcconfig"`), so its `CODE_SIGN_IDENTITY`, `CODE_SIGN_STYLE`, `DEVELOPMENT_TEAM`, `PROVISIONING_PROFILE_SPECIFIER`, and `CODE_SIGN_ENTITLEMENTS` assignments override the ad-hoc defaults above for local builds only.
 - If a build fails with a signing error, that means a `Local.xcconfig` is present and pointing at a team, profile, or certificate this machine doesn't actually have installed — fix it there, or remove the file to fall back to the ad-hoc default. Either way, that is not something to fix by editing `Cirruscope.xcconfig`/`Cirruscope/Cirruscope.xcconfig`'s checked-in defaults, which must stay ad-hoc so everyone else (including CI) keeps building.
+
+## Testing
+
+The `CirruscopeTests` target holds unit tests written with **Swift Testing** (`import Testing`, `@Test`, `#expect`) — not XCTest. It is hosted by the app (`TEST_HOST`/`BUNDLE_LOADER`), so tests reach the app's internal types through `@testable import Cirruscope` and may touch AppKit directly. `Cirruscope.xcodeproj/xcshareddata/xcschemes/Cirruscope.xcscheme` is committed so the scheme's test action is the same everywhere rather than depending on the per-user scheme Xcode autocreates (`xcuserdata` is gitignored).
+
+```bash
+xcodebuild test -project Cirruscope.xcodeproj -scheme Cirruscope -configuration Debug -destination 'platform=macOS'
+```
+
+In Xcode, Product ▸ Test (⌘U) with the `Cirruscope` scheme selected runs exactly the same suites; the command line above is what CI uses and what to use from a terminal session. Debug is not incidental either way: `@testable import` needs the testability that the Release configuration does not enable.
+
+**What to test.** Swift-only logic that can be exercised without a live Nextcloud server or a web view — shortcut matching and its conflict rules, display-string rendering, DTO derivations, pure helpers and pure decision functions. When a change adds or alters logic of that kind, add or update its tests in the same change, without being asked.
+
+**What not to test, and why.** The WebKit-facing half of the app — navigation policy, downloads, injected scripts, notification bridging — is not unit-tested: it needs a real server, a real `WKWebView`, and real network conditions, so tests there are slow, flaky, and assertion-poor compared with what they cost to maintain. That behaviour is verified by hand against a live server instead (see "Retrieving logs to research a bug"). Do not add a test whose only assertion is that a WebKit delegate was called.
+
+**When the code assumes something about a framework, test the framework.** A unit test that restates an assumption cannot catch the assumption being wrong, and this project has a scar to prove it: the shortcut comparison was built on a documented-sounding but false claim about which modifier bits AppKit matches key equivalents against. `KeyEquivalentProbe` therefore drives real `NSMenu.performKeyEquivalent(with:)`, and `KeyEquivalentMatchingOracleTests` asserts that `ShortcutMatching.areEquivalent(_:_:)` agrees with it for every pair of a shared fixture corpus. Prefer that shape — measure the framework, then assert the app agrees — over encoding a belief twice.
+
+**Conventions.**
+
+- Tests live in a subfolder of `CirruscopeTests/` named after the feature domain they cover (`KeyboardShortcuts/`), never loose at the target's root, so the target stays navigable as domains accumulate. Name the folder after the domain rather than after the app source folder the code happens to sit in, since one domain's logic is typically spread across several of those. The target's file group is file-system synchronized, so a new subfolder needs no project-file change — creating it is enough.
+- The same one-type-per-file and documentation rules as the app's source apply to test files: a suite is a type, so it gets its own file and a documentation comment explaining what it covers and why the suite exists at all.
+- Share fixtures through a named type (`ShortcutFixture`) instead of copying a corpus between suites, so two suites cannot silently drift apart on what they cover, and use `@Test(arguments:)` for matrices rather than hand-unrolled cases.
+- Annotate a suite `@MainActor` when it touches AppKit (`NSMenu`, view types), and add `.serialized` where cases would otherwise contend for the main actor.
+- SwiftFormat rewrites `@Test("A display name")` into a backtick-quoted function name (`func \`A display name\`()`). That is the project's configured style — write the sentence, run `swiftformat .`, and leave the result alone.
+- Tests must not contribute localized strings: `CirruscopeTests/CirruscopeTests.xcconfig` sets `SWIFT_EMIT_LOC_STRINGS = NO`, so the string-catalog completeness check stays about the app's own strings. Never wrap a test's literal in `String(localized:comment:)`.
+
+**Known gap.** `AccountStore` is a singleton over the on-disk SwiftData container, so its logic — the shortcut duplicate suppression, the app upsert — has no unit tests: exercising it would mutate the developer's real store. Making that testable means having the store accept an injected `ModelContainer` (in-memory for tests) rather than reaching for `AppDatabase.container` itself. Worth doing before the store grows further; until then, changes there are verified by hand.
 
 ## REUSE Compliance
 

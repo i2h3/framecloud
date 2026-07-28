@@ -1,0 +1,51 @@
+# SPDX-FileCopyrightText: 2026 Iva Horn
+# SPDX-License-Identifier: MIT
+
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test
+    runs-on: macos-26
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Show Xcode Version
+        run: xcodebuild -version
+
+      - name: Resolve Dependencies
+        run: xcodebuild -resolvePackageDependencies -project Cirruscope.xcodeproj
+
+      # Builds the app and the test bundle, then runs the unit tests. Debug because `@testable import Cirruscope`
+      # needs the testability the Release configuration does not enable. This replaces the former separate Debug
+      # build step, which this action performs anyway.
+      - name: Test
+        run: xcodebuild test -project Cirruscope.xcodeproj -scheme Cirruscope -configuration Debug -destination 'platform=macOS' -resultBundlePath TestResults.xcresult
+
+      # The tests cannot cover this: Release compiles with whole-module optimization and without testability, so it
+      # can fail where a Debug build succeeds. Kept as its own step so a Release-only break is not reported as a
+      # test failure.
+      - name: Build (Release)
+        run: xcodebuild -project Cirruscope.xcodeproj -scheme Cirruscope -configuration Release -destination 'platform=macOS' build
+
+      - name: Upload Test Results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults
+          path: TestResults.xcresult
+          retention-days: 7

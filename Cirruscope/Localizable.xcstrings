@@ -2,7 +2,7 @@
   "sourceLanguage" : "en",
   "strings" : {
     "“%@” already uses this shortcut." : {
-      "comment" : "Tooltip on the shortcut recorder explaining which of Cirruscope's own menu items the just-rejected shortcut is already used by.",
+      "comment" : "Tooltip on the shortcut recorder explaining what the just-rejected shortcut is already used by: one of Cirruscope's own menu items, or another Nextcloud server app.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -48,7 +48,7 @@
       }
     },
     "Already Used" : {
-      "comment" : "Shown briefly in the shortcut recorder when the just-pressed combination is already used by one of Cirruscope's own menu items.",
+      "comment" : "Shown briefly in the shortcut recorder when the just-pressed combination is already used by one of Cirruscope's own menu items or by another Nextcloud server app.",
       "localizations" : {
         "de" : {
           "stringUnit" : {

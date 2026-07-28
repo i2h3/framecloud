@@ -3,7 +3,7 @@
 
 import Cocoa
 
-/// `ServerAppsViewController`'s conformance to `NSTableViewDelegate` builds each row's views: the app name in the first column and a `ShortcutRecorderView` bound to the app's shortcut in `AccountStore` in the second.
+/// `ServerAppsViewController`'s conformance to `NSTableViewDelegate` builds each row's views: the app name in the first column and a `ShortcutRecorderView` bound to the app's shortcut in `AccountStore` in the second, including the lookup that keeps the row from recording a combination another app already uses.
 extension ServerAppsViewController: NSTableViewDelegate {
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         guard let tableColumn,
@@ -28,6 +28,12 @@ extension ServerAppsViewController: NSTableViewDelegate {
 
                 recorder.onChange = { shortcut in
                     AccountStore.shared.setShortcut(shortcut, forAppID: app.id)
+                }
+
+                // Only this controller knows which app the row stands for, so it is what turns the recorder's
+                // "is this combination occupied?" question into a lookup excluding the row's own app.
+                recorder.conflictingAppName = { shortcut in
+                    AccountStore.shared.nameOfApp(usingShortcut: shortcut, otherThanAppID: app.id)
                 }
 
                 return recorder

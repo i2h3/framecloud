@@ -62,6 +62,8 @@ The project builds ad-hoc by default (see [Cirruscope.xcconfig](./Cirruscope.xcc
 
 - Run `swiftformat .` before committing; CI lints with `swiftformat --lint`.
 - New files need SPDX copyright/license headers; run `reuse lint` to confirm compliance.
+- Run the unit tests before opening a pull request: **Product ▸ Test (⌘U)** with the `Cirruscope` scheme selected. The scheme is shared, so a fresh clone is already set up for it — nothing to configure. CI runs the same tests headlessly and then a Release build; see [AGENTS.md → Testing](./AGENTS.md#testing) for that command line if you want it outside Xcode.
+- Changing Swift-only logic that needs no server or web view — shortcut handling, string rendering, pure decision functions — means adding or updating its tests in the same pull request. The WebKit-facing code is deliberately not unit-tested; see [AGENTS.md → Testing](./AGENTS.md#testing) for where the line sits and why.
 - Any claimed performance improvement must be backed by evidence: include the benchmark, profiling data, or test results that show the before/after impact and explain the scenario it applies to.
 - See [AGENTS.md](./AGENTS.md) for the full set of project conventions followed by human and AI contributors alike.
 
