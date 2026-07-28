@@ -1,0 +1,93 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "NSCameraUsageDescription" : {
+      "comment" : "Reason shown in the system permission prompt asking to use the camera, presented the first time the web interface requests camera access for a video call.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erlauben Sie den Zugriff auf Ihre Kamera, um sich während Videoanrufen zu zeigen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grant access to your camera to show yourself during video calls."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Concede acceso a tu cámara para mostrarte durante las videollamadas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autorisez l'accès à votre caméra pour vous montrer pendant les appels vidéo."
+          }
+        }
+      }
+    },
+    "NSLocalNetworkUsageDescription" : {
+      "comment" : "Reason shown in the system permission prompt asking to reach devices on the local network, presented the first time the app connects to a server hosted there.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erlauben Sie den Zugriff, um Verbindungen zu Servern in Ihrem lokalen Netzwerk herzustellen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grant access to allow connections to servers in your local network."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Concede acceso para permitir conexiones a servidores de tu red local."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autorisez l'accès afin de permettre les connexions aux serveurs de votre réseau local."
+          }
+        }
+      }
+    },
+    "NSMicrophoneUsageDescription" : {
+      "comment" : "Reason shown in the system permission prompt asking to use the microphone, presented the first time the web interface requests microphone access for a call.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erlauben Sie den Zugriff auf Ihr Mikrofon, um während Videoanrufen frei zu sprechen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grant access to your microphone to speak freely during video calls."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Concede acceso a tu micrófono para hablar libremente durante las videollamadas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autorisez l'accès à votre microphone pour parler librement pendant les appels vidéo."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
