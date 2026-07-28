@@ -13,6 +13,16 @@ precedence = "override"
 SPDX-FileCopyrightText = "2025 Iva Horn"
 SPDX-License-Identifier = "MIT"
 
+# The shared scheme, committed in 2026 so `xcodebuild -scheme Cirruscope` finds
+# the same build and test configuration everywhere instead of relying on the
+# per-user scheme Xcode autocreates (`xcuserdata` is gitignored). Xcode rewrites
+# it through the Scheme editor, so it is annotated here rather than inline.
+[[annotations]]
+path = "Cirruscope.xcodeproj/xcshareddata/xcschemes/Cirruscope.xcscheme"
+precedence = "override"
+SPDX-FileCopyrightText = "2026 Iva Horn"
+SPDX-License-Identifier = "MIT"
+
 # SwiftPM's resolved-dependency lockfile: deleted and regenerated fresh in
 # 2026 when the app was rewritten, so its current content dates from then.
 [[annotations]]

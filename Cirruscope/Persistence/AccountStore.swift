@@ -228,19 +228,71 @@ final class AccountStore {
 
     // MARK: - App Shortcuts
 
-    /// `shortcut(forAppID:)` is the user's keyboard shortcut for the app with `appID`, or `nil` when none is assigned, the app is unknown, or the stored shortcut collides with one of Cirruscope's own reserved shortcuts (see `AppDelegate.reservedShortcutName(for:)`) — which can happen if it was recorded before that check existed, since `ShortcutRecorderView` now refuses to record one going forward.
+    /// `storedShortcuts` are the shortcuts currently stored for the connected account's apps, each paired with the app it belongs to, in the order the menus list those apps.
+    ///
+    /// The order is `serverApps`' own, ascending by `order`, with `appID` breaking a tie so that it is total: `appHolding(_:)` reads the first match from it to decide which single app a shared shortcut belongs to, and that answer has to be the same on every call rather than depend on an unstable sort.
+    private var storedShortcuts: [(appID: String, name: String, shortcut: AppShortcutTransferObject)] {
+        guard let account = currentAccount(createIfNeeded: false) else {
+            return []
+        }
+
+        return account.apps
+            .sorted { ($0.order, $0.appID) < ($1.order, $1.appID) }
+            .compactMap { app in
+                guard let stored = app.shortcut else {
+                    return nil
+                }
+
+                return (app.appID, app.name, AppShortcutTransferObject(keyEquivalent: stored.keyEquivalent, modifierFlags: stored.modifierFlags))
+            }
+    }
+
+    /// `appHolding(_:)` is the one app a keystroke matching `shortcut` actually reaches — the first entry in `storedShortcuts` carrying an equivalent shortcut — or `nil` when no app carries it at all.
+    ///
+    /// Answering both `shortcut(forAppID:)` and `nameOfApp(usingShortcut:otherThanAppID:)` from this same entry is what keeps the two from contradicting each other where a duplicate is stored: were the latter to consider every stored shortcut instead, an app whose duplicate the former suppresses would still be named as the occupant of a combination the settings tab shows as unassigned for it, and the app visibly holding that combination could not even re-record it.
+    private func appHolding(_ shortcut: AppShortcutTransferObject) -> (appID: String, name: String, shortcut: AppShortcutTransferObject)? {
+        storedShortcuts.first { ShortcutMatching.areEquivalent($0.shortcut, shortcut) }
+    }
+
+    /// `shortcut(forAppID:)` is the user's keyboard shortcut for the app with `appID`, or `nil` when none is assigned, the app is unknown, the stored shortcut collides with one of Cirruscope's own reserved shortcuts (see `AppDelegate.reservedShortcutName(for:)`), or another app already holds the same one (see `appHolding(_:)`).
+    ///
+    /// Both collisions can only come from data recorded before their respective checks existed, since `ShortcutRecorderView` now refuses to record either going forward; suppressing them here as well means such a shortcut is not applied to a menu item — and is shown as unassigned in the settings tab, so the user can see it is not in effect and record another — rather than being deleted behind the user's back.
     func shortcut(forAppID appID: String) -> AppShortcutTransferObject? {
         guard let stored = currentAccount(createIfNeeded: false)?.apps.first(where: { $0.appID == appID })?.shortcut else {
             return nil
         }
 
         let shortcut = AppShortcutTransferObject(keyEquivalent: stored.keyEquivalent, modifierFlags: stored.modifierFlags)
-        return AppDelegate.reservedShortcutName(for: shortcut) == nil ? shortcut : nil
+
+        guard AppDelegate.reservedShortcutName(for: shortcut) == nil else {
+            return nil
+        }
+
+        // Honour a shortcut two apps share for the first of them only, so one keystroke never reaches two equally
+        // enabled menu items, between which AppKit has no reliable, documented tie-break.
+        guard appHolding(shortcut)?.appID == appID else {
+            return nil
+        }
+
+        return shortcut
+    }
+
+    /// `nameOfApp(usingShortcut:otherThanAppID:)` is the name of the server app that the same keystroke as `shortcut` already reaches, or `nil` when that app is the one with `appID` itself or no app holds the combination.
+    ///
+    /// `ServerAppsViewController` hands it to each row's `ShortcutRecorderView` as its `conflictingAppName`, so a combination another app already uses is rejected while recording — naming that app — instead of leaving two menu items to share one key equivalent, exactly as `AppDelegate.reservedShortcutName(for:)` does for Cirruscope's own fixed items. Excluding the app being edited is what lets a row re-record the shortcut it already displays without being told it conflicts with itself.
+    func nameOfApp(usingShortcut shortcut: AppShortcutTransferObject, otherThanAppID appID: String) -> String? {
+        guard let holder = appHolding(shortcut) else {
+            return nil
+        }
+
+        return holder.appID == appID ? nil : holder.name
     }
 
     /// `setShortcut(_:forAppID:)` assigns, replaces, or (when `shortcut` is `nil`) clears the keyboard shortcut of the app with `appID`, then notifies observers so the menus update.
     ///
     /// `ServerAppsViewController` calls it from each row's `ShortcutRecorderView`. It does nothing when the app is unknown, which cannot happen for a row the settings tab is showing.
+    ///
+    /// It deliberately stores whatever it is given: rejecting a shortcut another app or a fixed menu item already occupies is the caller's job, done while recording (see `nameOfApp(usingShortcut:otherThanAppID:)` and `AppDelegate.reservedShortcutName(for:)`), so the settings tab can explain the rejection where the user is looking instead of a write silently doing nothing. Should a future caller — an App Intent, a widget — write a duplicate anyway, `shortcut(forAppID:)` still keeps it off the menus.
     func setShortcut(_ shortcut: AppShortcutTransferObject?, forAppID appID: String) {
         guard let app = currentAccount(createIfNeeded: false)?.apps.first(where: { $0.appID == appID }) else {
             return

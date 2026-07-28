@@ -6,7 +6,7 @@ import os
 
 /// `ShortcutRecorderView` is a focusable, text-field-style control that records a single keyboard shortcut.
 ///
-/// Clicking it makes it the first responder, which is the visual cue that it is recording; the next key combination the user presses becomes its value, provided it includes at least one of Command, Option, or Control, or is itself a function-region key (F-keys, arrows, Home/End, Page Up/Down, etc.) that can safely be recorded bare. A trailing clear button, shown only while a shortcut is assigned, removes the shortcut. `ServerAppsViewController` places one per row in its apps table and observes `onChange` to persist the recorded `AppShortcutTransferObject`, or `nil` when the user clears it, via `AccountStore.setShortcut(_:forAppID:)`.
+/// Clicking it makes it the first responder, which is the visual cue that it is recording; the next key combination the user presses becomes its value, provided it includes at least one of Command, Option, or Control, or is itself a function-region key (F-keys, arrows, Home/End, Page Up/Down, etc.) that can safely be recorded bare, and is occupied by neither one of Cirruscope's own menu items (`AppDelegate.reservedShortcutName(for:)`) nor another server app (`conflictingAppName`). A trailing clear button, shown only while a shortcut is assigned, removes the shortcut. `ServerAppsViewController` places one per row in its apps table and observes `onChange` to persist the recorded `AppShortcutTransferObject`, or `nil` when the user clears it, via `AccountStore.setShortcut(_:forAppID:)`.
 class ShortcutRecorderView: NSTableCellView {
     /// `shortcut` is the currently recorded shortcut, or `nil` when none is assigned.
     ///
@@ -22,6 +22,11 @@ class ShortcutRecorderView: NSTableCellView {
     ///
     /// It is a `@MainActor` closure because it is only ever invoked from this main-actor control and `ServerAppsViewController` uses it to call the main-actor `AccountStore` synchronously.
     var onChange: (@MainActor (AppShortcutTransferObject?) -> Void)?
+
+    /// `conflictingAppName` is asked, before a freshly recorded combination is accepted, for the name of another server app that already uses it, and returns `nil` when none does.
+    ///
+    /// `ServerAppsViewController` wires it to `AccountStore.nameOfApp(usingShortcut:otherThanAppID:)` for the row's own app, since only that controller knows which app a row stands for; this control stays unaware of the store, exactly as it is for `onChange`. A control left without it — as in a context where no other shortcut can be occupied — simply records anything not reserved.
+    var conflictingAppName: (@MainActor (AppShortcutTransferObject) -> String?)?
 
     /// `displayField` is the bezeled, non-editable text field that gives the control its text-field appearance and shows the placeholder, the recording prompt, or the recorded shortcut.
     private let displayField = NSTextField()
@@ -242,13 +247,15 @@ class ShortcutRecorderView: NSTableCellView {
             return
         }
 
-        // Preserve `characters`' case as produced (do not lowercase it): AppKit's own key-equivalent matching
-        // derives whether Shift is required entirely from the character itself — an uppercase letter (or, for
-        // symbols, whichever character Shift actually produces) — not from an independent modifier bit, so
-        // discarding the case here would make a Shift-inclusive shortcut indistinguishable from its bare form
-        // once applied to a real `NSMenuItem` (confirmed against real `NSMenu.performKeyEquivalent(with:)`
-        // behavior: a lowercase keyEquivalent with an explicit `.shift` bit in `keyEquivalentModifierMask` matches
-        // nothing at all, while an uppercase one with no such bit correctly requires Shift).
+        // Preserve `characters`' case as produced (do not lowercase it): for a character Shift can alter, AppKit's
+        // own key-equivalent matching derives whether Shift is required entirely from the character itself — an
+        // uppercase letter (or, for symbols, whichever character Shift actually produces) — rather than from the
+        // `.shift` bit in `keyEquivalentModifierMask`, so discarding the case here would make a Shift-inclusive
+        // shortcut indistinguishable from its bare form once applied to a real `NSMenuItem` (confirmed against
+        // real `NSMenu.performKeyEquivalent(with:)` behavior: an uppercase keyEquivalent matches a Shift-inclusive
+        // keystroke whether or not the mask names Shift, while a lowercase one matches only the keystroke without
+        // it, no matter what the mask says). `ShortcutMatching` documents the full rule, including why that bit is
+        // significant after all for the caseless function-region keys.
         let recorded = AppShortcutTransferObject(keyEquivalent: characters, modifierFlags: modifiers.rawValue)
 
         // Reject a shortcut that already appears elsewhere in the menu bar (e.g. ⌃⌘S for "Show/Hide Sidebar") —
@@ -257,6 +264,15 @@ class ShortcutRecorderView: NSTableCellView {
         if let reservedName = AppDelegate.reservedShortcutName(for: recorded) {
             logger.debug("Ignored reserved shortcut")
             showConflict(named: reservedName)
+            return
+        }
+
+        // Reject a shortcut another server app already uses for the same reason: two equally enabled menu items
+        // sharing one key equivalent have no reliable, documented tie-break, so the second assignment would make
+        // one of them unreachable. Keep recording so the user can try another combination.
+        if let occupyingAppName = conflictingAppName?(recorded) {
+            logger.debug("Ignored shortcut already used by another server app")
+            showConflict(named: occupyingAppName)
             return
         }
 
@@ -274,15 +290,15 @@ class ShortcutRecorderView: NSTableCellView {
 
     // MARK: - Display
 
-    /// `showConflict(named:)` briefly shows that the shortcut just pressed is already used by Cirruscope's `name` menu item, instead of silently ignoring the keypress.
+    /// `showConflict(named:)` briefly shows that the shortcut just pressed is already used by `name` — one of Cirruscope's own menu items, or another server app — instead of silently ignoring the keypress.
     ///
-    /// `handle(keyCode:modifierFlags:charactersIgnoringModifiers:)` calls it when a recorded combination matches `AppDelegate.reservedShortcutName(for:)`. It stays non-modal — no `NSAlert` — reusing `displayField`'s existing text/color channel plus the standard system beep for rejected input, and leaves recording active so the user can immediately try another combination. `conflictRevertTask` restores the normal "Press now" prompt shortly after; if recording ends first (a valid shortcut recorded, Escape, Delete, or clicking away) or a fresh conflict replaces it, `updateDisplay()` itself clears the tooltip this set, so it never lingers regardless of which happens first.
+    /// `handle(keyCode:modifierFlags:charactersIgnoringModifiers:)` calls it when a recorded combination matches `AppDelegate.reservedShortcutName(for:)` or `conflictingAppName`, whose answers read the same way to the user: something already occupies the combination, so it cannot be assigned again. It stays non-modal — no `NSAlert` — reusing `displayField`'s existing text/color channel plus the standard system beep for rejected input, and leaves recording active so the user can immediately try another combination. `conflictRevertTask` restores the normal "Press now" prompt shortly after; if recording ends first (a valid shortcut recorded, Escape, Delete, or clicking away) or a fresh conflict replaces it, `updateDisplay()` itself clears the tooltip this set, so it never lingers regardless of which happens first.
     private func showConflict(named name: String) {
         NSSound.beep()
 
-        displayField.stringValue = String(localized: "Already Used", comment: "Shown briefly in the shortcut recorder when the just-pressed combination is already used by one of Cirruscope's own menu items.")
+        displayField.stringValue = String(localized: "Already Used", comment: "Shown briefly in the shortcut recorder when the just-pressed combination is already used by one of Cirruscope's own menu items or by another Nextcloud server app.")
         displayField.textColor = backgroundStyle == .emphasized ? .alternateSelectedControlTextColor : .systemRed
-        displayField.toolTip = String(localized: "“\(name)” already uses this shortcut.", comment: "Tooltip on the shortcut recorder explaining which of Cirruscope's own menu items the just-rejected shortcut is already used by.")
+        displayField.toolTip = String(localized: "“\(name)” already uses this shortcut.", comment: "Tooltip on the shortcut recorder explaining what the just-rejected shortcut is already used by: one of Cirruscope's own menu items, or another Nextcloud server app.")
 
         conflictRevertTask?.cancel()
         conflictRevertTask = Task { [weak self] in
@@ -323,6 +339,11 @@ class ShortcutRecorderView: NSTableCellView {
     ///
     /// `AppShortcutTransferObject.keyEquivalent` stores these scalars unchanged for such keys, since that raw value is what
     /// `NSMenuItem.keyEquivalent` needs; this mapping only affects what is displayed, never what is stored.
+    ///
+    /// It names the scalars a user can actually record here, which is a subset of the Private Use Area region
+    /// `ShortcutMatching.isFunctionRegionKey(_:)` matches over — that predicate is what decides shortcut *identity*,
+    /// and it deliberately covers the whole region, so a scalar reaching this map without an entry still compares
+    /// correctly and only falls through to the raw-character branch of `displayString(for:)` for display.
     private static let functionRegionKeyNames: [Unicode.Scalar: String] = [
         Unicode.Scalar(0xF700)!: "↑",
         Unicode.Scalar(0xF701)!: "↓",

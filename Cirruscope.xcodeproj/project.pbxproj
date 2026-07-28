@@ -11,12 +11,23 @@
 		AA059CE32FE42E5500DE3094 /* Rainmaker in Frameworks */ = {isa = PBXBuildFile; productRef = AA059CE22FE42E5500DE3094 /* Rainmaker */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		AA2AC5D930189B11002A0C28 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA059C9B2FE407A700DE3094 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA059CA22FE407A700DE3094;
+			remoteInfo = Cirruscope;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		AA059CA32FE407A700DE3094 /* Cirruscope.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cirruscope.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA059CBE2FE407BA00DE3094 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		AA059CC42FE4130E00DE3094 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		AA059CC92FE414EB00DE3094 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		AA059CFA2FE558BD00DE3094 /* AGENTS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = AGENTS.md; sourceTree = "<group>"; };
+		AA2AC5D530189B11002A0C28 /* CirruscopeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CirruscopeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA8A9A90300522C20098151F /* Cirruscope.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Cirruscope.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -39,6 +50,11 @@
 			path = Cirruscope;
 			sourceTree = "<group>";
 		};
+		AA2AC5D630189B11002A0C28 /* CirruscopeTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = CirruscopeTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,6 +64,13 @@
 			files = (
 				AA059CBF2FE407BA00DE3094 /* WebKit.framework in Frameworks */,
 				AA059CE32FE42E5500DE3094 /* Rainmaker in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA2AC5D230189B11002A0C28 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -62,6 +85,7 @@
 				AA059CC92FE414EB00DE3094 /* LICENSE */,
 				AA059CC42FE4130E00DE3094 /* README.md */,
 				AA059CA52FE407A700DE3094 /* Cirruscope */,
+				AA2AC5D630189B11002A0C28 /* CirruscopeTests */,
 				AA059CBD2FE407BA00DE3094 /* Frameworks */,
 				AA059CA42FE407A700DE3094 /* Products */,
 			);
@@ -71,6 +95,7 @@
 			isa = PBXGroup;
 			children = (
 				AA059CA32FE407A700DE3094 /* Cirruscope.app */,
+				AA2AC5D530189B11002A0C28 /* CirruscopeTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -109,6 +134,29 @@
 			productReference = AA059CA32FE407A700DE3094 /* Cirruscope.app */;
 			productType = "com.apple.product-type.application";
 		};
+		AA2AC5D430189B11002A0C28 /* CirruscopeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA2AC5DD30189B11002A0C28 /* Build configuration list for PBXNativeTarget "CirruscopeTests" */;
+			buildPhases = (
+				AA2AC5D130189B11002A0C28 /* Sources */,
+				AA2AC5D230189B11002A0C28 /* Frameworks */,
+				AA2AC5D330189B11002A0C28 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AA2AC5DA30189B11002A0C28 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				AA2AC5D630189B11002A0C28 /* CirruscopeTests */,
+			);
+			name = CirruscopeTests;
+			packageProductDependencies = (
+			);
+			productName = CirruscopeTests;
+			productReference = AA2AC5D530189B11002A0C28 /* CirruscopeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -116,11 +164,15 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2650;
+				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 2660;
 				TargetAttributes = {
 					AA059CA22FE407A700DE3094 = {
 						CreatedOnToolsVersion = 26.5;
+					};
+					AA2AC5D430189B11002A0C28 = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = AA059CA22FE407A700DE3094;
 					};
 				};
 			};
@@ -145,12 +197,20 @@
 			projectRoot = "";
 			targets = (
 				AA059CA22FE407A700DE3094 /* Cirruscope */,
+				AA2AC5D430189B11002A0C28 /* CirruscopeTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		AA059CA12FE407A700DE3094 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA2AC5D330189B11002A0C28 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -167,7 +227,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AA2AC5D130189B11002A0C28 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AA2AC5DA30189B11002A0C28 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA059CA22FE407A700DE3094 /* Cirruscope */;
+			targetProxy = AA2AC5D930189B11002A0C28 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		AA059CAF2FE407A900DE3094 /* Debug */ = {
@@ -388,6 +463,36 @@
 			};
 			name = Release;
 		};
+		AA2AC5DB30189B11002A0C28 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = AA2AC5D630189B11002A0C28 /* CirruscopeTests */;
+			baseConfigurationReferenceRelativePath = CirruscopeTests.xcconfig;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Cirruscope.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Cirruscope";
+			};
+			name = Debug;
+		};
+		AA2AC5DC30189B11002A0C28 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = AA2AC5D630189B11002A0C28 /* CirruscopeTests */;
+			baseConfigurationReferenceRelativePath = CirruscopeTests.xcconfig;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Cirruscope.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Cirruscope";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -405,6 +510,15 @@
 			buildConfigurations = (
 				AA059CB22FE407A900DE3094 /* Debug */,
 				AA059CB32FE407A900DE3094 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA2AC5DD30189B11002A0C28 /* Build configuration list for PBXNativeTarget "CirruscopeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA2AC5DB30189B11002A0C28 /* Debug */,
+				AA2AC5DC30189B11002A0C28 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

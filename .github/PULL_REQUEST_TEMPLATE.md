@@ -6,3 +6,4 @@
 - [ ] AI tools have been used in the process of creating this contribution (see [CONTRIBUTING.md](./CONTRIBUTING.md#ai-assisted-contributions))
 - [ ] `swiftformat .` run
 - [ ] `reuse lint` passes
+- [ ] Tests pass in Xcode

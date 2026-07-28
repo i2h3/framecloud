@@ -12,7 +12,7 @@ SPDX-License-Identifier: MIT
 [![SwiftFormat](https://github.com/i2h3/cirruscope/actions/workflows/swiftformat.yml/badge.svg)](https://github.com/i2h3/cirruscope/actions/workflows/swiftformat.yml)
 [![REUSE](https://github.com/i2h3/cirruscope/actions/workflows/reuse.yml/badge.svg)](https://github.com/i2h3/cirruscope/actions/workflows/reuse.yml)
 [![DCO](https://github.com/i2h3/cirruscope/actions/workflows/dco.yml/badge.svg)](https://github.com/i2h3/cirruscope/actions/workflows/dco.yml)
-[![Build](https://github.com/i2h3/cirruscope/actions/workflows/build.yml/badge.svg)](https://github.com/i2h3/cirruscope/actions/workflows/build.yml)
+[![Test](https://github.com/i2h3/cirruscope/actions/workflows/test.yml/badge.svg)](https://github.com/i2h3/cirruscope/actions/workflows/test.yml)
 [![Website](https://github.com/i2h3/cirruscope/actions/workflows/website.yml/badge.svg)](https://github.com/i2h3/cirruscope/actions/workflows/website.yml)
 
 **This page is for developers. For a more general introduction, see [the official website](https://cirruscope.app).**
