@@ -393,10 +393,11 @@
 				INFOPLIST_FILE = Cirruscope/Info.plist;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				INFOPLIST_KEY_NSCameraUsageDescription = "Grant access to your camera to show yourself during Nextcloud Talk calls.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Grant access to your camera to show yourself during video calls.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Iva Horn";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Grant access to allow connections to servers in your local network.";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Grant access to your microphone to speak freely during Nextcloud Talk calls.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Grant access to your microphone to speak freely during video calls.";
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -442,10 +443,11 @@
 				INFOPLIST_FILE = Cirruscope/Info.plist;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				INFOPLIST_KEY_NSCameraUsageDescription = "Grant access to your camera to show yourself during Nextcloud Talk calls.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Grant access to your camera to show yourself during video calls.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Iva Horn";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Grant access to allow connections to servers in your local network.";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Grant access to your microphone to speak freely during Nextcloud Talk calls.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Grant access to your microphone to speak freely during video calls.";
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

@@ -28,7 +28,7 @@ You are an experienced software engineer specialized on native apps for macOS wr
     - `Base.lproj/Main.storyboard` defines the app's user interface; its strings are localized through `mul.lproj/Main.xcstrings`, a String Catalog covering German, French, and Spanish.
     - `Cirruscope.css` is the stylesheet injected into the web view.
     - `Scripts/` contains the JavaScript resources injected into or evaluated within the web view.
-    - `Info.plist` is the app's information property list, and `PrivacyInfo.xcprivacy` is its privacy manifest.
+    - `Info.plist` is the app's information property list, and `PrivacyInfo.xcprivacy` is its privacy manifest. The user-facing usage descriptions macOS shows in its permission prompts are not in that file — they come from the target's `INFOPLIST_KEY_*` build settings and are localized through `InfoPlist.xcstrings`, a String Catalog covering German, French, and Spanish.
 - `CirruscopeTests/` contains the app's unit tests (see "Testing" below), grouped into one subfolder per feature domain, alongside the target's own `CirruscopeTests.xcconfig`.
     - `KeyboardShortcuts/` covers the keyboard shortcut domain: the shortcut-matching and display-string suites, the `ShortcutFixture` corpus they share, and `KeyEquivalentProbe`, the AppKit oracle one of them measures against.
 - `Frameworks/` contains the bundled frameworks the app links against.
@@ -129,12 +129,13 @@ plutil -convert json -o - Cirruscope.xcodeproj/project.pbxproj \
   | python3 -c 'import sys, json; d = json.load(sys.stdin); print([r for r in [o["knownRegions"] for o in d["objects"].values() if o.get("isa") == "PBXProject"][0] if r not in ("en", "Base")])'
 ```
 
-Localization lives in two String Catalogs (JSON, both with the same shape: each key maps to a `comment` plus a `localizations` dict of `<locale>: {"stringUnit": {"state": ..., "value": ...}}`), and both must stay complete for every detected localization:
+Localization lives in three String Catalogs (JSON, all with the same shape: each key maps to a `comment` plus a `localizations` dict of `<locale>: {"stringUnit": {"state": ..., "value": ...}}`), and all of them must stay complete for every detected localization:
 
 - **Swift strings** are wrapped in `String(localized:comment:)` — never hardcoded — and backed by `Cirruscope/Localizable.xcstrings`. Each key is the literal source string.
 - **Storyboard strings** in `Cirruscope/Base.lproj/Main.storyboard` are backed by `Cirruscope/mul.lproj/Main.xcstrings` (migrated off the old per-locale `Main.strings` files — do not reintroduce those). Each key is `<objectID>.<property>`, e.g. `"5xm-BD-bvl.title"`, and the `comment` field still carries the generated `Class = …; title = …; ObjectID = …;` context Xcode always regenerates from the storyboard's current content.
+- **Info.plist strings** — the usage descriptions macOS shows in its permission prompts — are backed by `Cirruscope/InfoPlist.xcstrings`. Here each key is the property-list key name (e.g. `NSCameraUsageDescription`), *not* the English text, so unlike the other two catalogs this one carries an explicit `en` `stringUnit` as well. Its English source of truth is the matching `INFOPLIST_KEY_*` build setting on the Cirruscope target, set identically in both the Debug and Release configuration: change one and mirror it in the catalog's `en` value and in the other configuration. These prompts name no brand — neither the "Nextcloud" trademark nor "Cirruscope" — and describe the capability generically instead ("during video calls", not "during Nextcloud Talk calls"). That restriction is specific to these prompts: `Localizable.xcstrings` deliberately names both where the message is *about* the server product, as in "Cirruscope requires Nextcloud server version %lld or later."
 
-In both catalogs, a `stringUnit`'s `state` is the completeness/staleness signal Xcode itself tracks: a freshly added or changed source string starts at `"new"` for each locale and only reaches `"translated"` once a value is filled in, and Xcode flags a locale for re-review on its own when the source text changes later. **`state` alone is necessary but not sufficient, though** — proven the hard way: migrating off the old per-locale `Main.strings` files carried every existing value straight into the catalog and marked it `"translated"` per locale, even for the ~130 entries that were never actually translated and were just sitting there as English text. So also compare each locale's value against the `en` value, and treat a match as a real gap *unless* the key is a deliberately English/unchanged case — the brand name (`Cirruscope`), a placeholder example URL, a storyboard object whose text is fully overwritten at runtime and never shown (see the placeholder-skipping rule below), or a genuine cognate where that language's correct word simply is spelled the same (e.g. French `Services`/`Format`/`Ligatures`, German `Text`, Spanish `General` are all correct translations, not oversights):
+In all three catalogs, a `stringUnit`'s `state` is the completeness/staleness signal Xcode itself tracks: a freshly added or changed source string starts at `"new"` for each locale and only reaches `"translated"` once a value is filled in, and Xcode flags a locale for re-review on its own when the source text changes later. **`state` alone is necessary but not sufficient, though** — proven the hard way: migrating off the old per-locale `Main.strings` files carried every existing value straight into the catalog and marked it `"translated"` per locale, even for the ~130 entries that were never actually translated and were just sitting there as English text. So also compare each locale's value against the `en` value, and treat a match as a real gap *unless* the key is a deliberately English/unchanged case — the brand name (`Cirruscope`), a placeholder example URL, a storyboard object whose text is fully overwritten at runtime and never shown (see the placeholder-skipping rule below), or a genuine cognate where that language's correct word simply is spelled the same (e.g. French `Services`/`Format`/`Ligatures`, German `Text`, Spanish `General` are all correct translations, not oversights):
 
 ```bash
 plutil -convert json -o - Cirruscope.xcodeproj/project.pbxproj | python3 -c '
@@ -144,7 +145,7 @@ pbxproj = json.load(sys.stdin)
 known_regions = next(o["knownRegions"] for o in pbxproj["objects"].values() if o.get("isa") == "PBXProject")
 locales = [r for r in known_regions if r not in ("en", "Base")]
 
-for catalog in ["Cirruscope/Localizable.xcstrings", "Cirruscope/mul.lproj/Main.xcstrings"]:
+for catalog in ["Cirruscope/Localizable.xcstrings", "Cirruscope/mul.lproj/Main.xcstrings", "Cirruscope/InfoPlist.xcstrings"]:
     data = json.load(open(catalog))
     for key, entry in data["strings"].items():
         localizations = entry.get("localizations", {})
@@ -161,7 +162,7 @@ for catalog in ["Cirruscope/Localizable.xcstrings", "Cirruscope/mul.lproj/Main.x
 
 Run this after applying any change, not only when you believe you recognize that a user-facing string was added, renamed, or removed — that recognition is exactly what failed before this project migrated off per-locale `Main.strings` files (a storyboard menu item's title was renamed without updating its stale, plain-text translations, and it shipped unnoticed for several changes). It is a mechanical safety net, not a substitute for judgement: a clean run only rules out the two failure modes above — it cannot tell you whether an existing translation reads *well*, so still apply the checklist below by hand for every string you touch, and use judgement on every "still identical to English" hit rather than mechanically translating deliberate exceptions.
 
-Whenever a change adds, renames, or removes a user-facing string — in Swift or in the storyboard — check and update both catalogs without being asked, so no localization is left behind:
+Whenever a change adds, renames, or removes a user-facing string — in Swift, in the storyboard, or in an `INFOPLIST_KEY_*` usage description — check and update every catalog without being asked, so no localization is left behind:
 
 - Add an entry for every new user-facing string, translated into each detected localization, to the relevant catalog. Keep the English source wording on the storyboard's Base object and as the `Localizable.xcstrings` key.
 - Remove or rename entries whose source strings were deleted or changed, so no stale or orphaned keys remain and no localization is missing a key another one has.

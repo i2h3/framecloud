@@ -43,6 +43,7 @@ SPDX-License-Identifier = "MIT"
 # Contents.json manifests, both owned by Xcode's Asset Catalog editor.
 [[annotations]]
 path = [
+    "Cirruscope/Assets.xcassets/AccentColor.colorset/Contents.json",
     "Cirruscope/Assets.xcassets/Background.imageset/Background.jpg",
     "Cirruscope/Assets.xcassets/Background.imageset/Contents.json",
     "Cirruscope/Assets.xcassets/Logo.imageset/Contents.json",
@@ -80,9 +81,10 @@ SPDX-License-Identifier = "MIT"
 
 # Miscellaneous Xcode-GUI-editable or generated files, all added in 2026:
 # Interface Builder storyboard, the Privacy Manifest editor's file, the
-# Info tab's file, the two String Catalogs (JSON, one for Swift strings, one
-# for storyboard strings since migrating off per-locale Main.strings files),
-# the bare version file SwiftFormat itself parses, and the root LICENSE text.
+# Info tab's file, the three String Catalogs (JSON, one for Swift strings, one
+# for storyboard strings since migrating off per-locale Main.strings files, and
+# one for the Info.plist usage descriptions), the bare version file SwiftFormat
+# itself parses, and the root LICENSE text.
 [[annotations]]
 path = [
     ".swift-version",
@@ -90,6 +92,7 @@ path = [
     "Cirruscope/Base.lproj/Main.storyboard",
     "Cirruscope/Cirruscope.entitlements",
     "Cirruscope/Info.plist",
+    "Cirruscope/InfoPlist.xcstrings",
     "Cirruscope/PrivacyInfo.xcprivacy",
     "Cirruscope/Localizable.xcstrings",
     "Cirruscope/mul.lproj/Main.xcstrings",
