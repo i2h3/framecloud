@@ -24,12 +24,14 @@ enum AppDatabase {
 
     /// `container` is the shared model container, built on first access.
     ///
-    /// If opening the store fails — most likely an incompatible store left by an earlier schema during pre-release development, or a genuinely corrupt file — the store files are deleted and the container is rebuilt once. The store is largely reconstructible (apps are re-fetched from the server; only user shortcuts are authored locally), so recovering beats crash-looping on launch. A second failure is treated as an unrecoverable provisioning problem.
+    /// Three locations are tried in order. First the App Group container, which is where a properly signed build always ends up. If opening it fails — most likely an incompatible store left by an earlier schema during pre-release development, or a genuinely corrupt file — the store files are deleted and it is tried once more: the store is largely reconstructible (apps are re-fetched from the server; only user shortcuts are authored locally), so recovering beats crash-looping on launch. If that fails too, the store is opened in the app's own container instead, because the likeliest remaining cause is not corruption at all but a build with no App Group entitlement to reach the shared container with — an ad-hoc build, which is what a fresh clone, a fork, and CI all produce, and which the sandbox then denies write access to that path. Only a failure there as well is unrecoverable.
+    ///
+    /// Falling back rather than trapping is what lets such a build actually run, and it is deliberately the *last* resort: an entitled build that lands there would silently be reading an empty store instead of the user's data, so the switch is logged at a level that persists to the system log.
     ///
     /// Being a `static let`, it is opened only once something actually asks for it, which is what lets the account store's tests run entirely on their own in-memory container: nothing in them reaches `AccountStore.shared`, so this store is never opened on their behalf — and it must stay that way, since the recovery path above deletes the developer's real store files.
     static let container: ModelContainer = {
         let schema = Self.schema
-        let configuration = ModelConfiguration(
+        let sharedConfiguration = ModelConfiguration(
             storeName,
             schema: schema,
             groupContainer: .identifier(AppGroup.identifier),
@@ -37,16 +39,30 @@ enum AppDatabase {
         )
 
         do {
-            return try ModelContainer(for: schema, configurations: configuration)
+            return try ModelContainer(for: schema, configurations: sharedConfiguration)
         } catch {
-            logger.error("Could not open the SwiftData store; recreating it: \(error.localizedDescription)")
-            destroyStore(at: configuration.url)
+            logger.error("Could not open the SwiftData store in the App Group container; recreating it: \(error.localizedDescription)")
+        }
 
-            do {
-                return try ModelContainer(for: schema, configurations: configuration)
-            } catch {
-                preconditionFailure("Could not open the SwiftData store even after recreating it: \(error.localizedDescription)")
-            }
+        destroyStore(at: sharedConfiguration.url)
+
+        do {
+            return try ModelContainer(for: schema, configurations: sharedConfiguration)
+        } catch {
+            logger.error("Could not open the recreated SwiftData store in the App Group container; falling back to this build's own container: \(error.localizedDescription)")
+        }
+
+        let ownConfiguration = ModelConfiguration(
+            storeName,
+            schema: schema,
+            groupContainer: .none,
+            cloudKitDatabase: .none
+        )
+
+        do {
+            return try ModelContainer(for: schema, configurations: ownConfiguration)
+        } catch {
+            preconditionFailure("Could not open the SwiftData store in the App Group container or in this build's own container: \(error.localizedDescription)")
         }
     }()
 
