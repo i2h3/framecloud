@@ -1,6 +1,19 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "CFBundleName" : {
+      "comment" : "Bundle name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cirruscope"
+          }
+        }
+      },
+      "shouldTranslate" : false
+    },
     "NSCameraUsageDescription" : {
       "comment" : "Reason shown in the system permission prompt asking to use the camera, presented the first time the web interface requests camera access for a video call.",
       "localizations" : {
@@ -29,6 +42,19 @@
           }
         }
       }
+    },
+    "NSHumanReadableCopyright" : {
+      "comment" : "Copyright (human-readable)",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Copyright © 2026 Iva Horn"
+          }
+        }
+      },
+      "shouldTranslate" : false
     },
     "NSLocalNetworkUsageDescription" : {
       "comment" : "Reason shown in the system permission prompt asking to reach devices on the local network, presented the first time the app connects to a server hosted there.",
