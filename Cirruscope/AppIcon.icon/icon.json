@@ -1,8 +1,47 @@
 {
-  "fill" : "automatic",
+  "fill-specializations" : [
+    {
+      "value" : {
+        "linear-gradient" : [
+          "display-p3:0.24194,0.36207,0.67823,1.00000",
+          "display-p3:0.79349,0.89201,1.00000,1.00000"
+        ],
+        "orientation" : {
+          "start" : {
+            "x" : 0.5,
+            "y" : 0
+          },
+          "stop" : {
+            "x" : 0.5,
+            "y" : 0.7
+          }
+        }
+      }
+    },
+    {
+      "appearance" : "dark",
+      "value" : {
+        "linear-gradient" : [
+          "display-p3:0.09998,0.11289,0.19996,1.00000",
+          "display-p3:0.39784,0.47888,0.67823,1.00000"
+        ],
+        "orientation" : {
+          "start" : {
+            "x" : 0.5,
+            "y" : 0
+          },
+          "stop" : {
+            "x" : 0.5,
+            "y" : 0.7
+          }
+        }
+      }
+    }
+  ],
   "groups" : [
     {
-      "blur-material" : 0.3,
+      "blend-mode" : "normal",
+      "blur-material" : 0.5,
       "layers" : [
         {
           "fill" : {
@@ -12,30 +51,30 @@
           "image-name" : "Cloud.svg",
           "name" : "Cloud",
           "position" : {
-            "scale" : 0.17,
+            "scale" : 1.6,
             "translation-in-points" : [
-              4.2062197280756664e-08,
-              16.198603720686265
+              10.228125296909639,
+              218.59504900700574
             ]
           }
         }
       ],
       "name" : "Symbol",
       "position" : {
-        "scale" : 6,
+        "scale" : 1,
         "translation-in-points" : [
           0,
           0
         ]
       },
       "shadow" : {
-        "kind" : "neutral",
+        "kind" : "none",
         "opacity" : 1
       },
       "specular" : true,
       "translucency" : {
         "enabled" : true,
-        "value" : 0.4
+        "value" : 0.9
       }
     },
     {
@@ -62,8 +101,8 @@
           "position" : {
             "scale" : 1,
             "translation-in-points" : [
-              63.99999975257515,
-              -313.328125
+              62.99999975257515,
+              -322.328125
             ]
           }
         },
@@ -86,8 +125,8 @@
           "position" : {
             "scale" : 1,
             "translation-in-points" : [
-              -128.0000002474248,
-              -313.328125
+              -129.0000002474248,
+              -322.328125
             ]
           }
         },
@@ -110,8 +149,8 @@
           "position" : {
             "scale" : 1,
             "translation-in-points" : [
-              -320.0000002474248,
-              -313.328125
+              -322.0000002474248,
+              -322.328125
             ]
           }
         }
@@ -145,25 +184,38 @@
           "appearance" : "dark",
           "value" : {
             "enabled" : true,
-            "value" : 0.4
+            "value" : 0.5
           }
         },
         {
           "appearance" : "tinted",
           "value" : {
             "enabled" : true,
-            "value" : 0.4
+            "value" : 0.6
           }
         }
       ]
     },
     {
       "blend-mode" : "normal",
-      "blur-material" : null,
+      "blur-material" : 0.5,
       "layers" : [
         {
           "fill" : {
-            "solid" : "extended-gray:1.00000,1.00000"
+            "linear-gradient" : [
+              "display-p3:0.90000,0.90000,0.90000,1.00000",
+              "extended-gray:1.00000,1.00000"
+            ],
+            "orientation" : {
+              "start" : {
+                "x" : 0.5,
+                "y" : 1
+              },
+              "stop" : {
+                "x" : 0.5,
+                "y" : 0
+              }
+            }
           },
           "glass" : true,
           "image-name" : "Cloud.svg",
@@ -171,14 +223,27 @@
           "position" : {
             "scale" : 1,
             "translation-in-points" : [
-              -512.0000002474249,
-              353.7425663144203
+              -458.00000024742485,
+              52.22232081769812
             ]
           }
         },
         {
           "fill" : {
-            "solid" : "extended-gray:1.00000,1.00000"
+            "linear-gradient" : [
+              "display-p3:0.90000,0.90000,0.90000,1.00000",
+              "extended-gray:1.00000,1.00000"
+            ],
+            "orientation" : {
+              "start" : {
+                "x" : 0.49999999999999983,
+                "y" : 1
+              },
+              "stop" : {
+                "x" : 0.49999999999999983,
+                "y" : 0
+              }
+            }
           },
           "glass" : true,
           "image-name" : "Cloud.svg",
@@ -186,104 +251,31 @@
           "position" : {
             "scale" : 1,
             "translation-in-points" : [
-              512.0000002474246,
-              353.7425663144203
+              438.0000002474246,
+              -111.8225586855799
             ]
           }
         }
       ],
+      "lighting" : "individual",
       "name" : "Clouds",
       "opacity-specializations" : [
         {
-          "value" : 0.5
+          "value" : 0.6
         },
         {
           "appearance" : "dark",
-          "value" : 0.2
+          "value" : 0.5
         }
       ],
       "shadow" : {
         "kind" : "none",
         "opacity" : 0.92
       },
-      "specular" : false,
+      "specular" : true,
       "translucency" : {
         "enabled" : true,
-        "value" : 0.7
-      }
-    },
-    {
-      "blend-mode" : "normal",
-      "blur-material" : null,
-      "layers" : [
-        {
-          "fill-specializations" : [
-            {
-              "value" : {
-                "linear-gradient" : [
-                  "display-p3:0.00000,0.46132,0.77850,1.00000",
-                  "display-p3:0.44121,0.77625,0.98036,1.00000"
-                ],
-                "orientation" : {
-                  "start" : {
-                    "x" : 0.5,
-                    "y" : 0
-                  },
-                  "stop" : {
-                    "x" : 0.5,
-                    "y" : 0.7
-                  }
-                }
-              }
-            },
-            {
-              "appearance" : "dark",
-              "value" : {
-                "linear-gradient" : [
-                  "srgb:0.00000,0.02500,0.15000,1.00000",
-                  "srgb:0.15000,0.17500,0.30000,1.00000"
-                ],
-                "orientation" : {
-                  "start" : {
-                    "x" : 0.5,
-                    "y" : 0
-                  },
-                  "stop" : {
-                    "x" : 0.5,
-                    "y" : 0.7
-                  }
-                }
-              }
-            },
-            {
-              "appearance" : "tinted",
-              "value" : "automatic"
-            }
-          ],
-          "glass" : false,
-          "image-name" : "layer-0-background.svg",
-          "name" : "Sky",
-          "opacity-specializations" : [
-            {
-              "value" : 1
-            },
-            {
-              "appearance" : "tinted",
-              "value" : 0.5
-            }
-          ]
-        }
-      ],
-      "name" : "Background",
-      "opacity" : 1,
-      "shadow" : {
-        "kind" : "neutral",
-        "opacity" : 0.5
-      },
-      "specular" : false,
-      "translucency" : {
-        "enabled" : false,
-        "value" : 1
+        "value" : 0.5
       }
     }
   ],
