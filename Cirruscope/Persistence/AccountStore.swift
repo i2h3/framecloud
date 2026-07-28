@@ -6,30 +6,56 @@ import os
 import Rainmaker
 import SwiftData
 
-/// `AccountStore` is the main-actor repository over Cirruscope's SwiftData store (`AppDatabase.container`), owning every read and write of the connected account's data.
+/// `AccountStore` is the main-actor repository over a SwiftData container, owning every read and write of the connected account's data.
 ///
-/// It replaces the server-related values the app used to keep in `UserDefaults` via `Settings`. Consumers reach it as `AccountStore.shared`, mirroring the `AssetCache.shared` / `NotificationMonitor.shared` conventions, and it keeps posting `Notification.Name.serverAppsDidChange` so the existing AppKit menus and settings tab refresh exactly as before. As further domains arrive (files, notes, …) they gain methods here, or sibling main-actor stores sharing `AppDatabase.container`.
+/// It replaces the server-related values the app used to keep in `UserDefaults` via `Settings`. Consumers reach it as `AccountStore.shared`, mirroring the `AssetCache.shared` / `NotificationMonitor.shared` conventions, and it keeps posting `Notification.Name.serverAppsDidChange` so the existing AppKit menus and settings tab refresh exactly as before. As further domains arrive (files, notes, …) they gain methods here, or sibling main-actor stores sharing the same container.
 ///
 /// Reads return value-type DTOs (`ServerAppTransferObject`, `AppShortcutTransferObject`), never managed `@Model` objects, so AppKit table views and menus hold snapshots that stay valid across an upsert. Every access is confined to the main actor and only `Sendable` values ever cross the boundary to the nonisolated `ServerConnection`, which is what keeps the store race-free under Swift 6 complete concurrency. Autosave is disabled and each mutator saves explicitly, so every change commits atomically and is on disk by the time a future extension process reads it.
+///
+/// The container, and the two things this store reaches outside itself for, arrive through `init(container:isReservedShortcut:notifyServerAppsDidChange:)` so its logic can be exercised against an in-memory store; `CirruscopeTests/Account/` does exactly that. Production builds exactly one instance, `shared`.
 @MainActor
 final class AccountStore {
-    /// `shared` is the process-wide account store.
-    static let shared = AccountStore()
+    /// `shared` is the process-wide account store, over the app's on-disk container.
+    ///
+    /// It is the only instance production code builds, and the only one that must ever be built over `AppDatabase.container`: each instance memoizes the single `Account` separately (see `cachedAccount`), so two of them over one container would each believe a stale answer. Being a `static let` it is created lazily, which is what keeps the real store closed during a test run that never names it.
+    static let shared = AccountStore(container: AppDatabase.container)
 
     /// `logger` records store activity under the `AccountStore` category.
     private let logger = Logger(for: AccountStore.self)
 
+    /// `container` is the SwiftData container this store owns every read and write of.
+    ///
+    /// It is held rather than reached for so it can be handed in, and because a `ModelContainer` closes its store once nothing references it any more.
+    private let container: ModelContainer
+
+    /// `isReservedShortcut` reports whether a shortcut is already occupied by one of Cirruscope's own fixed menu items, which `shortcut(forAppID:)` consults to keep such a stored shortcut off the menus.
+    ///
+    /// It wraps `AppDelegate.reservedShortcutName(for:)` rather than calling it directly because that lookup answers from the live `NSApp.mainMenu`, and the test bundle is hosted by the app: the real `Main.storyboard` menu bar is loaded for the whole test run, so a case using ⌘Z — which both "Undo" and "Redo" declare — would be measuring the storyboard instead of this store. A test hands in a closure naming exactly the combinations it means to reserve.
+    private let isReservedShortcut: @MainActor (AppShortcutTransferObject) -> Bool
+
+    /// `notifyServerAppsDidChange` announces that the account's apps or their shortcuts changed, so the View and Dock menus and the Apps settings tab refresh.
+    ///
+    /// It is injected for the mirror image of `isReservedShortcut`'s reason: `AppDelegate` observes `Notification.Name.serverAppsDidChange` for the whole life of a hosted test run, so a test write posting it would have the real `AppDelegate.rebuildServerAppsMenu()` read `shared` — the developer's actual account — and rewrite the live menu bar, on a main-queue turn no test can wait for. A test hands in a closure that counts instead, which is also the only way to assert that a mutator announced at all, the production post being deliberately asynchronous. `postServerAppsDidChange()` is that production post.
+    private let notifyServerAppsDidChange: @MainActor () -> Void
+
     /// `context` is the container's main-actor context, the single context this store ever touches.
     private var context: ModelContext {
-        AppDatabase.container.mainContext
+        container.mainContext
     }
 
     /// `cachedAccount` retains the single `Account` between calls so the hot `serverAddress` read path does not re-fetch on every navigation decision.
     ///
-    /// `AccountStore` is the sole mutator on the main actor, so the cache stays consistent; `disconnect()` clears it after deleting the record.
+    /// `AccountStore` is the sole mutator on the main actor, so the cache stays consistent; `deleteAccount()` clears it after deleting the record.
     private var cachedAccount: Account?
 
-    private init() {
+    /// `init(container:isReservedShortcut:notifyServerAppsDidChange:)` builds a store over `container`, defaulting the two dependencies it reaches outside itself for to their production behaviour.
+    ///
+    /// A `ModelContainer` rather than a `ModelContext` is the parameter so that "the container's main-actor context" stays an invariant this store enforces, rather than something a caller could subvert by handing in a background context.
+    init(container: ModelContainer, isReservedShortcut: @escaping @MainActor (AppShortcutTransferObject) -> Bool = { AppDelegate.reservedShortcutName(for: $0) != nil }, notifyServerAppsDidChange: @escaping @MainActor () -> Void = { AccountStore.postServerAppsDidChange() }) {
+        self.container = container
+        self.isReservedShortcut = isReservedShortcut
+        self.notifyServerAppsDidChange = notifyServerAppsDidChange
+
         // Commit explicitly rather than relying on deferred autosave, which is insufficient for the cross-process
         // read contract and could otherwise fire at an `await` suspension point in the middle of a mutation.
         context.autosaveEnabled = false
@@ -70,10 +96,10 @@ final class AccountStore {
         }
     }
 
-    /// `postServerAppsDidChange()` posts `Notification.Name.serverAppsDidChange` on the next main-thread turn.
+    /// `postServerAppsDidChange()` posts `Notification.Name.serverAppsDidChange` on the next main-thread turn, and is the production default for `notifyServerAppsDidChange`.
     ///
-    /// The async hop is deliberate: it keeps `AppDelegate.rebuildServerAppsMenu()` and `ServerAppsViewController.reload()` from running reentrantly inside the `ShortcutRecorderView.onChange` handler that triggered the write.
-    private func postServerAppsDidChange() {
+    /// The async hop is deliberate: it keeps `AppDelegate.rebuildServerAppsMenu()` and `ServerAppsViewController.reload()` from running reentrantly inside the `ShortcutRecorderView.onChange` handler that triggered the write. It is `static` and not `private` so it can serve as that default argument, which may not reference a declaration less visible than the initializer itself — keeping this explanation next to the behaviour rather than inside a parameter list.
+    static func postServerAppsDidChange() {
         DispatchQueue.main.async {
             NotificationCenter.default.post(name: .serverAppsDidChange, object: nil)
         }
@@ -96,18 +122,25 @@ final class AccountStore {
 
     /// `disconnect()` deletes the account — cascading to its apps and their shortcuts — then empties `AssetCache` and clears the stored Login Flow v2 credentials, so nothing describing the old server remains.
     ///
-    /// `AppDelegate.logOut()` calls it; this reproduces the old `Settings.serverAddress = nil` cascade in one place.
+    /// `AppDelegate.logOut()` calls it; this reproduces the old `Settings.serverAddress = nil` cascade in one place. The announcement now happens in `deleteAccount()`, ahead of the two clears rather than after them, which is unobservable: the post is delivered on the next main-thread turn, while both clears are synchronous and finish inside the current one.
     func disconnect() {
+        deleteAccount()
+
+        AssetCache.shared.clear()
+        Keychain.clearAll()
+    }
+
+    /// `deleteAccount()` deletes the account record — cascading to its apps and their shortcuts — drops the memoized `cachedAccount`, commits, and announces the change.
+    ///
+    /// It is the storage half of `disconnect()`, separated so it can be exercised on its own: `disconnect()`'s remaining two steps empty `AssetCache` and clear the `Keychain`, neither of which a test can run without destroying the developer's real cached assets and stored credentials. Clearing `cachedAccount` is what keeps a later write from landing on the deleted object instead of a fresh account.
+    func deleteAccount() {
         if let account = currentAccount(createIfNeeded: false) {
             context.delete(account)
         }
 
         cachedAccount = nil
         save()
-
-        AssetCache.shared.clear()
-        Keychain.clearAll()
-        postServerAppsDidChange()
+        notifyServerAppsDidChange()
     }
 
     // MARK: - Theming
@@ -189,10 +222,10 @@ final class AccountStore {
             .map { ServerAppTransferObject(id: $0.appID, order: $0.order, href: $0.href, name: $0.name) }
     }
 
-    /// `persist(navigationApps:)` upserts the server's navigation apps: existing rows are updated in place, new ones inserted, and ones the server no longer offers deleted — which cascades to their shortcuts.
+    /// `persist(serverApps:)` upserts the server's apps: existing rows are updated in place, new ones inserted, and ones the server no longer offers deleted — which cascades to their shortcuts.
     ///
-    /// Matching by `appID` rather than replacing the list wholesale is what lets a user's keyboard shortcut survive an app-list refresh; a shortcut is pruned only when its app actually disappears. `ServerConnection.refreshNavigationApps(using:)` calls it after fetching the apps.
-    func persist(navigationApps: [NavigationItem]) {
+    /// Matching by `id` rather than replacing the list wholesale is what lets a user's keyboard shortcut survive an app-list refresh; a shortcut is pruned only when its app actually disappears. `ServerConnection.refreshNavigationApps(using:)` calls it with the `Rainmaker.NavigationItem`s it fetched already mapped to this app's own value type, so the store's write side speaks the same type its read side returns and neither depends on the shape of the network library — which is also what lets a test seed an app list without the test target linking that library.
+    func persist(serverApps: [ServerAppTransferObject]) {
         guard let account = currentAccount(createIfNeeded: true) else {
             return
         }
@@ -206,7 +239,10 @@ final class AccountStore {
 
         var incomingIDs: Set<String> = []
 
-        for item in navigationApps {
+        // Skip an id already seen in this list rather than inserting a second row for it: two rows sharing one id
+        // would leave the `(order, appID)` ordering `storedShortcuts` relies on with a tie it cannot break, so which
+        // of them a shared shortcut belongs to would stop being decidable. No real server sends duplicates.
+        for item in serverApps where incomingIDs.contains(item.id) == false {
             incomingIDs.insert(item.id)
 
             if let existing = existingByID[item.id] {
@@ -223,7 +259,7 @@ final class AccountStore {
         }
 
         save()
-        postServerAppsDidChange()
+        notifyServerAppsDidChange()
     }
 
     // MARK: - App Shortcuts
@@ -264,7 +300,7 @@ final class AccountStore {
 
         let shortcut = AppShortcutTransferObject(keyEquivalent: stored.keyEquivalent, modifierFlags: stored.modifierFlags)
 
-        guard AppDelegate.reservedShortcutName(for: shortcut) == nil else {
+        guard isReservedShortcut(shortcut) == false else {
             return nil
         }
 
@@ -310,6 +346,6 @@ final class AccountStore {
         }
 
         save()
-        postServerAppsDidChange()
+        notifyServerAppsDidChange()
     }
 }

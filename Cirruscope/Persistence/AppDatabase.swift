@@ -17,11 +17,18 @@ enum AppDatabase {
     /// `storeName` is the fixed configuration name that pins the store's filename, so every target — the app and any future extension — opens the very same file rather than a differently-named default.
     private static let storeName = "Cirruscope"
 
+    /// `schema` is the app's current SwiftData schema.
+    ///
+    /// It is one definition rather than two because `AccountStore`'s unit tests build their own in-memory container from it (see `AccountStoreHarness`): a schema spelled out a second time on the test side would keep exercising whichever version it was written against once the app moves on.
+    static let schema = Schema(versionedSchema: SchemaV1.self)
+
     /// `container` is the shared model container, built on first access.
     ///
     /// If opening the store fails — most likely an incompatible store left by an earlier schema during pre-release development, or a genuinely corrupt file — the store files are deleted and the container is rebuilt once. The store is largely reconstructible (apps are re-fetched from the server; only user shortcuts are authored locally), so recovering beats crash-looping on launch. A second failure is treated as an unrecoverable provisioning problem.
+    ///
+    /// Being a `static let`, it is opened only once something actually asks for it, which is what lets the account store's tests run entirely on their own in-memory container: nothing in them reaches `AccountStore.shared`, so this store is never opened on their behalf — and it must stay that way, since the recovery path above deletes the developer's real store files.
     static let container: ModelContainer = {
-        let schema = Schema(versionedSchema: SchemaV1.self)
+        let schema = Self.schema
         let configuration = ModelConfiguration(
             storeName,
             schema: schema,
