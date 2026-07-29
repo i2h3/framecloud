@@ -541,6 +541,36 @@
         }
       }
     },
+    "07Z-WQ-xKK.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Your Nextcloud experience, elevated.\"; ObjectID = \"07Z-WQ-xKK\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Nextcloud-Erlebnis auf einem neuen Niveau."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Your Nextcloud experience, elevated."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu experiencia de Nextcloud, elevada."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton expérience Nextcloud, sublimée."
+          }
+        }
+      }
+    },
     "8C7-MO-vDy.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Privacy Policy…\"; ObjectID = \"8C7-MO-vDy\";",
       "extractionState" : "extracted_with_value",
@@ -3632,7 +3662,7 @@
       }
     },
     "stm-Nb-RXX.title" : {
-      "comment" : "Class = \"NSButtonCell\"; title = \"Open\"; ObjectID = \"stm-Nb-RXX\";",
+      "comment" : "Class = \"NSButtonCell\"; title = \"Connect\"; ObjectID = \"stm-Nb-RXX\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
@@ -3644,7 +3674,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Open"
+            "value" : "Connect"
           }
         },
         "es" : {

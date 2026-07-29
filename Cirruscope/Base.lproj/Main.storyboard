@@ -677,7 +677,7 @@
         <scene sceneID="UII-pp-Y3L">
             <objects>
                 <windowController storyboardIdentifier="ServerAddressWindowController" showSeguePresentationStyle="single" id="gEK-0I-zXE" userLabel="Server Address Window" sceneMemberID="viewController">
-                    <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" titlebarAppearsTransparent="YES" titleVisibility="hidden" id="XFy-oL-ctO">
+                    <window key="window" title="Cirruscope" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" titlebarAppearsTransparent="YES" titleVisibility="hidden" id="XFy-oL-ctO">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" fullSizeContentView="YES"/>
                         <rect key="contentRect" x="425" y="462" width="400" height="270"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1410"/>
@@ -702,19 +702,19 @@
             <objects>
                 <viewController id="CSm-iM-xwx" customClass="ServerAddressViewController" customModule="Cirruscope" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="JXc-I7-b73">
-                        <rect key="frame" x="0.0" y="0.0" width="400" height="447"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="400"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hJR-Eu-VYI" userLabel="App Name">
-                                <rect key="frame" x="137" y="216" width="127" height="31"/>
+                                <rect key="frame" x="179" y="284" width="242" height="56"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Cirruscope" id="YMm-Pw-AmD">
-                                    <font key="font" textStyle="largeTitle" name=".SFNS-Regular"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <font key="font" metaFont="systemSemibold" size="48"/>
+                                    <color key="textColor" name="controlAccentColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
                             <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RBx-9A-EGs" userLabel="Address Label">
-                                <rect key="frame" x="58" y="160" width="229" height="16"/>
+                                <rect key="frame" x="78" y="179" width="229" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Enter your Nextcloud server address:" id="aZ0-zr-lPD">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -722,7 +722,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField focusRingType="none" verticalHuggingPriority="750" contentType="url" translatesAutoresizingMaskIntoConstraints="NO" id="YlJ-G9-LcR" userLabel="Address Field">
-                                <rect key="frame" x="60" y="128" width="252" height="24"/>
+                                <rect key="frame" x="80" y="147" width="408" height="24"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="https://your.nextcloud.com" drawsBackground="YES" usesSingleLineMode="YES" id="wwU-wS-wXs">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -733,47 +733,43 @@
                                 </connections>
                             </textField>
                             <progressIndicator hidden="YES" wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="ech-1t-Ipm" userLabel="Activity Indicator">
-                                <rect key="frame" x="192" y="104" width="16" height="16"/>
+                                <rect key="frame" x="292" y="123" width="16" height="16"/>
                             </progressIndicator>
-                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="46a-hj-1ne" userLabel="App Icon">
-                                <rect key="frame" x="150" y="267" width="100" height="100"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="100" id="NBx-hp-Saj"/>
-                                    <constraint firstAttribute="width" secondItem="46a-hj-1ne" secondAttribute="height" multiplier="1:1" id="Z4C-q0-MAB"/>
-                                </constraints>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="Logo" id="bqR-tO-fAe"/>
-                            </imageView>
                             <button translatesAutoresizingMaskIntoConstraints="NO" id="k1i-ML-nxX" userLabel="Login Button">
-                                <rect key="frame" x="320" y="131" width="20" height="20"/>
-                                <buttonCell key="cell" type="bevel" title="Open" bezelStyle="rounded" imagePosition="only" alignment="center" enabled="NO" imageScaling="proportionallyDown" inset="2" id="stm-Nb-RXX">
+                                <rect key="frame" x="496" y="144" width="24" height="30"/>
+                                <buttonCell key="cell" type="bevel" title="Connect" bezelStyle="rounded" imagePosition="only" alignment="center" enabled="NO" imageScaling="proportionallyUpOrDown" inset="2" id="stm-Nb-RXX">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
-                                    <imageReference key="image" image="arrow.right.circle.fill" catalog="system" symbolScale="large"/>
+                                    <imageReference key="image" image="arrow.right.circle.fill" catalog="system" symbolScale="default"/>
                                 </buttonCell>
                                 <color key="contentTintColor" name="controlAccentColor" catalog="System" colorSpace="catalog"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="k1i-ML-nxX" secondAttribute="height" multiplier="1:1" id="5lN-UY-MFY"/>
+                                    <constraint firstAttribute="height" constant="24" id="9ZH-F1-hvw"/>
+                                </constraints>
                                 <connections>
                                     <action selector="open:" target="CSm-iM-xwx" id="twh-wo-lFG"/>
                                 </connections>
                             </button>
-                            <stackView distribution="equalSpacing" orientation="horizontal" alignment="centerY" spacing="16" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ekq-sM-rjr" userLabel="Bottom Links">
-                                <rect key="frame" x="122" y="20" width="157" height="16"/>
+                            <stackView distribution="equalSpacing" orientation="horizontal" alignment="centerY" spacing="16" horizontalStackHuggingPriority="250" verticalStackHuggingPriority="1000" verticalHuggingPriority="750" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ekq-sM-rjr" userLabel="Bottom Links">
+                                <rect key="frame" x="230" y="20" width="140" height="14"/>
                                 <subviews>
-                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="mVU-k2-QDL">
-                                        <rect key="frame" x="0.0" y="0.0" width="88" height="16"/>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mVU-k2-QDL">
+                                        <rect key="frame" x="0.0" y="0.0" width="77" height="14"/>
                                         <buttonCell key="cell" type="bevel" title="Privacy Policy" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="641-vb-mzY">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" metaFont="smallSystem"/>
                                         </buttonCell>
                                         <color key="contentTintColor" name="controlAccentColor" catalog="System" colorSpace="catalog"/>
                                         <connections>
                                             <action selector="openPrivacyPolicy:" target="ZVT-ow-fmy" id="Ppb-It-pol"/>
                                         </connections>
                                     </button>
-                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="51v-jE-Cfp">
-                                        <rect key="frame" x="104" y="0.0" width="53" height="16"/>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="51v-jE-Cfp">
+                                        <rect key="frame" x="93" y="0.0" width="47" height="14"/>
                                         <buttonCell key="cell" type="bevel" title="Support" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="hoa-pe-yCP">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
+                                            <font key="font" metaFont="smallSystem"/>
                                         </buttonCell>
                                         <color key="contentTintColor" name="controlAccentColor" catalog="System" colorSpace="catalog"/>
                                         <connections>
@@ -790,25 +786,33 @@
                                     <real value="3.4028234663852886e+38"/>
                                 </customSpacing>
                             </stackView>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oXX-0C-ccH">
+                                <rect key="frame" x="157" y="255" width="287" height="21"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Your Nextcloud experience, elevated." id="07Z-WQ-xKK">
+                                    <font key="font" textStyle="title2" name=".SFNS-Regular"/>
+                                    <color key="textColor" name="tertiaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
                             <constraint firstItem="Ekq-sM-rjr" firstAttribute="centerX" secondItem="JXc-I7-b73" secondAttribute="centerX" id="3wJ-QI-0zb"/>
                             <constraint firstItem="YlJ-G9-LcR" firstAttribute="top" secondItem="RBx-9A-EGs" secondAttribute="bottom" constant="8" symbolic="YES" id="Bsv-FU-npx"/>
-                            <constraint firstItem="YlJ-G9-LcR" firstAttribute="leading" secondItem="JXc-I7-b73" secondAttribute="leading" constant="60" id="Cbi-y6-i1D"/>
+                            <constraint firstItem="YlJ-G9-LcR" firstAttribute="leading" secondItem="JXc-I7-b73" secondAttribute="leading" constant="80" id="Cbi-y6-i1D"/>
+                            <constraint firstItem="oXX-0C-ccH" firstAttribute="top" secondItem="hJR-Eu-VYI" secondAttribute="bottom" constant="8" symbolic="YES" id="Fuo-e5-AAW"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="RBx-9A-EGs" secondAttribute="trailing" constant="60" id="HgC-UQ-5kR"/>
-                            <constraint firstItem="46a-hj-1ne" firstAttribute="top" secondItem="JXc-I7-b73" secondAttribute="top" constant="80" id="LSX-ep-Iuw"/>
+                            <constraint firstItem="RBx-9A-EGs" firstAttribute="leading" secondItem="YlJ-G9-LcR" secondAttribute="leading" id="L4I-2W-bq7"/>
                             <constraint firstItem="k1i-ML-nxX" firstAttribute="centerY" secondItem="YlJ-G9-LcR" secondAttribute="centerY" id="LsY-hP-fhi"/>
-                            <constraint firstItem="hJR-Eu-VYI" firstAttribute="top" secondItem="46a-hj-1ne" secondAttribute="bottom" constant="20" id="Wxj-la-Cfv"/>
-                            <constraint firstAttribute="trailing" secondItem="k1i-ML-nxX" secondAttribute="trailing" constant="60" id="aQd-oB-iZS"/>
+                            <constraint firstItem="hJR-Eu-VYI" firstAttribute="centerX" secondItem="JXc-I7-b73" secondAttribute="centerX" id="S2F-be-9bs"/>
+                            <constraint firstItem="RBx-9A-EGs" firstAttribute="top" secondItem="oXX-0C-ccH" secondAttribute="bottom" constant="60" id="X9g-nv-UhF"/>
+                            <constraint firstAttribute="trailing" secondItem="k1i-ML-nxX" secondAttribute="trailing" constant="80" id="aQd-oB-iZS"/>
                             <constraint firstItem="ech-1t-Ipm" firstAttribute="centerX" secondItem="JXc-I7-b73" secondAttribute="centerX" id="aZc-gt-3ye"/>
-                            <constraint firstItem="46a-hj-1ne" firstAttribute="centerX" secondItem="JXc-I7-b73" secondAttribute="centerX" id="dD9-Lb-YOS"/>
-                            <constraint firstItem="Ekq-sM-rjr" firstAttribute="top" secondItem="ech-1t-Ipm" secondAttribute="bottom" constant="68" id="hUx-3G-KFj"/>
+                            <constraint firstItem="Ekq-sM-rjr" firstAttribute="top" relation="greaterThanOrEqual" secondItem="ech-1t-Ipm" secondAttribute="bottom" constant="8" symbolic="YES" id="hUx-3G-KFj"/>
+                            <constraint firstItem="oXX-0C-ccH" firstAttribute="centerX" secondItem="JXc-I7-b73" secondAttribute="centerX" id="jBG-57-ERi"/>
+                            <constraint firstItem="hJR-Eu-VYI" firstAttribute="top" secondItem="JXc-I7-b73" secondAttribute="top" constant="60" id="k3d-Rx-YbX"/>
                             <constraint firstAttribute="bottom" secondItem="Ekq-sM-rjr" secondAttribute="bottom" constant="20" symbolic="YES" id="k59-fG-Vrn"/>
                             <constraint firstItem="ech-1t-Ipm" firstAttribute="top" secondItem="YlJ-G9-LcR" secondAttribute="bottom" constant="8" symbolic="YES" id="m5m-7F-C7y"/>
-                            <constraint firstItem="hJR-Eu-VYI" firstAttribute="centerX" secondItem="JXc-I7-b73" secondAttribute="centerX" id="phN-2T-nbT"/>
                             <constraint firstItem="k1i-ML-nxX" firstAttribute="leading" secondItem="YlJ-G9-LcR" secondAttribute="trailing" constant="8" symbolic="YES" id="rk6-nx-Pm7"/>
-                            <constraint firstItem="RBx-9A-EGs" firstAttribute="leading" secondItem="JXc-I7-b73" secondAttribute="leading" constant="60" id="s8p-DS-hv1"/>
-                            <constraint firstItem="RBx-9A-EGs" firstAttribute="top" secondItem="hJR-Eu-VYI" secondAttribute="bottom" constant="40" id="uwY-UC-GdF"/>
                         </constraints>
                     </view>
                     <connections>
@@ -819,7 +823,7 @@
                 </viewController>
                 <customObject id="ZVT-ow-fmy" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1087" y="936.5"/>
+            <point key="canvasLocation" x="-1087" y="938"/>
         </scene>
         <!--Web Window-->
         <scene sceneID="R2V-B0-nI4">
@@ -1382,7 +1386,7 @@
         <image name="Logo" width="1024" height="1024"/>
         <image name="arrow.clockwise" catalog="system" width="14" height="16"/>
         <image name="arrow.down.circle" catalog="system" width="15" height="15"/>
-        <image name="arrow.right.circle.fill" catalog="system" width="20" height="20"/>
+        <image name="arrow.right.circle.fill" catalog="system" width="15" height="15"/>
         <image name="gear" catalog="system" width="17" height="16"/>
         <image name="hare" catalog="system" width="23" height="17"/>
         <image name="magnifyingglass.circle.fill" catalog="system" width="20" height="20"/>
