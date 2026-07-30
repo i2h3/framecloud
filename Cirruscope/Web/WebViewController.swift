@@ -247,7 +247,7 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
 
     /// `updateBackgroundImage()` shows the server's cached theming background behind the web view, or nothing when no background image is available so the window background shows through.
     ///
-    /// `viewDidLoad()` calls it. The image is the cached copy of the theming background, so it relies on `AccountStore.persist(theming:)` having already downloaded it via `AssetCache`, which `ServerConnection.validate(_:)` awaits before the web window is presented.
+    /// `viewDidLoad()` calls it. The image is the cached copy of the theming background, downloaded by `AccountStore.persist(theming:)` via `AssetCache`. Both paths that produce the *first* web window — `AppDelegate.presentInitialWindow(forLaunch:)` at launch and `ServerAddressViewController` after sign-in — await `ServerConnection.validate(_:)`, and so that download, before presenting it, which is what puts the asset on disk. A window opened later by ⌘N deliberately does not wait for that validation, and simply reads the copy those paths already cached; a miss is not an error state but the ordinary "no background available" case `cachedBackgroundImage()` returns `nil` for, leaving the window background to show through.
     private func updateBackgroundImage() {
         backgroundImageView.image = cachedBackgroundImage()
     }
