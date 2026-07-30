@@ -39,14 +39,17 @@ struct DuplicateShortcutSuppressionTests {
     }
 
     @Test
-    func `An equal order is broken by app identifier`() {
-        harness.store.persist(serverApps: ServerAppFixture.sameOrderApps)
-        harness.store.setShortcut(commandOne, forAppID: "beta")
-        harness.store.setShortcut(commandOne, forAppID: "alpha")
+    func `Two apps sharing a display name are broken by app identifier`() {
+        harness.store.persist(serverApps: ServerAppFixture.sameNameApps)
+        harness.store.setShortcut(commandOne, forAppID: "notes-beta")
+        harness.store.setShortcut(commandOne, forAppID: "notes")
 
-        // `sameOrderApps` lists "beta" first precisely so array position cannot be what decides this.
-        #expect(harness.store.shortcut(forAppID: "alpha") == commandOne)
-        #expect(harness.store.shortcut(forAppID: "beta") == nil)
+        // Two apps under one name leave the alphabetical comparison tied, and `sameNameApps` lists "notes-beta"
+        // first — and has the server place it first too — precisely so neither array position nor the server's own
+        // order can be what decides this. Only `serverApps`' `id` tie-break is left, which is what keeps the
+        // winner from changing between two readings of an unstable sort.
+        #expect(harness.store.shortcut(forAppID: "notes") == commandOne)
+        #expect(harness.store.shortcut(forAppID: "notes-beta") == nil)
     }
 
     @Test

@@ -209,17 +209,22 @@ final class AccountStore {
 
     // MARK: - Server Apps
 
-    /// `serverApps` is the connected server's apps as value snapshots, sorted ascending by `order`.
+    /// `serverApps` is the connected server's apps as value snapshots, in the one order every surface lists them in: alphabetically by localized name, with the app identifier settling a tie.
     ///
-    /// The sort is applied here because SwiftData does not preserve the order of a to-many relationship. `AppDelegate` reads it to build the View and Dock menus and `ServerAppsViewController` to list the apps.
+    /// The sort is applied here rather than left to each caller for two reasons. SwiftData does not preserve the order of a to-many relationship, so the records arrive in no meaningful order and something has to impose one; and sorting once, at the single read every surface shares, is what keeps the View menu, the Dock menu (both built by `AppDelegate`), the Apps settings tab (`ServerAppsViewController`), the Shortcuts and Siri lists (`ServerAppEntityQuery`), the Spotlight index (`ServerAppIndexer`), and `storedShortcuts` — which walks this list — from being able to disagree about where an app sits. Each of those consumers arrived without having to know the rule, which is the point of the sort living at the read rather than in any of them. The server's own position for an app, `ServerAppTransferObject.order`, deliberately decides nothing here: it arranges the web interface's app menu, where it reads as a layout the admin chose, while a macOS menu is scanned for a name.
+    ///
+    /// `localizedStandardCompare(_:)` is the comparison rather than `<`, because `<` orders Swift strings by Unicode scalar and this list is read by a person: it files every lowercase name behind every uppercase one ("Files" ahead of "deck"), a French "Éditeur" behind "Zoom", and reads "Talk 10" as preceding "Talk 2". This is the collation Finder lists names with — case- and diacritic-insensitive and numeric-aware — in the user's own locale, which is the locale the server localized these names into. The identifier fallback is what makes the ordering total, since `sorted(by:)` promises no stability: two apps a server offers under one name would otherwise be free to swap places between two menu rebuilds, taking which of them a duplicate shortcut reaches with them, `appHolding(_:)` reading the first match.
     var serverApps: [ServerAppTransferObject] {
         guard let account = currentAccount(createIfNeeded: false) else {
             return []
         }
 
         return account.apps
-            .sorted { $0.order < $1.order }
             .map { ServerAppTransferObject(id: $0.appID, order: $0.order, href: $0.href, name: $0.name) }
+            .sorted { one, other in
+                let comparison = one.name.localizedStandardCompare(other.name)
+                return comparison == .orderedSame ? one.id < other.id : comparison == .orderedAscending
+            }
     }
 
     /// `serverApp(forID:)` is the connected server's app with `appID` as a value snapshot, or `nil` when the account offers no such app.
@@ -251,8 +256,8 @@ final class AccountStore {
         var incomingIDs: Set<String> = []
 
         // Skip an id already seen in this list rather than inserting a second row for it: two rows sharing one id
-        // would leave the `(order, appID)` ordering `storedShortcuts` relies on with a tie it cannot break, so which
-        // of them a shared shortcut belongs to would stop being decidable. No real server sends duplicates.
+        // would leave `serverApps`' name-then-identifier ordering with a tie it cannot break, so which of them a
+        // shared shortcut belongs to would stop being decidable. No real server sends duplicates.
         for item in serverApps where incomingIDs.contains(item.id) == false {
             incomingIDs.insert(item.id)
 
@@ -277,21 +282,29 @@ final class AccountStore {
 
     /// `storedShortcuts` are the shortcuts currently stored for the connected account's apps, each paired with the app it belongs to, in the order the menus list those apps.
     ///
-    /// The order is `serverApps`' own, ascending by `order`, with `appID` breaking a tie so that it is total: `appHolding(_:)` reads the first match from it to decide which single app a shared shortcut belongs to, and that answer has to be the same on every call rather than depend on an unstable sort.
+    /// It walks `serverApps` rather than sorting the records itself, so that order is the menus' own by construction — alphabetical by name, with the app identifier breaking a tie so that it is total. `appHolding(_:)` reads the first match from it to decide which single app a shared shortcut belongs to, and that answer has to be the same on every call rather than depend on an unstable sort. Collecting the shortcuts into a dictionary first is what keeps that walk from being a search of the relationship per app.
     private var storedShortcuts: [(appID: String, name: String, shortcut: KeyboardShortcutTransferObject)] {
         guard let account = currentAccount(createIfNeeded: false) else {
             return []
         }
 
-        return account.apps
-            .sorted { ($0.order, $0.appID) < ($1.order, $1.appID) }
-            .compactMap { app in
-                guard let stored = app.shortcut else {
-                    return nil
-                }
+        var shortcutsByAppID: [String: KeyboardShortcutTransferObject] = [:]
 
-                return (app.appID, app.name, KeyboardShortcutTransferObject(keyEquivalent: stored.keyEquivalent, modifierFlags: stored.modifierFlags))
+        for app in account.apps {
+            guard let stored = app.shortcut else {
+                continue
             }
+
+            shortcutsByAppID[app.appID] = KeyboardShortcutTransferObject(keyEquivalent: stored.keyEquivalent, modifierFlags: stored.modifierFlags)
+        }
+
+        return serverApps.compactMap { app in
+            guard let shortcut = shortcutsByAppID[app.id] else {
+                return nil
+            }
+
+            return (app.id, app.name, shortcut)
+        }
     }
 
     /// `appHolding(_:)` is the one app a keystroke matching `shortcut` actually reaches — the first entry in `storedShortcuts` carrying an equivalent shortcut — or `nil` when no app carries it at all.

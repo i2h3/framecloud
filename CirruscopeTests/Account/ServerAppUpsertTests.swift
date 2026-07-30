@@ -6,7 +6,9 @@ import Testing
 
 /// `ServerAppUpsertTests` covers `AccountStore.persist(serverApps:)` and the `serverApps` snapshot it feeds the menus and the Apps settings tab from.
 ///
-/// The upsert is the half of the store whose whole point is what it does *not* destroy: an app list arrives on every launch and every reconnect, and matching by identifier is what keeps a user's recorded shortcut alive across those refreshes while still pruning one whose app the server stopped offering. Both of those are asserted here, along with the ordering the snapshot applies because SwiftData does not preserve a to-many relationship's order.
+/// The upsert is the half of the store whose whole point is what it does *not* destroy: an app list arrives on every launch and every reconnect, and matching by identifier is what keeps a user's recorded shortcut alive across those refreshes while still pruning one whose app the server stopped offering. Both of those are asserted here, along with the order the snapshot imposes, SwiftData preserving none of its own: that it is the names' rather than the positions the server assigned, that the comparison is the localized one and not `<` — the trap the sort exists to avoid, a plain string comparison reading a lowercase name and a trailing number wrongly — and that it is total, so a menu rebuild cannot reshuffle two apps sharing a name and, with them, which one a duplicate shortcut reaches (see `DuplicateShortcutSuppressionTests`).
+///
+/// Where a locale files a diacritic is deliberately not asserted. `localizedStandardCompare(_:)` answers in the user's own locale by design, and locales genuinely disagree — Swedish orders "Ä" after "Z", English with "A" — so pinning one answer would assert the test machine's locale rather than the store's behaviour.
 @MainActor
 @Suite(.serialized)
 struct ServerAppUpsertTests {
@@ -26,13 +28,67 @@ struct ServerAppUpsertTests {
     }
 
     @Test
-    func `Server apps are returned sorted ascending by order`() {
-        // Persisted deliberately out of order: SwiftData does not preserve the order of a to-many relationship, so
-        // the sort in `serverApps` is the only thing putting the menus in the order the server intended.
+    func `Server apps are returned in the order the menus list them`() {
+        // Persisted deliberately shuffled: SwiftData does not preserve the order of a to-many relationship, so the
+        // sort in `serverApps` is the only thing giving the menus and the settings table an order at all.
         harness.store.persist(serverApps: [ServerAppFixture.talk, ServerAppFixture.files, ServerAppFixture.photos])
 
-        #expect(harness.store.serverApps.map(\.order) == [0, 1, 2])
         #expect(harness.store.serverApps.map(\.id) == ["files", "photos", "talk"])
+    }
+
+    @Test
+    func `Server apps are returned alphabetically and not in the server's own order`() {
+        harness.store.persist(serverApps: ServerAppFixture.unalphabeticalApps)
+
+        #expect(harness.store.serverApps.map(\.id) == ["deck", "files", "talk"])
+        // The server's own positions come out descending, which is what tells this apart from a list that merely
+        // happens to agree with them: the fixture's names run the exact opposite way to its `order` values.
+        #expect(harness.store.serverApps.map(\.order) == [2, 1, 0])
+    }
+
+    @Test
+    func `A lowercase name is ordered by its letter rather than behind every uppercase one`() {
+        harness.store.persist(serverApps: ServerAppFixture.unalphabeticalApps)
+
+        // `<` orders Swift strings by Unicode scalar, which files every lowercase name behind every uppercase one:
+        // it puts "deck" last where a person reading the menu looks for it first. Asserting what `<` would answer
+        // for these very names is the negative control — it keeps the store's sort from being quietly rewritten as
+        // a plain string comparison, and keeps a rename of the fixture from leaving the case unable to tell.
+        #expect(ServerAppFixture.unalphabeticalApps.map(\.name).sorted() == ["Files", "Talk", "deck"])
+        #expect(harness.store.serverApps.map(\.name) == ["deck", "Files", "Talk"])
+    }
+
+    @Test
+    func `A trailing number in a name is read as a number and not as characters`() {
+        harness.store.persist(serverApps: ServerAppFixture.numberedApps)
+
+        // "Talk 2" before "Talk 10", as Finder lists them; comparing the digits as characters would invert this.
+        #expect(harness.store.serverApps.map(\.id) == ["talk2", "talk10"])
+    }
+
+    @Test
+    func `Two apps sharing a display name are ordered by identifier`() {
+        harness.store.persist(serverApps: ServerAppFixture.sameNameApps)
+
+        // Neither the array's own order nor the server's positions can be the answer here: the fixture lists the
+        // apps in the opposite order to both, leaving the identifier as the only tie-break left.
+        #expect(harness.store.serverApps.map(\.id) == ["notes", "notes-beta"])
+    }
+
+    @Test
+    func `The same apps come out in the same order whichever order they arrive in`() {
+        let apps = ServerAppFixture.unalphabeticalApps + ServerAppFixture.numberedApps + ServerAppFixture.sameNameApps
+        harness.store.persist(serverApps: apps)
+        let firstReading = harness.store.serverApps.map(\.id)
+
+        // Re-persisting reversed rewrites every row through the update path, so a sort resting on the order the
+        // records happen to arrive in would answer differently the second time. `sorted(by:)` promises no stability,
+        // so only the identifier tie-break makes these two readings agree — and only that keeps a menu rebuild from
+        // silently moving an app.
+        harness.store.persist(serverApps: apps.reversed())
+
+        #expect(firstReading == harness.store.serverApps.map(\.id))
+        #expect(firstReading == ["deck", "files", "notes", "notes-beta", "talk", "talk2", "talk10"])
     }
 
     @Test
@@ -78,7 +134,7 @@ struct ServerAppUpsertTests {
     func `The same app offered twice is stored once`() {
         harness.store.persist(serverApps: [ServerAppFixture.files, ServerAppFixture.files])
 
-        // Two rows sharing one identifier would leave `storedShortcuts`' (order, appID) ordering with a tie it
+        // Two rows sharing one identifier would leave `serverApps`' name-then-identifier ordering with a tie it
         // cannot break, so which app a shared shortcut belongs to would stop being decidable.
         #expect(harness.store.serverApps.map(\.id) == ["files"])
     }
