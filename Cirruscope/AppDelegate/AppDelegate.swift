@@ -92,6 +92,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         true
     }
 
+    /// `newWindow(_:)` opens another web window for the "New Window" menu item and its ⌘N key equivalent.
+    ///
+    /// It reaches `presentInitialWindow(forLaunch:)` with `forLaunch` cleared, which presents the window in this same run-loop turn and validates the server behind it, so the window appears immediately rather than after a round-trip to the server.
     @IBAction
     func newWindow(_: Any?) {
         presentInitialWindow(forLaunch: false)
@@ -117,7 +120,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     /// `presentInitialWindow(forLaunch:)` validates the configured server and presents the window the app should show: a `WebViewWindowController` when a supported server is reachable or merely unreachable — in which case the web view shows its own "Server unreachable" retry UI — and a `ServerAddressWindowController` when no server is configured, the stored credentials were revoked, or the server runs an unsupported major version.
     ///
-    /// `applicationDidFinishLaunching(_:)` calls it with `forLaunch` set to coordinate with AppKit window restoration: it opens a fresh web window only when none was restored. When the server reports an unsupported version or revoked credentials it closes any restored web windows so none lingers on a server the app can no longer use; an unreachable server is treated as transient, so restored windows are left in place to show their retry UI. `newWindow(_:)` and `applicationShouldHandleReopen(_:hasVisibleWindows:)` call it with `forLaunch` cleared, which always opens a new web window on success and leaves any already-open windows untouched on failure.
+    /// `applicationDidFinishLaunching(_:)` calls it with `forLaunch` set to coordinate with AppKit window restoration: it opens a fresh web window only when none was restored. When the server reports an unsupported version or revoked credentials it closes any restored web windows so none lingers on a server the app can no longer use; an unreachable server is treated as transient, so restored windows are left in place to show their retry UI. `newWindow(_:)` and `applicationShouldHandleReopen(_:hasVisibleWindows:)` call it with `forLaunch` cleared, which always opens a new web window and leaves any already-open windows untouched unless validation reports the server unusable.
+    ///
+    /// `forLaunch` also selects *when* the web window is presented, which is what keeps ⌘N feeling instant. Validation is a live round-trip to the server — `capabilities()`, plus the theming assets `AccountStore.persist(theming:)` revalidates — and takes on the order of a second, so a user-initiated window is presented before the `Task` below rather than inside it: waiting would leave the app looking frozen for that whole second, since building and showing the window itself costs a few tens of milliseconds. At launch the presentation stays inside the `Task`, where it is reconciled against whatever AppKit restored and against a server that turns out to be unusable. Nothing else moves: the same capabilities, theming, app-list, and notification-monitor refreshes still run, only now behind the window instead of in front of it.
     private func presentInitialWindow(forLaunch: Bool) {
         logger.log("Presenting initial window")
 
@@ -134,15 +139,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
+        // A user-initiated window must not wait on the network: present it in this run-loop turn and let the
+        // validation below run behind it. At launch the window is presented inside the `Task` instead, so it
+        // can still be reconciled against whatever AppKit restored.
+        if forLaunch == false {
+            presentWebViewWindow()
+        }
+
         Task {
             do {
                 switch try await ServerConnection.validate(server) {
                     case let .supported(capabilities):
-                        logger.info("Server supported; presenting web window")
+                        logger.info("Server supported")
                         // At launch the validate round-trip runs after AppKit's local restoration, so any restored
                         // web windows are already tracked; open a fresh one only when nothing was restored. A
-                        // user-initiated new window always opens.
-                        if forLaunch == false || hasOpenWebWindow == false {
+                        // user-initiated window was already presented above.
+                        if forLaunch, hasOpenWebWindow == false {
                             presentWebViewWindow()
                         }
 
@@ -153,10 +165,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     case let .unsupported(version):
                         logger.notice("Server at \(serverAddress.absoluteString) runs unsupported version \(version)")
                         NotificationMonitor.shared.stop()
-
-                        if forLaunch {
-                            closeWebViewWindows()
-                        }
+                        // Unconditionally, not only at launch: a window this call presented moments ago must not
+                        // linger on a server the app cannot use either, matching what `requireSignIn()` does for
+                        // revoked credentials.
+                        closeWebViewWindows()
 
                         presentAlert(title: String(localized: "Unsupported Server", comment: "Alert title shown at launch when the configured server runs a Nextcloud version older than the app supports."), message: String(localized: "Cirruscope requires Nextcloud version \(Settings.minimumSupportedServerMajorVersion) or later. The server at “\(serverAddress.absoluteString)” is running version \(version).", comment: "Alert message shown at launch when the configured server's Nextcloud version is too old; placeholders are the minimum supported major version, the server address, and the server's version."))
                         presentWindow(withIdentifier: "ServerAddressWindowController")
@@ -170,11 +182,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 // like a reset: keep the configured server address and stored credentials, keep or open the
                 // web window, and let `WebViewController` surface its own "Server unreachable" retry UI.
                 // Showing an alert or falling back to the sign-in window here would appear to wipe the user's
-                // settings. As in the `.supported` case, only open a fresh window when none was restored.
+                // settings. As in the `.supported` case, only open a fresh window when none was restored; a
+                // user-initiated one is already on screen, showing its retry UI without ever having waited for
+                // this request to time out.
                 logger.error("Could not reach server; leaving the web window to show its retry UI: \(error.localizedDescription)")
                 NotificationMonitor.shared.stop()
 
-                if forLaunch == false || hasOpenWebWindow == false {
+                if forLaunch, hasOpenWebWindow == false {
                     presentWebViewWindow()
                 }
             }
