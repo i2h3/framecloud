@@ -88,9 +88,17 @@ html[data-cirruscope-full-width="true"] #content-vue {
     width: 100% !important;
 }
 
-html[data-cirruscope-full-width="true"] #content,
-html[data-cirruscope-full-width="true"] #content-vue,
-html[data-cirruscope-full-width="true"] #app-content-vue {
+html[data-cirruscope-full-width="true"][data-cirruscope-translucency="true"] #content,
+html[data-cirruscope-full-width="true"][data-cirruscope-translucency="true"] #content-vue,
+html[data-cirruscope-full-width="true"][data-cirruscope-translucency="true"] #app-content-vue {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+}
+
+html[data-cirruscope-full-width="true"][data-cirruscope-translucency="false"] #content,
+html[data-cirruscope-full-width="true"][data-cirruscope-translucency="false"] #content-vue,
+html[data-cirruscope-full-width="true"][data-cirruscope-translucency="false"] #app-content-vue {
     border-radius: 0 !important;
 }
 
