@@ -723,7 +723,7 @@
                             </textField>
                             <textField focusRingType="none" verticalHuggingPriority="750" contentType="url" translatesAutoresizingMaskIntoConstraints="NO" id="YlJ-G9-LcR" userLabel="Address Field">
                                 <rect key="frame" x="80" y="147" width="408" height="24"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="https://your.nextcloud.com" drawsBackground="YES" usesSingleLineMode="YES" id="wwU-wS-wXs">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" placeholderString="https://your.nextcloud.com" drawsBackground="YES" usesSingleLineMode="YES" id="wwU-wS-wXs">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -732,8 +732,8 @@
                                     <action selector="performClick:" target="k1i-ML-nxX" id="nbX-nn-9aL"/>
                                 </connections>
                             </textField>
-                            <progressIndicator hidden="YES" wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="ech-1t-Ipm" userLabel="Activity Indicator">
-                                <rect key="frame" x="292" y="123" width="16" height="16"/>
+                            <progressIndicator hidden="YES" wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" indeterminate="YES" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="ech-1t-Ipm" userLabel="Activity Indicator">
+                                <rect key="frame" x="284" y="86" width="32" height="32"/>
                             </progressIndicator>
                             <button translatesAutoresizingMaskIntoConstraints="NO" id="k1i-ML-nxX" userLabel="Login Button">
                                 <rect key="frame" x="496" y="144" width="24" height="30"/>
@@ -794,30 +794,42 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <textField hidden="YES" focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="BCk-Io-y3b" userLabel="Scheme Hint Label">
+                                <rect key="frame" x="78" y="126" width="444" height="13"/>
+                                <textFieldCell key="cell" lineBreakMode="truncatingTail" title="Assuming HTTPS for a secure connection unless specified differently." usesSingleLineMode="YES" id="LT5-DM-Nvd">
+                                    <font key="font" textStyle="footnote" name=".SFNS-Regular"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
                             <constraint firstItem="Ekq-sM-rjr" firstAttribute="centerX" secondItem="JXc-I7-b73" secondAttribute="centerX" id="3wJ-QI-0zb"/>
+                            <constraint firstItem="ech-1t-Ipm" firstAttribute="top" secondItem="BCk-Io-y3b" secondAttribute="bottom" constant="8" symbolic="YES" id="Az3-z4-5Dz"/>
                             <constraint firstItem="YlJ-G9-LcR" firstAttribute="top" secondItem="RBx-9A-EGs" secondAttribute="bottom" constant="8" symbolic="YES" id="Bsv-FU-npx"/>
                             <constraint firstItem="YlJ-G9-LcR" firstAttribute="leading" secondItem="JXc-I7-b73" secondAttribute="leading" constant="80" id="Cbi-y6-i1D"/>
                             <constraint firstItem="oXX-0C-ccH" firstAttribute="top" secondItem="hJR-Eu-VYI" secondAttribute="bottom" constant="8" symbolic="YES" id="Fuo-e5-AAW"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="RBx-9A-EGs" secondAttribute="trailing" constant="60" id="HgC-UQ-5kR"/>
                             <constraint firstItem="RBx-9A-EGs" firstAttribute="leading" secondItem="YlJ-G9-LcR" secondAttribute="leading" id="L4I-2W-bq7"/>
                             <constraint firstItem="k1i-ML-nxX" firstAttribute="centerY" secondItem="YlJ-G9-LcR" secondAttribute="centerY" id="LsY-hP-fhi"/>
+                            <constraint firstItem="BCk-Io-y3b" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="k1i-ML-nxX" secondAttribute="trailing" id="Onp-XT-Se4"/>
                             <constraint firstItem="hJR-Eu-VYI" firstAttribute="centerX" secondItem="JXc-I7-b73" secondAttribute="centerX" id="S2F-be-9bs"/>
                             <constraint firstItem="RBx-9A-EGs" firstAttribute="top" secondItem="oXX-0C-ccH" secondAttribute="bottom" constant="60" id="X9g-nv-UhF"/>
                             <constraint firstAttribute="trailing" secondItem="k1i-ML-nxX" secondAttribute="trailing" constant="80" id="aQd-oB-iZS"/>
                             <constraint firstItem="ech-1t-Ipm" firstAttribute="centerX" secondItem="JXc-I7-b73" secondAttribute="centerX" id="aZc-gt-3ye"/>
+                            <constraint firstItem="BCk-Io-y3b" firstAttribute="top" secondItem="YlJ-G9-LcR" secondAttribute="bottom" constant="8" symbolic="YES" id="d82-1f-dOb"/>
                             <constraint firstItem="Ekq-sM-rjr" firstAttribute="top" relation="greaterThanOrEqual" secondItem="ech-1t-Ipm" secondAttribute="bottom" constant="8" symbolic="YES" id="hUx-3G-KFj"/>
                             <constraint firstItem="oXX-0C-ccH" firstAttribute="centerX" secondItem="JXc-I7-b73" secondAttribute="centerX" id="jBG-57-ERi"/>
                             <constraint firstItem="hJR-Eu-VYI" firstAttribute="top" secondItem="JXc-I7-b73" secondAttribute="top" constant="60" id="k3d-Rx-YbX"/>
                             <constraint firstAttribute="bottom" secondItem="Ekq-sM-rjr" secondAttribute="bottom" constant="20" symbolic="YES" id="k59-fG-Vrn"/>
-                            <constraint firstItem="ech-1t-Ipm" firstAttribute="top" secondItem="YlJ-G9-LcR" secondAttribute="bottom" constant="8" symbolic="YES" id="m5m-7F-C7y"/>
+                            <constraint firstItem="BCk-Io-y3b" firstAttribute="leading" secondItem="YlJ-G9-LcR" secondAttribute="leading" id="nqq-rP-lKs"/>
                             <constraint firstItem="k1i-ML-nxX" firstAttribute="leading" secondItem="YlJ-G9-LcR" secondAttribute="trailing" constant="8" symbolic="YES" id="rk6-nx-Pm7"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="openButton" destination="k1i-ML-nxX" id="yTP-uu-Umj"/>
                         <outlet property="progressIndicator" destination="ech-1t-Ipm" id="ask-cz-WW2"/>
+                        <outlet property="schemeHintLabel" destination="BCk-Io-y3b" id="1bS-R9-6eD"/>
                         <outlet property="serverAddressField" destination="YlJ-G9-LcR" id="7M9-fT-bgh"/>
                     </connections>
                 </viewController>

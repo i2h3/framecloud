@@ -2641,6 +2641,36 @@
         }
       }
     },
+    "LT5-DM-Nvd.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Assuming HTTPS for a secure connection unless specified differently.\"; ObjectID = \"LT5-DM-Nvd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HTTPS wird für eine sichere Verbindung angenommen, sofern nicht anders angegeben."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Assuming HTTPS for a secure connection unless specified differently."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se asume HTTPS para una conexión segura, salvo indicación contraria."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HTTPS est supposé pour une connexion sécurisée, sauf indication contraire."
+          }
+        }
+      }
+    },
     "LVM-kO-fVI.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Paste Ruler\"; ObjectID = \"LVM-kO-fVI\";",
       "extractionState" : "extracted_with_value",

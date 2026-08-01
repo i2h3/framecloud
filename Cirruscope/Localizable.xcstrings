@@ -24,6 +24,29 @@
         }
       }
     },
+    "“%@” is not a valid server name. Please check the address and try again." : {
+      "comment" : "Error shown when the server name in the entered address cannot name a server; the placeholder is that name.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” ist kein gültiger Servername. Bitte überprüfen Sie die Adresse und versuchen Sie es erneut."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” no es un nombre de servidor válido. Comprueba la dirección y vuelve a intentarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” n'est pas un nom de serveur valide. Veuillez vérifier l'adresse et réessayer."
+          }
+        }
+      }
+    },
     "“%@” is not a valid URL. Please check the address and try again." : {
       "comment" : "Alert message shown when the entered server address is not a valid URL; the placeholder is the address the user typed.",
       "localizations" : {
@@ -43,6 +66,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "“%@” n'est pas une URL valide. Veuillez vérifier l'adresse et réessayer."
+          }
+        }
+      }
+    },
+    "“%lld” is not a valid port number. Please enter a port between 1 and 65535." : {
+      "comment" : "Error shown when the port in the entered server address is out of range; the placeholder is that port.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%lld” ist keine gültige Portnummer. Bitte geben Sie einen Port zwischen 1 und 65535 ein."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%lld” no es un número de puerto válido. Introduce un puerto entre 1 y 65535."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%lld” n'est pas un numéro de port valide. Veuillez saisir un port compris entre 1 et 65535."
           }
         }
       }
@@ -203,6 +249,29 @@
         }
       }
     },
+    "Cirruscope can only connect to a Nextcloud server over HTTP or HTTPS, not “%@”." : {
+      "comment" : "Error shown when the entered server address uses a scheme other than HTTP or HTTPS; the placeholder is that scheme.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cirruscope kann sich nur über HTTP oder HTTPS mit einem Nextcloud-Server verbinden, nicht über “%@”."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cirruscope solo puede conectarse a un servidor Nextcloud mediante HTTP o HTTPS, no mediante “%@”."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cirruscope ne peut se connecter à un serveur Nextcloud qu'en HTTP ou HTTPS, pas en “%@”."
+          }
+        }
+      }
+    },
     "Cirruscope requires Nextcloud server version %lld or later. The server at “%@” is running version %@." : {
       "comment" : "Alert message shown when the server's Nextcloud version is too old; placeholders are the minimum supported major version, the server address, and the server's version.",
       "localizations" : {
@@ -342,7 +411,7 @@
       }
     },
     "Invalid Server Address" : {
-      "comment" : "Alert title shown when the entered server address is not a valid URL.",
+      "comment" : "Alert title shown when the entered server address cannot be used to reach a Nextcloud server.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -525,6 +594,52 @@
         }
       }
     },
+    "Please enter the address of your Nextcloud server." : {
+      "comment" : "Error shown when the server address field is empty.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitte geben Sie die Adresse Ihres Nextcloud-Servers ein."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Introduce la dirección de tu servidor Nextcloud."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veuillez saisir l'adresse de votre serveur Nextcloud."
+          }
+        }
+      }
+    },
+    "Please enter the server address without a user name or password. Signing in happens in the next step." : {
+      "comment" : "Error shown when the entered server address contains user information.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitte geben Sie die Serveradresse ohne Benutzernamen und Passwort ein. Die Anmeldung erfolgt im nächsten Schritt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Introduce la dirección del servidor sin nombre de usuario ni contraseña. El inicio de sesión se realiza en el paso siguiente."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veuillez saisir l'adresse du serveur sans nom d'utilisateur ni mot de passe. La connexion a lieu à l'étape suivante."
+          }
+        }
+      }
+    },
     "Press now" : {
       "comment" : "Shown in the shortcut recorder while it is waiting to capture the next key combination.",
       "localizations" : {
@@ -636,6 +751,75 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Déconnecté"
+          }
+        }
+      }
+    },
+    "The address contains characters that are not allowed in a web address. Please check the address and try again." : {
+      "comment" : "Error shown when the entered server address contains control characters.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Adresse enthält Zeichen, die in einer Webadresse nicht erlaubt sind. Bitte überprüfen Sie die Adresse und versuchen Sie es erneut."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La dirección contiene caracteres que no se permiten en una dirección web. Comprueba la dirección y vuelve a intentarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'adresse contient des caractères qui ne sont pas autorisés dans une adresse web. Veuillez vérifier l'adresse et réessayer."
+          }
+        }
+      }
+    },
+    "The address is missing a server name. Please enter an address such as https://cloud.example.com." : {
+      "comment" : "Error shown when the entered server address names no server.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In der Adresse fehlt der Servername. Bitte geben Sie eine Adresse wie https://cloud.example.com ein."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Falta el nombre del servidor en la dirección. Introduce una dirección como https://cloud.example.com."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le nom du serveur est absent de l'adresse. Veuillez saisir une adresse telle que https://cloud.example.com."
+          }
+        }
+      }
+    },
+    "The address is too long. Please enter only the address of your Nextcloud server." : {
+      "comment" : "Error shown when the entered server address is longer than any address could reasonably be.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Adresse ist zu lang. Bitte geben Sie nur die Adresse Ihres Nextcloud-Servers ein."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La dirección es demasiado larga. Introduce solo la dirección de tu servidor Nextcloud."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'adresse est trop longue. Veuillez saisir uniquement l'adresse de votre serveur Nextcloud."
           }
         }
       }
