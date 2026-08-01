@@ -29,6 +29,10 @@
 		AA059CFA2FE558BD00DE3094 /* AGENTS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = AGENTS.md; sourceTree = "<group>"; };
 		AA2AC5D530189B11002A0C28 /* CirruscopeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CirruscopeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA8A9A90300522C20098151F /* Cirruscope.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Cirruscope.xcconfig; sourceTree = "<group>"; };
+		AAE675CC301CEB10007853C0 /* DECISIONS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = DECISIONS.md; sourceTree = "<group>"; };
+		AAE675CD301CEB20007853C0 /* CODE_OF_CONDUCT.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CODE_OF_CONDUCT.md; sourceTree = "<group>"; };
+		AAE675CE301CEB20007853C0 /* CONTRIBUTING.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTING.md; sourceTree = "<group>"; };
+		AAE675CF301CEB20007853C0 /* REUSE.toml */ = {isa = PBXFileReference; lastKnownFileType = text; path = REUSE.toml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -81,10 +85,14 @@
 		AA059C9A2FE407A700DE3094 = {
 			isa = PBXGroup;
 			children = (
-				AA8A9A90300522C20098151F /* Cirruscope.xcconfig */,
-				AA059CFA2FE558BD00DE3094 /* AGENTS.md */,
-				AA059CC92FE414EB00DE3094 /* LICENSE */,
 				AA059CC42FE4130E00DE3094 /* README.md */,
+				AA059CFA2FE558BD00DE3094 /* AGENTS.md */,
+				AAE675CC301CEB10007853C0 /* DECISIONS.md */,
+				AA059CC92FE414EB00DE3094 /* LICENSE */,
+				AAE675CD301CEB20007853C0 /* CODE_OF_CONDUCT.md */,
+				AAE675CE301CEB20007853C0 /* CONTRIBUTING.md */,
+				AAE675CF301CEB20007853C0 /* REUSE.toml */,
+				AA8A9A90300522C20098151F /* Cirruscope.xcconfig */,
 				AA059CA52FE407A700DE3094 /* Cirruscope */,
 				AA2AC5D630189B11002A0C28 /* CirruscopeTests */,
 				AA059CBD2FE407BA00DE3094 /* Frameworks */,
