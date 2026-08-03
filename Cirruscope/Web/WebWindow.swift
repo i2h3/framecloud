@@ -34,14 +34,10 @@ class WebWindow: NSWindow {
     /// `performKeyEquivalent(with:)` claims ⌃⌘S — Cirruscope's own "Show/Hide Sidebar" shortcut — before the event ever reaches the hosted `WKWebView`.
     ///
     /// `-[NSWindow performKeyEquivalent:]`'s default implementation asks the content view hierarchy — which includes the web view — before it ever falls back to the menu bar, and a `WKWebView` can itself claim a command-key event by forwarding it to the loaded page's JavaScript, which may call `preventDefault()` for its own purposes. Nextcloud Talk does exactly that for ⌃⌘S (issue #59): its own keyboard handling — almost certainly a `event.ctrlKey || event.metaKey` check meant to unify Mac and Windows/Linux shortcuts under one condition, which also fires when *both* are held together on Mac — swallows the event and triggers an unrelated, broken "export" download instead ("undefined.html"), and the "Show/Hide Sidebar" menu item, despite being enabled, never even gets asked. Intercepting the shortcut here, ahead of the content view hierarchy, guarantees Cirruscope's own action always wins regardless of what any loaded page's script does with the keystroke.
+    ///
+    /// This covers the shortcut only while this window is the one AppKit offers the event to, which it is not while the page is in element fullscreen: the key window then belongs to WebKit rather than to the app. `WebViewScript.sidebarShortcut` claims the keystroke from inside the page for that case, and both halves agree on which keystroke it is — this one through `WebViewController.isSidebarToggleShortcut(_:)`, the script through the same modifier set spelled out in JavaScript.
     override func performKeyEquivalent(with event: NSEvent) -> Bool {
-        // `.deviceIndependentFlagsMask` also carries incidental flags like `.capsLock` and `.numericPad`; narrow to
-        // just the modifiers a shortcut can meaningfully require (matching `ShortcutRecorderView.handle(...)`'s
-        // same two-step intersection) so, for example, having Caps Lock on doesn't stop this from matching.
-        let modifiers = event.modifierFlags.intersection(.deviceIndependentFlagsMask).intersection([.command, .option, .control, .shift])
-
-        if modifiers == [.control, .command],
-           event.charactersIgnoringModifiers?.lowercased() == "s",
+        if WebViewController.isSidebarToggleShortcut(event),
            let webViewController = contentViewController as? WebViewController
         {
             webViewController.toggleSidebar(nil)

@@ -19,6 +19,11 @@ enum WebViewScript: String {
     /// `WebViewController.installSidebarToggleBridge()` installs it as a user script that runs at the end of every document load.
     case sidebarToggleState = "SidebarToggleState"
 
+    /// `sidebarShortcut` claims the ⌃⌘S keystroke inside the page and reports it through the `sidebarShortcut` message handler, for the cases in which no `WebWindow` is offered the key equivalent — element fullscreen above all, where WebKit hosts the web view in a window of its own.
+    ///
+    /// `WebViewController.installSidebarShortcutBridge()` installs it as a user script that runs at the start of every document load, before the page's own scripts attach the keyboard handlers it has to be offered the event ahead of.
+    case sidebarShortcut = "SidebarShortcut"
+
     /// `sidebarToggle` clicks Nextcloud's sidebar toggle to show or hide the sidebar.
     ///
     /// `WebViewController.toggleSidebar(_:)` evaluates it on demand when the user activates the "Show/Hide Sidebar" menu item.

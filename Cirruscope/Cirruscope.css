@@ -57,6 +57,51 @@ html[data-cirruscope-translucency="true"] .content {
 }
 
 /*
+ * ...except while the page is in element fullscreen. WebKit then moves the web
+ * view into a fullscreen window of its own (see
+ * WebViewController.enableElementFullscreen()) and leaves the
+ * NSVisualEffectView behind in the host window, so there is no material to show
+ * through any more. What shows instead is the ::backdrop the fullscreen element
+ * is painted over, which the fullscreen user-agent stylesheet fills with solid
+ * black — observed as Nextcloud's light theme in a fullscreen Talk window: dark
+ * text on black.
+ *
+ * It takes both declarations below, and giving the fullscreen element a
+ * background alone is not enough — the reason being the rule above. With
+ * background-image: none and background-color: transparent on <html>, the user
+ * agent propagates *body's* background to the canvas and paints body with none
+ * of its own (css-backgrounds-3 § 2.11.2), and the canvas is painted below the
+ * ::backdrop. A color set on body therefore lands behind the black rather than
+ * over it. Clearing the ::backdrop is what lets it through, and an opaque canvas
+ * then also covers the fullscreen window's own black background, since the web
+ * view draws none of its own either
+ * (WebViewController.makeWebViewBackgroundTransparent()).
+ *
+ * The ::backdrop is cleared rather than recolored on purpose: it is a
+ * tree-abiding pseudo-element whose inheritance from its originating element was
+ * only specified later, so a var() reference to a Nextcloud custom property
+ * inside it would be invalid at computed-value time on any engine that has not
+ * caught up — and an invalid background-color computes to transparent, putting
+ * the window's black right back. `transparent` needs nothing inherited.
+ *
+ * The fullscreen element is still named rather than matched with a bare
+ * :fullscreen, which would also strip the black from behind a fullscreen
+ * <video>'s letterbox bars — where black is exactly right. body is what
+ * Nextcloud Talk fullscreens today; #content-vue, which carries .content, is
+ * what it fullscreened up to Talk 20, and being no child of <html> it keeps its
+ * own background instead of propagating it.
+ */
+html[data-cirruscope-translucency="true"] body:fullscreen::backdrop,
+html[data-cirruscope-translucency="true"] .content:fullscreen::backdrop {
+    background: transparent !important;
+}
+
+html[data-cirruscope-translucency="true"] body:fullscreen,
+html[data-cirruscope-translucency="true"] .content:fullscreen {
+    background-color: var(--color-main-background) !important;
+}
+
+/*
  * With the material showing through, the header no longer sits on the theme's
  * primary color, so its icons and text — which resolve fill="currentColor"
  * from color: var(--color-background-plain-text) — must contrast the macOS
