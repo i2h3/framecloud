@@ -151,6 +151,9 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
         webView.isInspectable = true
         webView.navigationDelegate = self
         webView.uiDelegate = self
+        enableElementFullscreen()
+        makeWebViewResizeWithItsSuperview()
+        observeFullscreenState()
         makeWebViewBackgroundTransparent()
         observeWebViewTitle()
         observeWebViewURL()
@@ -158,6 +161,7 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
         installAppearanceAttributes()
         installWindowDragBridge()
         installSidebarToggleBridge()
+        installSidebarShortcutBridge()
         installNotificationBridge()
         observeAppearanceSettings()
         observeAccentColor()
@@ -339,6 +343,83 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
         }
     }
 
+    // MARK: - Fullscreen
+
+    /// `enableElementFullscreen()` turns on WebKit's Fullscreen API for `webView`, so that `Element.requestFullscreen()` — the call behind Nextcloud Talk's "Full screen" button during a call — actually enters fullscreen instead of doing nothing at all (issue #84).
+    private func enableElementFullscreen() {
+        webView.configuration.preferences.isElementFullscreenEnabled = true
+    }
+
+    /// `makeWebViewResizeWithItsSuperview()` replaces the storyboard's four edge constraints on `webView` with an autoresizing mask, so the web view keeps filling whatever view it currently lives in — including the fullscreen window WebKit moves it into.
+    ///
+    /// `viewDidLoad()` calls it right after `enableElementFullscreen()`, the preference that makes that move possible in the first place.
+    /// Entering element fullscreen removes `webView` from this controller's view — which destroys every constraint referring to it, those four included — and adds it to a window of WebKit's own; leaving fullscreen adds it back. WebKit carries the frame and the autoresizing mask across both moves, but not constraints, so with the storyboard's Auto Layout pinning left in place the web view arrives in the fullscreen window with no layout at all and freezes at the size it had on entry. That is measured, not hypothetical: moving the fullscreen space to a larger external display resized WebKit's window and left the page rendering at the internal display's size.
+    /// An autoresizing mask survives the round trip because it belongs to the view itself rather than to the superview that owns its constraints, and for a subview that simply fills its parent it expresses exactly what those four constraints did. `translatesAutoresizingMaskIntoConstraints` has to be turned back on for the mask to be honoured at all, and the storyboard's constraints are deactivated first so the ones AppKit then generates from the frame do not fight them.
+    private func makeWebViewResizeWithItsSuperview() {
+        for constraint in view.constraints where constraint.firstItem === webView || constraint.secondItem === webView {
+            constraint.isActive = false
+        }
+
+        webView.translatesAutoresizingMaskIntoConstraints = true
+        webView.frame = view.bounds
+        webView.autoresizingMask = [.width, .height]
+    }
+
+    /// `fullscreenStateObservation` retains the key-value observation of `webView`'s `fullscreenState` that logs every transition into and out of WebKit's own fullscreen window.
+    ///
+    /// `observeFullscreenState()` assigns it during `viewDidLoad()`, and it is released when the controller is deallocated, which ends the observation.
+    private var fullscreenStateObservation: NSKeyValueObservation?
+
+    /// `observeFullscreenState()` logs `webView.fullscreenState` on every change, so that a report of a page's fullscreen button doing nothing — the shape issue #84 arrived in — can be answered from a log capture: whether WebKit was asked at all, whether it entered, and whether it came back.
+    ///
+    /// `viewDidLoad()` calls this once, right after `enableElementFullscreen()`. `WKWebView` documents the property as the notification channel for the transition, on the expectation that an application adjusts or restores its own interface around it; Cirruscope has nothing to adjust, because the window chrome, `stateOverlay`, and `backgroundImageView` all stay behind in the host window the web view leaves, and the latter two are hidden for as long as a page is on screen anyway. What the app *does* have to keep working across the move is a keyboard shortcut and a stylesheet, and neither is driven from here: `WebViewScript.sidebarShortcut` claims ⌃⌘S inside the page, and `Cirruscope.css` styles the fullscreen element with `:fullscreen`, so both follow the page rather than a state this observation would have to distribute.
+    /// The log is therefore all it does — the way `observeWebViewURL()` does — but at `.notice` rather than `.debug`, since only `.notice` and above are persisted for retrieval after the fact and a fullscreen transition is far too rare for that to become noise.
+    /// It deliberately does not ask for `.initial` either, which would report `notInFullscreen` once per window at launch and say nothing.
+    private func observeFullscreenState() {
+        fullscreenStateObservation = webView.observe(\.fullscreenState, options: [.new], changeHandler: makeFullscreenStateChangeHandler())
+    }
+
+    /// `makeFullscreenStateChangeHandler()` builds the KVO change handler `observeFullscreenState()` registers on `webView.fullscreenState`.
+    ///
+    /// It is `nonisolated` for the same reason as `makeTitleChangeHandler()`: so the closure it returns is not inferred main-actor-isolated and does not trip a dynamic isolation check should `WKWebView` ever deliver this KVO callback off the main thread instead of hopping to the main actor as this handler does.
+    ///
+    /// Only `change.newValue` — the `Sendable` `WKWebView.FullscreenState?` KVO already snapshotted, the enum being imported from Objective-C — crosses into the `Task`, rather than `webView` itself, since `WKWebView` is main-actor-isolated and not `Sendable`.
+    private nonisolated func makeFullscreenStateChangeHandler() -> @Sendable (WKWebView, NSKeyValueObservedChange<WKWebView.FullscreenState>) -> Void {
+        { [weak self] _, change in
+            guard let state = change.newValue else {
+                return
+            }
+
+            Task { @MainActor [weak self] in
+                guard let self else {
+                    return
+                }
+
+                logger.notice("Web view fullscreen state changed to \(Self.name(for: state), privacy: .public) (WebViewController \(self.logID))")
+            }
+        }
+    }
+
+    /// `name(for:)` renders a `WKWebView.FullscreenState` as the stable English identifier `makeFullscreenStateChangeHandler()` writes to the log, the enum being imported from Objective-C and carrying no description of its own, and its raw value alone being unreadable in a capture.
+    private static func name(for state: WKWebView.FullscreenState) -> String {
+        switch state {
+            case .notInFullscreen:
+                "notInFullscreen"
+
+            case .enteringFullscreen:
+                "enteringFullscreen"
+
+            case .inFullscreen:
+                "inFullscreen"
+
+            case .exitingFullscreen:
+                "exitingFullscreen"
+
+            @unknown default:
+                "unknown (\(state.rawValue))"
+        }
+    }
+
     // MARK: - Server App
 
     /// `currentAppID` is the Nextcloud app id of the page the web view currently shows, derived from its URL, or `nil` when the URL does not address a recognizable app on the configured server.
@@ -396,6 +477,24 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
     private func installSidebarToggleBridge() {
         webView.configuration.userContentController.add(self, name: ScriptMessageName.sidebarToggleState.rawValue)
         installUserScript(.sidebarToggleState, injectionTime: .atDocumentEnd)
+    }
+
+    /// `installSidebarShortcutBridge()` registers the `sidebarShortcut` message handler and injects `WebViewScript.sidebarShortcut`, which claims ⌃⌘S from inside the page for every case in which no `WebWindow` is offered the key equivalent.
+    ///
+    /// `viewDidLoad()` calls it alongside `installSidebarToggleBridge()`, whose script and message report whether there is a sidebar toggle to activate at all.
+    /// `WebWindow.performKeyEquivalent(with:)` remains the ordinary path and is the reason this one is a supplement rather than a replacement: while one of the app's own windows is key, AppKit offers it the key equivalent before the page is ever asked, the window claims it, and this script never runs. Element fullscreen is the case it exists for. There WebKit hosts the web view in a window of its own, so no `WebWindow` sees the event and the "Show/Hide Sidebar" menu item is disabled as well — its action targets the first responder, and the responder chain of WebKit's window does not lead back to this controller, so nothing implements `toggleSidebar(_:)` and AppKit disables the item without even asking `WebViewController+NSMenuItemValidation`. That left the keystroke to Nextcloud Talk's own handling, which swallows it and starts a bogus download (issue #59) — the very misbehaviour the window override was written to prevent, back again for as long as a call was fullscreen. A listener in the page is offered the event wherever the page is, which is what makes it the right place for the exception.
+    private func installSidebarShortcutBridge() {
+        webView.configuration.userContentController.add(self, name: ScriptMessageName.sidebarShortcut.rawValue)
+        installUserScript(.sidebarShortcut, injectionTime: .atDocumentStart)
+    }
+
+    /// `isSidebarToggleShortcut(_:)` is `true` when `event` is the ⌃⌘S keystroke Cirruscope claims for "Show/Hide Sidebar" ahead of the loaded page.
+    ///
+    /// `WebWindow.performKeyEquivalent(with:)` asks it, and `WebViewScript.sidebarShortcut` tests for the same keystroke in JavaScript for the fullscreen case that override cannot cover. Naming it here rather than inline keeps the native half of that pair in one place, and the script's own comment points at this method so the two cannot quietly drift apart on which modifiers count.
+    /// `.deviceIndependentFlagsMask` also carries incidental flags like `.capsLock` and `.numericPad`; they are narrowed away to just the modifiers a shortcut can meaningfully require — the same two-step intersection `ShortcutRecorderView.handle(keyCode:modifierFlags:charactersIgnoringModifiers:)` applies — so that, for example, having Caps Lock on does not stop this from matching.
+    static func isSidebarToggleShortcut(_ event: NSEvent) -> Bool {
+        let modifiers = event.modifierFlags.intersection(.deviceIndependentFlagsMask).intersection([.command, .option, .control, .shift])
+        return modifiers == [.control, .command] && event.charactersIgnoringModifiers?.lowercased() == "s"
     }
 
     @IBAction
@@ -553,6 +652,9 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
         /// `sidebarToggleState` is posted by `WebViewScript.sidebarToggleState` to report whether Nextcloud's sidebar toggle is available and expanded.
         case sidebarToggleState
 
+        /// `sidebarShortcut` is posted by `WebViewScript.sidebarShortcut` to report that the page has claimed the ⌃⌘S keystroke on the app's behalf.
+        case sidebarShortcut
+
         /// `notification` is posted by `WebViewScript.notificationBridge` to forward a web notification's content to the app.
         case notification
     }
@@ -585,6 +687,9 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
                 }
                 sidebarToggleAvailable = body["available"] as? Bool ?? false
                 sidebarToggleExpanded = body["expanded"] as? Bool ?? false
+
+            case .sidebarShortcut:
+                toggleSidebar(nil)
 
             case .notification:
                 guard let body = message.body as? [String: Any] else {
