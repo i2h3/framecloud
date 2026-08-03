@@ -88,6 +88,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationWillTerminate(_: Notification) {
         logger.log("App will terminate")
+
+        // `NSWindow.willCloseNotification` is not posted when the application terminates, so the window delegate's
+        // own recording in `WebWindowController+NSWindowDelegate` never runs for a window still open at quit. Record
+        // here as well, or a size the user reached by zooming rather than by dragging a resize edge — which fires no
+        // live-resize notification either — would be lost on every quit.
+        if let window = frontmostWebWindow {
+            WebWindowFrame.record(window)
+        }
     }
 
     func applicationSupportsSecureRestorableState(_: NSApplication) -> Bool {
@@ -228,6 +236,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         windowControllers.contains { $0 is WebWindowController }
     }
 
+    /// `frontmostWebWindow` is the web window the user was last working in — the app's main window when that is one, and otherwise any open web window — or `nil` while none is open.
+    ///
+    /// `applicationWillTerminate(_:)` reads it to record a window's size at quit. The main window is preferred because with several web windows open it is the one whose size the user just settled on; the fallback keeps a quit while some other kind of window (Settings, Downloads) holds main status from recording nothing at all.
+    private var frontmostWebWindow: NSWindow? {
+        if let mainWindow = NSApp.mainWindow, mainWindow is WebWindow {
+            return mainWindow
+        }
+
+        return windowControllers.first { $0 is WebWindowController }?.window
+    }
+
     /// `closeWebViewWindows()` closes every open web window.
     ///
     /// `presentInitialWindow(forLaunch:)` calls it at launch when the server turns out to be unreachable, unsupported, or to have revoked the stored credentials, so a restored window does not linger on a server the app can no longer use.
@@ -243,6 +262,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     /// `presentWebViewWindow(targetURL:)` opens and tracks a web window, loading `targetURL` when given or `AccountStore.serverAddress` otherwise.
     ///
     /// `presentInitialWindow()` and `ServerAddressViewController` open the root window through it, and `openServerApp(_:)` opens app-specific windows, so every web window is created, cascaded, and retained the same way.
+    ///
+    /// Being the one place every web window is created is also what makes it the one place the remembered size is applied (issue #82): `WebWindowFrame.applySize(to:)` resizes the window before `present(windowController:sender:)` cascades it, so the cascade offsets the origin and leaves that size alone. Windows AppKit restores at launch bypass this method entirely and keep the frame AppKit saved for each of them.
     func presentWebViewWindow(targetURL: URL? = nil) {
         logger.debug("Presenting web view window…")
 
@@ -255,6 +276,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         windowController.targetURL = targetURL
         // Give every web window a unique restoration identifier so AppKit tracks and restores each one separately.
         windowController.window?.identifier = NSUserInterfaceItemIdentifier(UUID().uuidString)
+
+        if let window = windowController.window {
+            WebWindowFrame.applySize(to: window)
+        }
+
         present(windowController: windowController)
     }
 

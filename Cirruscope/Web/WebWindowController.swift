@@ -14,7 +14,9 @@ class WebWindowController: NSWindowController {
     var targetURL: URL?
 
     /// `logger` records this window controller's activity under the `WebWindowController` category.
-    private let logger = Logger(for: WebWindowController.self)
+    ///
+    /// It is not `private` so this controller's `NSWindowDelegate` conformance in `WebWindowController+NSWindowDelegate.swift` logs through the same one.
+    let logger = Logger(for: WebWindowController.self)
 
     override func windowDidLoad() {
         super.windowDidLoad()
