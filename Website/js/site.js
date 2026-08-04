@@ -30,6 +30,8 @@
   // Redirect first-time visitors from the English pages to their language.
   function maybeRedirect() {
     if (currentLang() !== "en") return;
+    // Some pages are English-only, so never auto-redirect away from them.
+    if (document.body.hasAttribute("data-no-lang-redirect")) return;
     try {
       if (sessionStorage.getItem("cirruscope-redirected")) return;
     } catch (e) {}

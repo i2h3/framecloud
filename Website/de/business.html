@@ -4,8 +4,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
-  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a121c">
 
   <title>Cirruscope for Business</title>
   <meta name="description" content="Wir bauen die Werkzeuge, die IT-Teams brauchen, um Cirruscope im großen Stil auszurollen, zu konfigurieren und zu branden – damit dein Unternehmen dieselbe native Erfahrung bekommt, nach euren Regeln.">
@@ -20,7 +18,6 @@
   <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="../assets/apple-touch-icon.png">
-  <link rel="manifest" href="/manifest.json">
 
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Cirruscope">
@@ -30,7 +27,6 @@
   <meta property="og:image" content="https://cirruscope.app/assets/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Cirruscope for Business">
   <meta property="og:locale" content="de_DE">
   <meta property="og:locale:alternate" content="en_US">
   <meta property="og:locale:alternate" content="fr_FR">
@@ -39,7 +35,6 @@
   <meta name="twitter:title" content="Cirruscope for Business">
   <meta name="twitter:description" content="Wir bauen die Werkzeuge, die IT-Teams brauchen, um Cirruscope im großen Stil auszurollen, zu konfigurieren und zu branden – damit dein Unternehmen dieselbe native Erfahrung bekommt, nach euren Regeln.">
   <meta name="twitter:image" content="https://cirruscope.app/assets/og-image.png">
-  <meta name="twitter:image:alt" content="Cirruscope for Business">
 
   <link rel="stylesheet" href="../css/styles.css">
   <script src="../js/site.js" defer></script>
@@ -48,10 +43,10 @@
   <header class="site-header">
     <div class="container site-header__inner">
       <a class="brand" href="index.html">
-        <picture class="brand__mark">
-          <source srcset="../assets/icon-dark-56.png" media="(prefers-color-scheme: dark)">
-          <img src="../assets/icon-light-56.png" alt="" width="28" height="28">
-        </picture>
+        <span class="brand__mark">
+          <img class="img-light" src="../assets/icon-light.png" alt="" width="28" height="28">
+          <img class="img-dark" src="../assets/icon-dark.png" alt="" width="28" height="28">
+        </span>
         <span>Cirruscope</span>
       </a>
 
@@ -62,6 +57,11 @@
       </nav>
 
       <div class="header-actions">
+        <a class="header-cta" href="https://apps.apple.com/de/app/cirruscope/id6790750584" target="_blank" rel="noopener" aria-label="Cirruscope im Mac App Store laden">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v10 M8 9.5l4 4 4-4 M4.5 17.5h15"></path></svg>
+          <span class="header-cta__label">Mac App Store</span>
+        </a>
+
         <a class="icon-link" href="https://github.com/i2h3/cirruscope" target="_blank" rel="noopener" aria-label="Source code on GitHub">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4 3 12l5 8 M16 4l5 8-5 8"></path></svg>
         </a>
@@ -89,6 +89,8 @@
       <a href="index.html">Start</a>
       <a href="business.html">Unternehmen</a>
       <a href="support.html">Support</a>
+      <a class="mobile-nav__cta" href="https://apps.apple.com/de/app/cirruscope/id6790750584" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v10 M8 9.5l4 4 4-4 M4.5 17.5h15"></path></svg><span>Im Mac App Store laden</span></a>
+      <a class="mobile-nav__beta" href="https://testflight.apple.com/join/sJ72uzhS" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3h4 M10.5 3v6L5.5 18a2 2 0 0 0 1.8 3h9.4a2 2 0 0 0 1.8-3l-5-9V3 M8.2 14h7.6"></path></svg><span>TestFlight beitreten</span></a>
     </nav>
   </header>
 
@@ -129,7 +131,7 @@
       <div class="grid grid--pillars">
         <div class="cell cell--pillar">
           <h3 class="cell__title">Verteilung über Apple Business Manager</h3>
-          <p class="cell__text">Sobald Cirruscope im Mac App Store ist, kannst du es im Apple Business Manager hinzufügen und über euer MDM verwalteten Macs zuweisen – lautlos installiert, vom App Store aktuell gehalten und ganz ohne persönliche Apple-ID.</p>
+          <p class="cell__text">Cirruscope ist im Mac App Store, du kannst es also im Apple Business Manager hinzufügen und über euer MDM verwalteten Macs zuweisen – lautlos installiert, vom App Store aktuell gehalten und ganz ohne persönliche Apple-ID.</p>
         </div>
         <div class="cell cell--pillar">
           <h3 class="cell__title">Private, gebrandete Builds über Custom Apps</h3>
@@ -152,10 +154,10 @@
     <div class="container site-footer__top">
       <div class="site-footer__brand">
         <div class="site-footer__brand-row">
-          <picture class="site-footer__mark">
-            <source srcset="../assets/icon-dark-56.png" media="(prefers-color-scheme: dark)">
-            <img src="../assets/icon-light-56.png" alt="" width="24" height="24">
-          </picture>
+          <span class="site-footer__mark">
+            <img class="img-light" src="../assets/icon-light.png" alt="" width="24" height="24">
+            <img class="img-dark" src="../assets/icon-dark.png" alt="" width="24" height="24">
+          </span>
           <span class="site-footer__name">Cirruscope</span>
         </div>
         <p class="site-footer__tagline">Ein Nextcloud-Erlebnis, das sich auf macOS zu Hause fühlt.</p>
@@ -169,6 +171,7 @@
         </div>
         <div class="footer-col">
           <span class="footer-col__title">Ressourcen</span>
+          <a href="../brand-colors.html">Markenfarben</a>
           <a href="support.html">Support</a>
           <a href="privacy.html">Datenschutz</a>
           <a href="https://github.com/i2h3/cirruscope" target="_blank" rel="noopener">Quellcode auf GitHub</a>

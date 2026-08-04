@@ -4,8 +4,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
-  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a121c">
 
   <title>Privacy Policy — Cirruscope</title>
   <meta name="description" content="Cirruscope does not collect any data. Not usage analytics, not crash reports, not your files, nothing — full stop.">
@@ -20,7 +18,6 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-  <link rel="manifest" href="/manifest.json">
 
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Cirruscope">
@@ -30,7 +27,6 @@
   <meta property="og:image" content="https://cirruscope.app/assets/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Privacy Policy — Cirruscope">
   <meta property="og:locale" content="en_US">
   <meta property="og:locale:alternate" content="de_DE">
   <meta property="og:locale:alternate" content="fr_FR">
@@ -39,7 +35,6 @@
   <meta name="twitter:title" content="Privacy Policy — Cirruscope">
   <meta name="twitter:description" content="Cirruscope does not collect any data. Not usage analytics, not crash reports, not your files, nothing — full stop.">
   <meta name="twitter:image" content="https://cirruscope.app/assets/og-image.png">
-  <meta name="twitter:image:alt" content="Privacy Policy — Cirruscope">
 
   <link rel="stylesheet" href="css/styles.css">
   <script src="js/site.js" defer></script>
@@ -48,10 +43,10 @@
   <header class="site-header">
     <div class="container site-header__inner">
       <a class="brand" href="index.html">
-        <picture class="brand__mark">
-          <source srcset="assets/icon-dark-56.png" media="(prefers-color-scheme: dark)">
-          <img src="assets/icon-light-56.png" alt="" width="28" height="28">
-        </picture>
+        <span class="brand__mark">
+          <img class="img-light" src="assets/icon-light.png" alt="" width="28" height="28">
+          <img class="img-dark" src="assets/icon-dark.png" alt="" width="28" height="28">
+        </span>
         <span>Cirruscope</span>
       </a>
 
@@ -62,6 +57,11 @@
       </nav>
 
       <div class="header-actions">
+        <a class="header-cta" href="https://apps.apple.com/us/app/cirruscope/id6790750584" target="_blank" rel="noopener" aria-label="Get Cirruscope on the Mac App Store">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v10 M8 9.5l4 4 4-4 M4.5 17.5h15"></path></svg>
+          <span class="header-cta__label">Mac App Store</span>
+        </a>
+
         <a class="icon-link" href="https://github.com/i2h3/cirruscope" target="_blank" rel="noopener" aria-label="Source code on GitHub">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4 3 12l5 8 M16 4l5 8-5 8"></path></svg>
         </a>
@@ -89,6 +89,8 @@
       <a href="index.html">Home</a>
       <a href="business.html">Business</a>
       <a href="support.html">Support</a>
+      <a class="mobile-nav__cta" href="https://apps.apple.com/us/app/cirruscope/id6790750584" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v10 M8 9.5l4 4 4-4 M4.5 17.5h15"></path></svg><span>Get it on the Mac App Store</span></a>
+      <a class="mobile-nav__beta" href="https://testflight.apple.com/join/sJ72uzhS" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3h4 M10.5 3v6L5.5 18a2 2 0 0 0 1.8 3h9.4a2 2 0 0 0 1.8-3l-5-9V3 M8.2 14h7.6"></path></svg><span>Join TestFlight</span></a>
     </nav>
   </header>
 
@@ -134,10 +136,10 @@
     <div class="container site-footer__top">
       <div class="site-footer__brand">
         <div class="site-footer__brand-row">
-          <picture class="site-footer__mark">
-            <source srcset="assets/icon-dark-56.png" media="(prefers-color-scheme: dark)">
-            <img src="assets/icon-light-56.png" alt="" width="24" height="24">
-          </picture>
+          <span class="site-footer__mark">
+            <img class="img-light" src="assets/icon-light.png" alt="" width="24" height="24">
+            <img class="img-dark" src="assets/icon-dark.png" alt="" width="24" height="24">
+          </span>
           <span class="site-footer__name">Cirruscope</span>
         </div>
         <p class="site-footer__tagline">A Nextcloud experience that feels at home on macOS.</p>
@@ -151,6 +153,7 @@
         </div>
         <div class="footer-col">
           <span class="footer-col__title">Resources</span>
+          <a href="brand-colors.html">Brand colors</a>
           <a href="support.html">Support</a>
           <a href="privacy.html">Privacy Policy</a>
           <a href="https://github.com/i2h3/cirruscope" target="_blank" rel="noopener">Source code on GitHub</a>

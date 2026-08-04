@@ -4,8 +4,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
-  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a121c">
 
   <title>Soporte — Cirruscope</title>
   <meta name="description" content="Consigue ayuda, reporta un error o encuentra respuestas a preguntas comunes.">
@@ -20,7 +18,6 @@
   <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="../assets/apple-touch-icon.png">
-  <link rel="manifest" href="/manifest.json">
 
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Cirruscope">
@@ -30,7 +27,6 @@
   <meta property="og:image" content="https://cirruscope.app/assets/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Soporte — Cirruscope">
   <meta property="og:locale" content="es_ES">
   <meta property="og:locale:alternate" content="en_US">
   <meta property="og:locale:alternate" content="de_DE">
@@ -39,107 +35,18 @@
   <meta name="twitter:title" content="Soporte — Cirruscope">
   <meta name="twitter:description" content="Consigue ayuda, reporta un error o encuentra respuestas a preguntas comunes.">
   <meta name="twitter:image" content="https://cirruscope.app/assets/og-image.png">
-  <meta name="twitter:image:alt" content="Soporte — Cirruscope">
 
   <link rel="stylesheet" href="../css/styles.css">
   <script src="../js/site.js" defer></script>
-  <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "¿Cirruscope es gratis?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Sí. Cirruscope es gratuito y de código abierto bajo licencia MIT: puedes leer el código o contribuir a él en GitHub cuando quieras."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "¿Cirruscope recopila alguno de mis datos?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "No. Cirruscope no recopila, transmite ni vende ningún dato sobre ti o tu uso. Los detalles están en nuestra política de privacidad."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "¿Con qué servidores de Nextcloud funciona?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Con cualquier instancia de Nextcloud: tu propio servidor autoalojado o el de un proveedor. Cirruscope no está ligado a ningún proveedor en concreto."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "¿Qué necesito para usarlo?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Un Mac con una versión reciente de macOS. Publicaremos los requisitos exactos en cuanto Cirruscope llegue a la App Store."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "¿Cómo lo consigo?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Cirruscope está recibiendo los últimos retoques antes de entrar en revisión de la App Store muy pronto. Todavía no se puede descargar, pero llegará pronto."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "¿Habrá una versión para iOS o iPadOS?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Por ahora no. Primero nos estamos centrando en que Cirruscope sea la mejor experiencia nativa de Nextcloud en macOS. No lo descartamos, pero no hay nada que anunciar todavía."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "¿Y Windows?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "La razón de ser de Cirruscope es su integración profunda con las tecnologías nativas de Apple, así que una versión para Windows no sería un simple port, sino un proyecto completamente distinto construido desde cero. No es algo para lo que tengamos recursos ahora mismo, pero no está descartado para siempre."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "¿Y Linux?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "El mismo razonamiento que con Windows: el valor de Cirruscope viene de su integración nativa profunda con la plataforma de Apple, así que una versión para Linux sería un proyecto aparte, no un port. No es algo que podamos asumir ahora. Eso sí, la interfaz web de Nextcloud funciona genial en cualquier navegador en Linux."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "¿Cómo puedo contribuir?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Cirruscope es de código abierto bajo licencia MIT. Los reportes de errores, ideas de funciones y pull requests son bienvenidos en GitHub."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "¿Quién decide qué se desarrolla?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Cirruscope es un proyecto mantenido por una sola persona, con una visión deliberadamente enfocada de cómo debe ser una experiencia nativa de Nextcloud en macOS. Las ideas siempre son bienvenidas, pero la mantenedora tiene la última palabra sobre lo que encaja, lo que mantiene la app enfocada en lugar de sobrecargada. Como es de código abierto bajo licencia MIT, también eres libre de hacer un fork y adaptarla. Consulta GOVERNANCE.md en GitHub para los detalles."
-      }
-    }
-  ]
-}
-  </script>
 </head>
 <body data-page="support">
   <header class="site-header">
     <div class="container site-header__inner">
       <a class="brand" href="index.html">
-        <picture class="brand__mark">
-          <source srcset="../assets/icon-dark-56.png" media="(prefers-color-scheme: dark)">
-          <img src="../assets/icon-light-56.png" alt="" width="28" height="28">
-        </picture>
+        <span class="brand__mark">
+          <img class="img-light" src="../assets/icon-light.png" alt="" width="28" height="28">
+          <img class="img-dark" src="../assets/icon-dark.png" alt="" width="28" height="28">
+        </span>
         <span>Cirruscope</span>
       </a>
 
@@ -150,6 +57,11 @@
       </nav>
 
       <div class="header-actions">
+        <a class="header-cta" href="https://apps.apple.com/es/app/cirruscope/id6790750584" target="_blank" rel="noopener" aria-label="Descargar Cirruscope en la Mac App Store">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v10 M8 9.5l4 4 4-4 M4.5 17.5h15"></path></svg>
+          <span class="header-cta__label">Mac App Store</span>
+        </a>
+
         <a class="icon-link" href="https://github.com/i2h3/cirruscope" target="_blank" rel="noopener" aria-label="Source code on GitHub">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4 3 12l5 8 M16 4l5 8-5 8"></path></svg>
         </a>
@@ -177,6 +89,8 @@
       <a href="index.html">Inicio</a>
       <a href="business.html">Empresas</a>
       <a href="support.html">Soporte</a>
+      <a class="mobile-nav__cta" href="https://apps.apple.com/es/app/cirruscope/id6790750584" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v10 M8 9.5l4 4 4-4 M4.5 17.5h15"></path></svg><span>Descargar en la Mac App Store</span></a>
+      <a class="mobile-nav__beta" href="https://testflight.apple.com/join/sJ72uzhS" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3h4 M10.5 3v6L5.5 18a2 2 0 0 0 1.8 3h9.4a2 2 0 0 0 1.8-3l-5-9V3 M8.2 14h7.6"></path></svg><span>Unirse a TestFlight</span></a>
     </nav>
   </header>
 
@@ -226,18 +140,25 @@
           <p class="faq__answer" id="faq-answer-2" hidden>Con cualquier instancia de Nextcloud: tu propio servidor autoalojado o el de un proveedor. Cirruscope no está ligado a ningún proveedor en concreto.</p>
         </div>
         <div class="faq__item">
+          <button class="faq__question" type="button" aria-expanded="false" aria-controls="faq-answer-9">
+            <span>¿En qué se diferencia de los clientes de escritorio de Nextcloud?</span>
+            <span class="faq__sign" aria-hidden="true">+</span>
+          </button>
+          <p class="faq__answer" id="faq-answer-9" hidden>Cirruscope está pensado para entornos online-first, en los que la interfaz web de Nextcloud es tu forma principal de trabajar, en lugar de copias locales de tus archivos. El cliente oficial Nextcloud Files tiene como función sincronizar archivos de forma bidireccional entre el servidor y tu dispositivo. El cliente Nextcloud Talk comparte el objetivo de Cirruscope de integrarse mejor en el escritorio, pero se centra sobre todo en Nextcloud Talk. Los clientes oficiales de Nextcloud son proyectos multiplataforma; Cirruscope es exclusivo de macOS y cambia esa amplitud por la integración más estrecha y nativa que permite la especialización. Cirruscope lleva esa sensación nativa e integrada a toda la experiencia web de Nextcloud.</p>
+        </div>
+        <div class="faq__item">
           <button class="faq__question" type="button" aria-expanded="false" aria-controls="faq-answer-3">
             <span>¿Qué necesito para usarlo?</span>
             <span class="faq__sign" aria-hidden="true">+</span>
           </button>
-          <p class="faq__answer" id="faq-answer-3" hidden>Un Mac con una versión reciente de macOS. Publicaremos los requisitos exactos en cuanto Cirruscope llegue a la App Store.</p>
+          <p class="faq__answer" id="faq-answer-3" hidden>Un Mac con macOS 26 Tahoe o posterior y un servidor Nextcloud en la versión 34 o posterior. Tienes los detalles en la sección «Compatibilidad» de más abajo.</p>
         </div>
         <div class="faq__item">
           <button class="faq__question" type="button" aria-expanded="false" aria-controls="faq-answer-4">
             <span>¿Cómo lo consigo?</span>
             <span class="faq__sign" aria-hidden="true">+</span>
           </button>
-          <p class="faq__answer" id="faq-answer-4" hidden>Cirruscope está recibiendo los últimos retoques antes de entrar en revisión de la App Store muy pronto. Todavía no se puede descargar, pero llegará pronto.</p>
+          <p class="faq__answer" id="faq-answer-4" hidden>Cirruscope ya está en la <a href="https://apps.apple.com/es/app/cirruscope/id6790750584" target="_blank" rel="noopener">Mac App Store</a>, gratis como todo el proyecto. Si quieres probar las próximas versiones antes que nadie, únete al grupo de prueba Community en <a href="https://testflight.apple.com/join/sJ72uzhS" target="_blank" rel="noopener">TestFlight</a>.</p>
         </div>
         <div class="faq__item">
           <button class="faq__question" type="button" aria-expanded="false" aria-controls="faq-answer-5">
@@ -267,18 +188,65 @@
           </button>
           <p class="faq__answer" id="faq-answer-8" hidden>Cirruscope es de código abierto bajo licencia MIT. Los reportes de errores, ideas de funciones y pull requests son bienvenidos en GitHub.</p>
         </div>
-        <div class="faq__item">
-          <button class="faq__question" type="button" aria-expanded="false" aria-controls="faq-answer-9">
-            <span>¿Quién decide qué se desarrolla?</span>
-            <span class="faq__sign" aria-hidden="true">+</span>
-          </button>
-          <p class="faq__answer" id="faq-answer-9" hidden>Cirruscope es un proyecto mantenido por una sola persona, con una visión deliberadamente enfocada de cómo debe ser una experiencia nativa de Nextcloud en macOS. Las ideas siempre son bienvenidas, pero la mantenedora tiene la última palabra sobre lo que encaja, lo que mantiene la app enfocada en lugar de sobrecargada. Como es de código abierto bajo licencia MIT, también eres libre de hacer un fork y adaptarla. Consulta <a href="https://github.com/i2h3/cirruscope/blob/main/GOVERNANCE.md" target="_blank" rel="noopener">GOVERNANCE.md</a> en GitHub para los detalles.</p>
+      </div>
+    </section>
+
+    <section class="compat">
+      <h2 class="compat__title">Compatibilidad</h2>
+      <p class="compat__lede">Cirruscope apuesta por las tecnologías más recientes en ambos extremos de la conexión. Esto es exactamente aquello para lo que se desarrolla y se prueba hoy.</p>
+
+      <div class="compat__reqs">
+        <div class="req-card">
+          <span class="req-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1.5"></rect><path d="M2 20h20"></path></svg>
+          </span>
+          <div>
+            <span class="req-card__label">macOS</span>
+            <p class="req-card__value">macOS 26 Tahoe o posterior</p>
+            <p class="req-card__note">Creada para la generación actual de macOS y su lenguaje de diseño nativo.</p>
+          </div>
         </div>
+        <div class="req-card">
+          <span class="req-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 0 0 .5-8.98 6 6 0 0 0-11.64-1.4A4 4 0 0 0 6.5 19z"></path></svg>
+          </span>
+          <div>
+            <span class="req-card__label">Servidor Nextcloud</span>
+            <p class="req-card__value">Versión 34 o posterior</p>
+            <p class="req-card__note">La versión mínima compatible a día de hoy; las versiones más nuevas se admiten en cuanto salen.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="compat__apps">
+        <h3 class="compat__subtitle">Apps de Nextcloud probadas</h3>
+        <p class="compat__apps-lede">Estas apps oficiales de Nextcloud son compatibles y se prueban con Cirruscope:</p>
+        <ul class="app-chips">
+          <li class="app-chip">Dashboard</li>
+          <li class="app-chip">Files</li>
+          <li class="app-chip">Talk</li>
+          <li class="app-chip">Activity</li>
+          <li class="app-chip">Photos</li>
+          <li class="app-chip">Mail</li>
+          <li class="app-chip">Contacts</li>
+          <li class="app-chip">Calendar</li>
+          <li class="app-chip">Notes</li>
+          <li class="app-chip">Deck</li>
+          <li class="app-chip">Collectives</li>
+          <li class="app-chip">Tasks</li>
+          <li class="app-chip">Office</li>
+          <li class="app-chip">Text</li>
+        </ul>
+      </div>
+
+      <div class="compat__note">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.7 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.7a2 2 0 0 0-3.4 0z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+        <span>Los front-ends personalizados de servidores Nextcloud no se prueban para comprobar la compatibilidad. Los temas, las apps de terceros o una interfaz web modificada pueden afectar al comportamiento de Cirruscope.</span>
       </div>
     </section>
 
     <section class="cta cta--spaced">
-      <div class="cta__box cta__box--narrow">
+      <div class="cta__box cta__box--wide">
         <h3 class="cta__title">¿Todavía necesitas ayuda?</h3>
         <p class="cta__text">¿No encuentras lo que buscas? Envíanos un correo y te responderemos.</p>
         <a class="cta__link" href="mailto:contact@cirruscope.app">contact@cirruscope.app</a>
@@ -290,10 +258,10 @@
     <div class="container site-footer__top">
       <div class="site-footer__brand">
         <div class="site-footer__brand-row">
-          <picture class="site-footer__mark">
-            <source srcset="../assets/icon-dark-56.png" media="(prefers-color-scheme: dark)">
-            <img src="../assets/icon-light-56.png" alt="" width="24" height="24">
-          </picture>
+          <span class="site-footer__mark">
+            <img class="img-light" src="../assets/icon-light.png" alt="" width="24" height="24">
+            <img class="img-dark" src="../assets/icon-dark.png" alt="" width="24" height="24">
+          </span>
           <span class="site-footer__name">Cirruscope</span>
         </div>
         <p class="site-footer__tagline">Una experiencia de Nextcloud que se siente como en casa en macOS.</p>
@@ -307,6 +275,7 @@
         </div>
         <div class="footer-col">
           <span class="footer-col__title">Recursos</span>
+          <a href="../brand-colors.html">Colores de marca</a>
           <a href="support.html">Soporte</a>
           <a href="privacy.html">Privacidad</a>
           <a href="https://github.com/i2h3/cirruscope" target="_blank" rel="noopener">Código fuente en GitHub</a>
