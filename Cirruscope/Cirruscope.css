@@ -22,12 +22,22 @@
  * cannot read a value out of an attribute.
  */
 
-/* Always applied, independent of any setting. */
+/*
+ * - MARK: Overscroll
+ *
+ * Always applied, independent of any setting.
+ */
+
 :root {
     overscroll-behavior: none;
 }
 
-/* Clear the macOS traffic-light window controls that overlap the header. */
+/*
+ * - MARK: Window Controls
+ *
+ * Clear the macOS traffic-light window controls that overlap the header.
+ */
+
 #header .header-start {
     margin-left: 80px;
 }
@@ -42,10 +52,12 @@ html[data-cirruscope-translucency="true"] .header-start .app-menu__current-app {
 }
 
 /*
- * Translucency: drop the Nextcloud backgrounds so the native window material
- * behind the web view shows through. When off, Nextcloud paints its own opaque
- * background and hides the material (WebViewController also hides its native
- * background image only while translucency is on).
+ * - MARK: Translucency
+ *
+ * Drop the Nextcloud backgrounds so the native window material behind the web
+ * view shows through. When off, Nextcloud paints its own opaque background and
+ * hides the material (WebViewController also hides its native background image
+ * only while translucency is on).
  */
 html[data-cirruscope-translucency="true"],
 html[data-cirruscope-translucency="true"] body,
@@ -57,9 +69,11 @@ html[data-cirruscope-translucency="true"] .content {
 }
 
 /*
- * ...except while the page is in element fullscreen. WebKit then moves the web
- * view into a fullscreen window of its own (see
- * WebViewController.enableElementFullscreen()) and leaves the
+ * - MARK: Element Fullscreen
+ *
+ * The cleared backgrounds above hold everywhere except while the page is in
+ * element fullscreen. WebKit then moves the web view into a fullscreen window of
+ * its own (see WebViewController.enableElementFullscreen()) and leaves the
  * NSVisualEffectView behind in the host window, so there is no material to show
  * through any more. What shows instead is the ::backdrop the fullscreen element
  * is painted over, which the fullscreen user-agent stylesheet fills with solid
@@ -102,6 +116,8 @@ html[data-cirruscope-translucency="true"] .content:fullscreen {
 }
 
 /*
+ * - MARK: Header Contrast
+ *
  * With the material showing through, the header no longer sits on the theme's
  * primary color, so its icons and text — which resolve fill="currentColor"
  * from color: var(--color-background-plain-text) — must contrast the macOS
@@ -121,8 +137,10 @@ html[data-cirruscope-translucency="true"] #header {
 }
 
 /*
- * Full width: remove the margins and rounded corners Nextcloud puts around the
- * content area so it reaches the window edges.
+ * - MARK: Full Width
+ *
+ * Remove the margins and rounded corners Nextcloud puts around the content area
+ * so it reaches the window edges.
  */
 html[data-cirruscope-full-width="true"] #content,
 html[data-cirruscope-full-width="true"] #content-vue {
@@ -148,8 +166,10 @@ html[data-cirruscope-full-width="true"][data-cirruscope-translucency="false"] #a
 }
 
 /*
- * Accent color: WebViewController resolves NSColor.controlAccentColor — the app's
- * own AccentColor asset while the user's macOS accent is "Multicolor", the chosen
+ * - MARK: Accent Color
+ *
+ * WebViewController resolves NSColor.controlAccentColor — the app's own
+ * AccentColor asset while the user's macOS accent is "Multicolor", the chosen
  * system accent otherwise — for the appearance its window draws with, and hands it
  * over as --cirruscope-accent-color plus the brightness flag.
  *
@@ -220,6 +240,8 @@ html[data-cirruscope-translucency="true"][data-cirruscope-accent="true"] body {
 }
 
 /*
+ * - MARK: Accent Brightness
+ *
  * The remaining three values follow Nextcloud's brightness branch, which CSS
  * cannot evaluate: it selects the sign of a lightness step and two filter
  * keywords, and no CSS function turns a color into a keyword. WebViewController
@@ -250,4 +272,28 @@ html[data-cirruscope-translucency="true"][data-cirruscope-accent="true"][data-ci
 
     --primary-invert-if-bright: no !important;
     --primary-invert-if-dark: invert(100%) !important;
+}
+
+/*
+ * - MARK: Viewer Insets
+ *
+ * Nextcloud's Viewer hides the header for as long as a viewer is open — Viewer.vue declares `body:has(#viewer) #header { visibility: hidden }` globally — on the assumption that the browser chrome stays behind it.
+ * Here the header bar *is* the chrome: it carries the margin that clears the traffic lights above, and `WindowDrag.js` starts a window drag only from a mousedown inside `#header`, so hiding it leaves the window undraggable.
+ * The header is restored below and the viewer moved out from under it.
+ * The restoring selector repeats Nextcloud's own rather than naming `#header` alone, so the two tie on specificity and `!important` is what decides the cascade.
+ *
+ * The height has to shrink by the same inset the top gains. The viewer's root is an NcModal mask, fixed at `top: 0` with `height: 100%`, so moving its top edge alone would hang its bottom edge that far past the viewport — and Viewer.vue insets its own `.modal-container` by `--header-height` at top and bottom, so the first thing lost would be the gap it deliberately keeps at the bottom.
+ *
+ * This affects every viewer handler, not only Nextcloud Text and Nextcloud Office: images, video, audio, and PDFs all render through the same `#viewer` root.
+ *
+ * Neither rule applies in element fullscreen. The Viewer fullscreens `document.documentElement` and resets its own insets for that state, and WebKit moves the web view into a fullscreen window of its own (see WebViewController.enableElementFullscreen()), where there are no traffic lights to clear and no host window to drag.
+ */
+
+html:not(:fullscreen) body:has(#viewer) #header {
+    visibility: visible !important;
+}
+
+html:not(:fullscreen) #viewer {
+    height: calc(100% - var(--header-height)) !important;
+    top: var(--header-height) !important;
 }
