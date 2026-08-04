@@ -17,10 +17,6 @@ SPDX-License-Identifier: MIT
 
 **This page is for developers. For a more general introduction, see [the official website](https://cirruscope.app).**
 
-## Project Status
-
-The app is in the App Store review process.
-
 ## Contributing
 
 Contributions are welcome. See [CONTRIBUTING.md](./CONTRIBUTING.md) for the workflow.
