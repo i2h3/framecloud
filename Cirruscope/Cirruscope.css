@@ -39,16 +39,18 @@
  */
 
 #header .header-start {
-    margin-left: 80px;
-}
-
-html[data-cirruscope-translucency="true"] #header .header-start {
     margin-left: 90px;
 }
 
-html[data-cirruscope-translucency="true"] .header-start #nextcloud,
-html[data-cirruscope-translucency="true"] .header-start .app-menu__current-app {
+.header-start #nextcloud,
+.header-start .app-menu__current-app {
     display: none !important;
+}
+
+@media (max-width: 700px) {
+    #contactsmenu {
+        display: none !important;
+    }
 }
 
 /*
