@@ -299,3 +299,24 @@ html:not(:fullscreen) #viewer {
     height: calc(100% - var(--header-height)) !important;
     top: var(--header-height) !important;
 }
+
+/*
+ * MARK: - Dashboard
+ *
+ * Minor overrides for issues which surface in translucent appearance.
+ */
+
+html[data-cirruscope-translucency="true"] #app-dashboard h2 {
+    color: var(--color-main-text);
+}
+
+/*
+ * MARK: - Mail
+ *
+ * Minor overrides for issues which surface in translucent appearance.
+ * Actually, this should be fixed in form of an upstream pull request instead.
+ */
+
+html[data-cirruscope-translucency="true"] .app-mail .search-messages {
+    border-top-left-radius: var(--body-container-radius);
+}
