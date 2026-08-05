@@ -4,7 +4,7 @@ SPDX-License-Identifier: MIT
 -->
 
 <div align="center">
-    <img src="Website/assets/screenshot-light.jpg" alt="Screenshot" height="400" />
+    <img src="Website/assets/screenshot.webp" alt="Screenshot" height="400" />
 </div>
 
 # Cirruscope
