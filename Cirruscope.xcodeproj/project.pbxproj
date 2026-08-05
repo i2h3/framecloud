@@ -60,6 +60,11 @@
 			path = CirruscopeTests;
 			sourceTree = "<group>";
 		};
+		AAE67F6530231586007853C0 /* Website */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Website;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +100,7 @@
 				AA8A9A90300522C20098151F /* Cirruscope.xcconfig */,
 				AA059CA52FE407A700DE3094 /* Cirruscope */,
 				AA2AC5D630189B11002A0C28 /* CirruscopeTests */,
+				AAE67F6530231586007853C0 /* Website */,
 				AA059CBD2FE407BA00DE3094 /* Frameworks */,
 				AA059CA42FE407A700DE3094 /* Products */,
 			);
