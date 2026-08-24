@@ -46,6 +46,17 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Reduce Motion in macOS accessibility settings exists because animated
+   movement can trigger nausea or dizziness for people with vestibular
+   disorders, and a scroll animating the whole viewport is the largest such
+   movement the site has. The hover transitions elsewhere are a 1px lift and a
+   colour fade, which are not what this setting is for, so they stay. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 body {
   margin: 0;
   background: var(--bg);
