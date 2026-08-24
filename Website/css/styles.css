@@ -28,6 +28,7 @@
   --btn-glow: 0 14px 34px -10px rgba(61, 123, 255, 0.65);
   --accent-tip: #41c98d;
   --accent-warn: #e6a44a;
+  --focus-ring: #ffffff;
 
   --maxw: 1200px;
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
@@ -89,6 +90,38 @@ h3 {
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
+}
+
+/* Focus indicator ------------------------------------------------------- */
+/* This adds an indicator rather than restoring a suppressed one: there is no
+   `outline: none` anywhere, so the browser was already drawing its own ring —
+   it just was never checked for contrast, and it fails in the two places that
+   matter. A UA ring is typically blue, which on the cobalt button fill is
+   about 1.3:1; and the header controls set `background: none`, so their ring
+   sits on the translucent bar over whatever part of the screenshot has
+   scrolled behind it.
+   White is the one tone that clears WCAG 1.4.11's 3:1 against every surface
+   this canvas has — 3.42:1 on the palest button stop, 18.72:1 on the page
+   itself — so a single rule covers every focusable the site has and every one
+   it gains later. `outline` rather than `box-shadow`, because box-shadow is
+   dropped entirely in forced-colors mode. `:focus-visible` rather than
+   `:focus`, so clicking the FAQ rows does not leave a ring stuck behind. */
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Menu rows sit 6px inside a 12px-radius panel, so an offset ring would paint
+   across the panel's own corner. Drawn inside instead, where it still carries
+   16.88:1 against the card. */
+.lang__option:focus-visible {
+  outline-offset: -2px;
+}
+
+@media (forced-colors: active) {
+  :focus-visible {
+    outline-color: Highlight;
+  }
 }
 
 /* Adaptive artwork ------------------------------------------------------ */
