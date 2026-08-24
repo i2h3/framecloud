@@ -1448,6 +1448,12 @@ kbd {
   color: var(--text-2);
 }
 
+.site-footer__maintainer {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--text-2);
+}
+
 .site-footer__cols {
   display: flex;
   flex-wrap: wrap;
