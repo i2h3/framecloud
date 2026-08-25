@@ -88,6 +88,11 @@
 			path = Website;
 			sourceTree = "<group>";
 		};
+		AAE70077303DB197001A7B02 /* .github */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = .github;
+			sourceTree = "<group>";
+		};
 		AAE7F451303D7455001A7B02 /* iOS */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = iOS;
@@ -153,6 +158,7 @@
 				AAE675CE301CEB20007853C0 /* CONTRIBUTING.md */,
 				AAE675CF301CEB20007853C0 /* REUSE.toml */,
 				AA8A9A90300522C20098151F /* Cirruscope.xcconfig */,
+				AAE70077303DB197001A7B02 /* .github */,
 				AA059CA52FE407A700DE3094 /* Cirruscope */,
 				AAE7F477303D75FE001A7B02 /* macOS */,
 				AA2AC5D630189B11002A0C28 /* macOSTests */,
