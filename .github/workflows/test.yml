@@ -34,13 +34,26 @@ jobs:
       # needs the testability the Release configuration does not enable. This replaces the former separate Debug
       # build step, which this action performs anyway.
       - name: Test
-        run: xcodebuild test -project Cirruscope.xcodeproj -scheme Cirruscope -configuration Debug -destination 'platform=macOS' -resultBundlePath TestResults.xcresult
+        run: xcodebuild test -project Cirruscope.xcodeproj -scheme 'Cirruscope for macOS' -configuration Debug -destination 'platform=macOS' -resultBundlePath TestResults.xcresult
 
       # The tests cannot cover this: Release compiles with whole-module optimization and without testability, so it
       # can fail where a Debug build succeeds. Kept as its own step so a Release-only break is not reported as a
       # test failure.
       - name: Build (Release)
-        run: xcodebuild -project Cirruscope.xcodeproj -scheme Cirruscope -configuration Release -destination 'platform=macOS' build
+        run: xcodebuild -project Cirruscope.xcodeproj -scheme 'Cirruscope for macOS' -configuration Release -destination 'platform=macOS' build
+
+      # The iOS app target is scaffolding — not shipped, and with no tests of its own beyond the template stub — so
+      # CI only proves it still compiles. A generic Simulator destination avoids pinning a device name that changes
+      # with every runner image update. Device destinations are deliberately out of scope: the checked-in ad-hoc
+      # default carries no DEVELOPMENT_TEAM, so an iOS device build fails signing, whereas a Simulator build signs
+      # ad-hoc happily.
+      - name: Build for iOS Simulator (Debug)
+        run: xcodebuild -project Cirruscope.xcodeproj -scheme 'Cirruscope for iOS' -configuration Debug -destination 'generic/platform=iOS Simulator' build
+
+      # Release for iOS for the same reason it is built separately for macOS above: whole-module optimization can
+      # fail where a Debug build succeeds.
+      - name: Build for iOS Simulator (Release)
+        run: xcodebuild -project Cirruscope.xcodeproj -scheme 'Cirruscope for iOS' -configuration Release -destination 'generic/platform=iOS Simulator' build
 
       - name: Upload Test Results
         if: failure()
