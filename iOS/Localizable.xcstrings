@@ -1,0 +1,167 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Assuming HTTPS for a secure connection unless specified differently." : {
+      "comment" : "Caption under the server address field on the iOS sign-in screen, naming the HTTPS default the app applies to an address entered without a scheme of its own.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HTTPS wird für eine sichere Verbindung angenommen, sofern nicht anders angegeben."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se asume HTTPS para una conexión segura, salvo que se indique lo contrario."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HTTPS est utilisé pour une connexion sécurisée, sauf indication contraire."
+          }
+        }
+      }
+    },
+    "Connect" : {
+      "comment" : "Accessibility label of the icon-only button that starts signing in to the entered server address on the iOS sign-in screen.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verbinden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conectar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se connecter"
+          }
+        }
+      }
+    },
+    "Enter your Nextcloud server address:" : {
+      "comment" : "Label above the server address field on the iOS sign-in screen.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geben Sie die Adresse Ihres Nextcloud-Servers ein:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Introduce la dirección de tu servidor Nextcloud:"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saisissez l'adresse de votre serveur Nextcloud :"
+          }
+        }
+      }
+    },
+    "Privacy Policy" : {
+      "comment" : "Link at the bottom of the iOS sign-in screen opening the project's privacy policy. Same wording as the macOS Help menu item.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datenschutzerklärung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Política de privacidad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Politique de confidentialité"
+          }
+        }
+      }
+    },
+    "Server Address" : {
+      "comment" : "Accessibility label of the server address field on the iOS sign-in screen. It is not displayed: the field shows an example address as its prompt instead.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Serveradresse"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dirección del servidor"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adresse du serveur"
+          }
+        }
+      }
+    },
+    "Support" : {
+      "comment" : "Link at the bottom of the iOS sign-in screen opening the project's support page. German keeps the English word, which is the established term there.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Support"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soporte"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assistance"
+          }
+        }
+      }
+    },
+    "Your Nextcloud experience, elevated." : {
+      "comment" : "Tagline under the app name on the iOS sign-in screen.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ihr Nextcloud-Erlebnis auf einem neuen Niveau."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu experiencia Nextcloud, a otro nivel."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre expérience Nextcloud, sublimée."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.1"
+}

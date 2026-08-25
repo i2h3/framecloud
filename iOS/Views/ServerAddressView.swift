@@ -4,18 +4,20 @@
 import SwiftUI
 
 struct ServerAddressView: View {
-    @State private var enteredServerAddress = ""
-    @State private var isConnecting: Bool
+    @State
+    private var enteredServerAddress = ""
+    @State
+    private var isConnecting: Bool
 
     init(isConnecting: Bool = false) {
-        self._isConnecting = State(initialValue: isConnecting)
+        _isConnecting = State(initialValue: isConnecting)
     }
 
     var body: some View {
         VStack {
             Spacer()
 
-            Text("Cirruscope")
+            Text(verbatim: "Cirruscope")
                 .font(.system(size: 40, weight: .bold))
                 .foregroundStyle(Gradient(colors: [.accent.opacity(0.75), .accent]))
                 .shadow(color: .accent, radius: 24, x: 0, y: 0)

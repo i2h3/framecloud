@@ -8,6 +8,7 @@
 *.log
 .swiftpm
 .build
+build
 DerivedData
 xcuserdata
 .DS_Store
