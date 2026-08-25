@@ -13,12 +13,16 @@ precedence = "override"
 SPDX-FileCopyrightText = "2025 Iva Horn"
 SPDX-License-Identifier = "MIT"
 
-# The shared scheme, committed in 2026 so `xcodebuild -scheme Cirruscope` finds
-# the same build and test configuration everywhere instead of relying on the
-# per-user scheme Xcode autocreates (`xcuserdata` is gitignored). Xcode rewrites
-# it through the Scheme editor, so it is annotated here rather than inline.
+# The shared schemes, one per platform, committed in 2026 so `xcodebuild -scheme
+# 'Cirruscope for macOS'` and `-scheme 'Cirruscope for iOS'` find the same build
+# and test configuration everywhere instead of relying on the per-user schemes
+# Xcode autocreates (`xcuserdata` is gitignored). Xcode rewrites them through the
+# Scheme editor, so they are annotated here rather than inline.
 [[annotations]]
-path = "Cirruscope.xcodeproj/xcshareddata/xcschemes/Cirruscope.xcscheme"
+path = [
+    "Cirruscope.xcodeproj/xcshareddata/xcschemes/Cirruscope for iOS.xcscheme",
+    "Cirruscope.xcodeproj/xcshareddata/xcschemes/Cirruscope for macOS.xcscheme",
+]
 precedence = "override"
 SPDX-FileCopyrightText = "2026 Iva Horn"
 SPDX-License-Identifier = "MIT"
@@ -39,17 +43,9 @@ precedence = "override"
 SPDX-FileCopyrightText = "2025 Iva Horn"
 SPDX-License-Identifier = "MIT"
 
-# Asset catalog contents added in 2026: binary images plus their
-# Contents.json manifests, both owned by Xcode's Asset Catalog editor.
+# Asset catalog contents added in 2026, owned by Xcode's Asset Catalog editor.
 [[annotations]]
-path = [
-    "Cirruscope/Assets.xcassets/AccentColor.colorset/Contents.json",
-    "Cirruscope/Assets.xcassets/Background.imageset/Background.jpg",
-    "Cirruscope/Assets.xcassets/Background.imageset/Contents.json",
-    "Cirruscope/Assets.xcassets/Logo.imageset/Contents.json",
-    "Cirruscope/Assets.xcassets/Logo.imageset/Dark.png",
-    "Cirruscope/Assets.xcassets/Logo.imageset/Light.png",
-]
+path = "Cirruscope/Assets.xcassets/AccentColor.colorset/Contents.json"
 precedence = "override"
 SPDX-FileCopyrightText = "2026 Iva Horn"
 SPDX-License-Identifier = "MIT"
@@ -59,8 +55,7 @@ SPDX-License-Identifier = "MIT"
 # bundle with no guarantee an inline comment survives, so every layer is
 # annotated here rather than inline. icon.json and Cloud.svg have been
 # present since 2025, carried through the rename without being replaced;
-# the remaining layers were added later, in 2026. Excludes the Nextcloud
-# mark layer, annotated separately below.
+# the remaining layers were added later, in 2026.
 [[annotations]]
 path = [
     "Cirruscope/AppIcon.icon/icon.json",
@@ -73,7 +68,6 @@ SPDX-License-Identifier = "MIT"
 [[annotations]]
 path = [
     "Cirruscope/AppIcon.icon/Assets/Zoom.svg",
-    "Cirruscope/AppIcon.icon/Assets/layer-0-background.svg",
 ]
 precedence = "override"
 SPDX-FileCopyrightText = "2026 Iva Horn"
@@ -81,22 +75,24 @@ SPDX-License-Identifier = "MIT"
 
 # Miscellaneous Xcode-GUI-editable or generated files, all added in 2026:
 # Interface Builder storyboard, the Privacy Manifest editor's file, the
-# Info tab's file, the four String Catalogs (JSON: one for Swift strings, one
-# for storyboard strings since migrating off per-locale Main.strings files, one
-# for the Info.plist usage descriptions, and one for App Shortcut phrases), the
-# bare version file SwiftFormat itself parses, and the root LICENSE text.
+# Info tab's file, the five String Catalogs (JSON: one for each app target's own
+# Swift and SwiftUI strings, one for storyboard strings since migrating off
+# per-locale Main.strings files, one for the Info.plist usage descriptions, and
+# one for App Shortcut phrases), the bare version file SwiftFormat itself
+# parses, and the root LICENSE text.
 [[annotations]]
 path = [
     ".swift-version",
     "LICENSE",
-    "Cirruscope/Base.lproj/Main.storyboard",
     "Cirruscope/Cirruscope.entitlements",
-    "Cirruscope/Info.plist",
-    "Cirruscope/InfoPlist.xcstrings",
     "Cirruscope/PrivacyInfo.xcprivacy",
-    "Cirruscope/AppShortcuts.xcstrings",
-    "Cirruscope/Localizable.xcstrings",
-    "Cirruscope/mul.lproj/Main.xcstrings",
+    "iOS/Localizable.xcstrings",
+    "macOS/AppShortcuts.xcstrings",
+    "macOS/Base.lproj/Main.storyboard",
+    "macOS/Info.plist",
+    "macOS/InfoPlist.xcstrings",
+    "macOS/Localizable.xcstrings",
+    "macOS/mul.lproj/Main.xcstrings",
 ]
 precedence = "override"
 SPDX-FileCopyrightText = "2026 Iva Horn"
