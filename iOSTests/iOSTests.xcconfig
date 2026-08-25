@@ -4,11 +4,12 @@
 // Configuration settings file format documentation can be found at:
 // https://developer.apple.com/documentation/xcode/adding-a-build-configuration-file-to-your-project
 
-#include "../Cirruscope/Cirruscope.xcconfig"
+#include "../Cirruscope.xcconfig"
 
 PRODUCT_BUNDLE_IDENTIFIER = $(CIRRUSCOPE_BASE_BUNDLE_IDENTIFIER).tests
 PRODUCT_NAME = $(CIRRUSCOPE_BUNDLE_NAME)
-PROVISIONING_PROFILE_SPECIFIER = Cirruscope Tests
+SDKROOT = iphoneos
 SWIFT_EMIT_LOC_STRINGS = NO
+TARGETED_DEVICE_FAMILY = 1,2
 
 #include? "Local.xcconfig"

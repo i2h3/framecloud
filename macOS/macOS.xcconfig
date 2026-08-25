@@ -7,5 +7,6 @@
 #include "../Cirruscope/Cirruscope.xcconfig"
 
 INFOPLIST_FILE = macOS/Info.plist
+PROVISIONING_PROFILE_SPECIFIER = Cirruscope
 
 #include? "Local.xcconfig"
