@@ -19,6 +19,13 @@
 			remoteGlobalIDString = AA059CA22FE407A700DE3094;
 			remoteInfo = Cirruscope;
 		};
+		AAE7F45D303D7457001A7B02 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA059C9B2FE407A700DE3094 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AAE7F44F303D7455001A7B02;
+			remoteInfo = iOS;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -27,22 +34,37 @@
 		AA059CC42FE4130E00DE3094 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		AA059CC92FE414EB00DE3094 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		AA059CFA2FE558BD00DE3094 /* AGENTS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = AGENTS.md; sourceTree = "<group>"; };
-		AA2AC5D530189B11002A0C28 /* CirruscopeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CirruscopeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA2AC5D530189B11002A0C28 /* macOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = macOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA8A9A90300522C20098151F /* Cirruscope.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Cirruscope.xcconfig; sourceTree = "<group>"; };
 		AAE675CC301CEB10007853C0 /* DECISIONS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = DECISIONS.md; sourceTree = "<group>"; };
 		AAE675CD301CEB20007853C0 /* CODE_OF_CONDUCT.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CODE_OF_CONDUCT.md; sourceTree = "<group>"; };
 		AAE675CE301CEB20007853C0 /* CONTRIBUTING.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTING.md; sourceTree = "<group>"; };
 		AAE675CF301CEB20007853C0 /* REUSE.toml */ = {isa = PBXFileReference; lastKnownFileType = text; path = REUSE.toml; sourceTree = "<group>"; };
+		AAE7F450303D7455001A7B02 /* Cirruscope.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cirruscope.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AAE7F45C303D7457001A7B02 /* iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		AA059CF62FE5301C00DE3094 /* Exceptions for "Cirruscope" folder in "Cirruscope" target */ = {
+		AAE7FF44303D7EF4001A7B02 /* Exceptions for "macOS" folder in "macOS" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = AA059CA22FE407A700DE3094 /* macOS */;
+		};
+		AAE7FF49303D82EF001A7B02 /* Exceptions for "Cirruscope" folder in "macOS" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Cirruscope.xcconfig,
-				Info.plist,
 			);
-			target = AA059CA22FE407A700DE3094 /* Cirruscope */;
+			target = AA059CA22FE407A700DE3094 /* macOS */;
+		};
+		AAE7FF4A303D82EF001A7B02 /* Exceptions for "Cirruscope" folder in "iOS" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Cirruscope.xcconfig,
+			);
+			target = AAE7F44F303D7455001A7B02 /* iOS */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -50,19 +72,38 @@
 		AA059CA52FE407A700DE3094 /* Cirruscope */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				AA059CF62FE5301C00DE3094 /* Exceptions for "Cirruscope" folder in "Cirruscope" target */,
+				AAE7FF49303D82EF001A7B02 /* Exceptions for "Cirruscope" folder in "macOS" target */,
+				AAE7FF4A303D82EF001A7B02 /* Exceptions for "Cirruscope" folder in "iOS" target */,
 			);
 			path = Cirruscope;
 			sourceTree = "<group>";
 		};
-		AA2AC5D630189B11002A0C28 /* CirruscopeTests */ = {
+		AA2AC5D630189B11002A0C28 /* macOSTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = CirruscopeTests;
+			path = macOSTests;
 			sourceTree = "<group>";
 		};
 		AAE67F6530231586007853C0 /* Website */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Website;
+			sourceTree = "<group>";
+		};
+		AAE7F451303D7455001A7B02 /* iOS */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = iOS;
+			sourceTree = "<group>";
+		};
+		AAE7F45F303D7457001A7B02 /* iOSTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = iOSTests;
+			sourceTree = "<group>";
+		};
+		AAE7F477303D75FE001A7B02 /* macOS */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				AAE7FF44303D7EF4001A7B02 /* Exceptions for "macOS" folder in "macOS" target */,
+			);
+			path = macOS;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -84,6 +125,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AAE7F44D303D7455001A7B02 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AAE7F459303D7457001A7B02 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -99,7 +154,10 @@
 				AAE675CF301CEB20007853C0 /* REUSE.toml */,
 				AA8A9A90300522C20098151F /* Cirruscope.xcconfig */,
 				AA059CA52FE407A700DE3094 /* Cirruscope */,
-				AA2AC5D630189B11002A0C28 /* CirruscopeTests */,
+				AAE7F477303D75FE001A7B02 /* macOS */,
+				AA2AC5D630189B11002A0C28 /* macOSTests */,
+				AAE7F451303D7455001A7B02 /* iOS */,
+				AAE7F45F303D7457001A7B02 /* iOSTests */,
 				AAE67F6530231586007853C0 /* Website */,
 				AA059CBD2FE407BA00DE3094 /* Frameworks */,
 				AA059CA42FE407A700DE3094 /* Products */,
@@ -110,7 +168,9 @@
 			isa = PBXGroup;
 			children = (
 				AA059CA32FE407A700DE3094 /* Cirruscope.app */,
-				AA2AC5D530189B11002A0C28 /* CirruscopeTests.xctest */,
+				AA2AC5D530189B11002A0C28 /* macOSTests.xctest */,
+				AAE7F450303D7455001A7B02 /* Cirruscope.app */,
+				AAE7F45C303D7457001A7B02 /* iOSTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -126,9 +186,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		AA059CA22FE407A700DE3094 /* Cirruscope */ = {
+		AA059CA22FE407A700DE3094 /* macOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AA059CB12FE407A900DE3094 /* Build configuration list for PBXNativeTarget "Cirruscope" */;
+			buildConfigurationList = AA059CB12FE407A900DE3094 /* Build configuration list for PBXNativeTarget "macOS" */;
 			buildPhases = (
 				AA059C9F2FE407A700DE3094 /* Sources */,
 				AA059CA02FE407A700DE3094 /* Frameworks */,
@@ -140,8 +200,9 @@
 			);
 			fileSystemSynchronizedGroups = (
 				AA059CA52FE407A700DE3094 /* Cirruscope */,
+				AAE7F477303D75FE001A7B02 /* macOS */,
 			);
-			name = Cirruscope;
+			name = macOS;
 			packageProductDependencies = (
 				AA059CE22FE42E5500DE3094 /* Rainmaker */,
 			);
@@ -149,9 +210,9 @@
 			productReference = AA059CA32FE407A700DE3094 /* Cirruscope.app */;
 			productType = "com.apple.product-type.application";
 		};
-		AA2AC5D430189B11002A0C28 /* CirruscopeTests */ = {
+		AA2AC5D430189B11002A0C28 /* macOSTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AA2AC5DD30189B11002A0C28 /* Build configuration list for PBXNativeTarget "CirruscopeTests" */;
+			buildConfigurationList = AA2AC5DD30189B11002A0C28 /* Build configuration list for PBXNativeTarget "macOSTests" */;
 			buildPhases = (
 				AA2AC5D130189B11002A0C28 /* Sources */,
 				AA2AC5D230189B11002A0C28 /* Frameworks */,
@@ -163,13 +224,59 @@
 				AA2AC5DA30189B11002A0C28 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				AA2AC5D630189B11002A0C28 /* CirruscopeTests */,
+				AA2AC5D630189B11002A0C28 /* macOSTests */,
 			);
-			name = CirruscopeTests;
+			name = macOSTests;
 			packageProductDependencies = (
 			);
 			productName = CirruscopeTests;
-			productReference = AA2AC5D530189B11002A0C28 /* CirruscopeTests.xctest */;
+			productReference = AA2AC5D530189B11002A0C28 /* macOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		AAE7F44F303D7455001A7B02 /* iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AAE7F474303D7457001A7B02 /* Build configuration list for PBXNativeTarget "iOS" */;
+			buildPhases = (
+				AAE7F44C303D7455001A7B02 /* Sources */,
+				AAE7F44D303D7455001A7B02 /* Frameworks */,
+				AAE7F44E303D7455001A7B02 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				AA059CA52FE407A700DE3094 /* Cirruscope */,
+				AAE7F451303D7455001A7B02 /* iOS */,
+			);
+			name = iOS;
+			packageProductDependencies = (
+			);
+			productName = iOS;
+			productReference = AAE7F450303D7455001A7B02 /* Cirruscope.app */;
+			productType = "com.apple.product-type.application";
+		};
+		AAE7F45B303D7457001A7B02 /* iOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AAE7F475303D7457001A7B02 /* Build configuration list for PBXNativeTarget "iOSTests" */;
+			buildPhases = (
+				AAE7F458303D7457001A7B02 /* Sources */,
+				AAE7F459303D7457001A7B02 /* Frameworks */,
+				AAE7F45A303D7457001A7B02 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AAE7F45E303D7457001A7B02 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				AAE7F45F303D7457001A7B02 /* iOSTests */,
+			);
+			name = iOSTests;
+			packageProductDependencies = (
+			);
+			productName = iOSTests;
+			productReference = AAE7F45C303D7457001A7B02 /* iOSTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -188,6 +295,13 @@
 					AA2AC5D430189B11002A0C28 = {
 						CreatedOnToolsVersion = 26.6;
 						TestTargetID = AA059CA22FE407A700DE3094;
+					};
+					AAE7F44F303D7455001A7B02 = {
+						CreatedOnToolsVersion = 26.6;
+					};
+					AAE7F45B303D7457001A7B02 = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = AAE7F44F303D7455001A7B02;
 					};
 				};
 			};
@@ -211,8 +325,10 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				AA059CA22FE407A700DE3094 /* Cirruscope */,
-				AA2AC5D430189B11002A0C28 /* CirruscopeTests */,
+				AA059CA22FE407A700DE3094 /* macOS */,
+				AA2AC5D430189B11002A0C28 /* macOSTests */,
+				AAE7F44F303D7455001A7B02 /* iOS */,
+				AAE7F45B303D7457001A7B02 /* iOSTests */,
 			);
 		};
 /* End PBXProject section */
@@ -226,6 +342,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		AA2AC5D330189B11002A0C28 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AAE7F44E303D7455001A7B02 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AAE7F45A303D7457001A7B02 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -249,13 +379,32 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AAE7F44C303D7455001A7B02 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AAE7F458303D7457001A7B02 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
 		AA2AC5DA30189B11002A0C28 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = AA059CA22FE407A700DE3094 /* Cirruscope */;
+			target = AA059CA22FE407A700DE3094 /* macOS */;
 			targetProxy = AA2AC5D930189B11002A0C28 /* PBXContainerItemProxy */;
+		};
+		AAE7F45E303D7457001A7B02 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AAE7F44F303D7455001A7B02 /* iOS */;
+			targetProxy = AAE7F45D303D7457001A7B02 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -297,6 +446,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 9258VT2Z85;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -361,6 +511,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 9258VT2Z85;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -382,8 +533,8 @@
 		};
 		AA059CB22FE407A900DE3094 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = AA059CA52FE407A700DE3094 /* Cirruscope */;
-			baseConfigurationReferenceRelativePath = Cirruscope.xcconfig;
+			baseConfigurationReferenceAnchor = AAE7F477303D75FE001A7B02 /* macOS */;
+			baseConfigurationReferenceRelativePath = macOS.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -405,7 +556,6 @@
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Cirruscope/Info.plist;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Grant access to your camera to show yourself during video calls.";
@@ -432,8 +582,8 @@
 		};
 		AA059CB32FE407A900DE3094 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = AA059CA52FE407A700DE3094 /* Cirruscope */;
-			baseConfigurationReferenceRelativePath = Cirruscope.xcconfig;
+			baseConfigurationReferenceAnchor = AAE7F477303D75FE001A7B02 /* macOS */;
+			baseConfigurationReferenceRelativePath = macOS.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -455,7 +605,6 @@
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Cirruscope/Info.plist;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Grant access to your camera to show yourself during video calls.";
@@ -482,14 +631,13 @@
 		};
 		AA2AC5DB30189B11002A0C28 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = AA2AC5D630189B11002A0C28 /* CirruscopeTests */;
-			baseConfigurationReferenceRelativePath = CirruscopeTests.xcconfig;
+			baseConfigurationReferenceAnchor = AA2AC5D630189B11002A0C28 /* macOSTests */;
+			baseConfigurationReferenceRelativePath = macOSTests.xcconfig;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Cirruscope.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Cirruscope";
 			};
@@ -497,16 +645,109 @@
 		};
 		AA2AC5DC30189B11002A0C28 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = AA2AC5D630189B11002A0C28 /* CirruscopeTests */;
-			baseConfigurationReferenceRelativePath = CirruscopeTests.xcconfig;
+			baseConfigurationReferenceAnchor = AA2AC5D630189B11002A0C28 /* macOSTests */;
+			baseConfigurationReferenceRelativePath = macOSTests.xcconfig;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Cirruscope.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Cirruscope";
+			};
+			name = Release;
+		};
+		AAE7F46E303D7457001A7B02 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = AAE7F451303D7455001A7B02 /* iOS */;
+			baseConfigurationReferenceRelativePath = iOS.xcconfig;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AAE7F46F303D7457001A7B02 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = AAE7F451303D7455001A7B02 /* iOS */;
+			baseConfigurationReferenceRelativePath = iOS.xcconfig;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		AAE7F470303D7457001A7B02 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = AAE7F45F303D7457001A7B02 /* iOSTests */;
+			baseConfigurationReferenceRelativePath = iOSTests.xcconfig;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Cirruscope.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Cirruscope";
+			};
+			name = Debug;
+		};
+		AAE7F471303D7457001A7B02 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = AAE7F45F303D7457001A7B02 /* iOSTests */;
+			baseConfigurationReferenceRelativePath = iOSTests.xcconfig;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Cirruscope.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Cirruscope";
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -522,7 +763,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		AA059CB12FE407A900DE3094 /* Build configuration list for PBXNativeTarget "Cirruscope" */ = {
+		AA059CB12FE407A900DE3094 /* Build configuration list for PBXNativeTarget "macOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AA059CB22FE407A900DE3094 /* Debug */,
@@ -531,11 +772,29 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		AA2AC5DD30189B11002A0C28 /* Build configuration list for PBXNativeTarget "CirruscopeTests" */ = {
+		AA2AC5DD30189B11002A0C28 /* Build configuration list for PBXNativeTarget "macOSTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AA2AC5DB30189B11002A0C28 /* Debug */,
 				AA2AC5DC30189B11002A0C28 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AAE7F474303D7457001A7B02 /* Build configuration list for PBXNativeTarget "iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AAE7F46E303D7457001A7B02 /* Debug */,
+				AAE7F46F303D7457001A7B02 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AAE7F475303D7457001A7B02 /* Build configuration list for PBXNativeTarget "iOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AAE7F470303D7457001A7B02 /* Debug */,
+				AAE7F471303D7457001A7B02 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -1,0 +1,11 @@
+// SPDX-FileCopyrightText: 2026 Iva Horn
+// SPDX-License-Identifier: MIT
+
+// Configuration settings file format documentation can be found at:
+// https://developer.apple.com/documentation/xcode/adding-a-build-configuration-file-to-your-project
+
+#include "../Cirruscope/Cirruscope.xcconfig"
+
+INFOPLIST_FILE = macOS/Info.plist
+
+#include? "Local.xcconfig"

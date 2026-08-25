@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "AA059CA22FE407A700DE3094"
+               BlueprintIdentifier = "AAE7F44F303D7455001A7B02"
                BuildableName = "Cirruscope.app"
-               BlueprintName = "Cirruscope"
+               BlueprintName = "iOS"
                ReferencedContainer = "container:Cirruscope.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -35,9 +35,20 @@
             parallelizable = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "AA2AC5D430189B11002A0C28"
-               BuildableName = "CirruscopeTests.xctest"
-               BlueprintName = "CirruscopeTests"
+               BlueprintIdentifier = "AAE7F45B303D7457001A7B02"
+               BuildableName = "iOSTests.xctest"
+               BlueprintName = "iOSTests"
+               ReferencedContainer = "container:Cirruscope.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "AAE7F465303D7457001A7B02"
+               BuildableName = "iOSUITests.xctest"
+               BlueprintName = "iOSUITests"
                ReferencedContainer = "container:Cirruscope.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -58,9 +69,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "AA059CA22FE407A700DE3094"
+            BlueprintIdentifier = "AAE7F44F303D7455001A7B02"
             BuildableName = "Cirruscope.app"
-            BlueprintName = "Cirruscope"
+            BlueprintName = "iOS"
             ReferencedContainer = "container:Cirruscope.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -75,9 +86,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "AA059CA22FE407A700DE3094"
+            BlueprintIdentifier = "AAE7F44F303D7455001A7B02"
             BuildableName = "Cirruscope.app"
-            BlueprintName = "Cirruscope"
+            BlueprintName = "iOS"
             ReferencedContainer = "container:Cirruscope.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
