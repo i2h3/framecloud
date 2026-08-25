@@ -12,7 +12,7 @@ import SwiftData
 ///
 /// Reads return value-type DTOs (`ServerAppTransferObject`, `KeyboardShortcutTransferObject`), never managed `@Model` objects, so AppKit table views and menus hold snapshots that stay valid across an upsert. Every access is confined to the main actor and only `Sendable` values ever cross the boundary to the nonisolated `ServerConnection`, which is what keeps the store race-free under Swift 6 complete concurrency. Autosave is disabled and each mutator saves explicitly, so every change commits atomically and is on disk by the time a future extension process reads it.
 ///
-/// The container, and the two things this store reaches outside itself for, arrive through `init(container:isReservedShortcut:notifyServerAppsDidChange:)` so its logic can be exercised against an in-memory store; `CirruscopeTests/Account/` does exactly that. Production builds exactly one instance, `shared`.
+/// The container, and the two things this store reaches outside itself for, arrive through `init(container:isReservedShortcut:notifyServerAppsDidChange:)` so its logic can be exercised against an in-memory store; `macOSTests/Account/` does exactly that. Production builds exactly one instance, `shared`.
 @MainActor
 final class AccountStore {
     /// `shared` is the process-wide account store, over the app's on-disk container.

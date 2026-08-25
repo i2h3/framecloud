@@ -1,15 +1,17 @@
 # SPDX-FileCopyrightText: 2026 Iva Horn
 # SPDX-License-Identifier: MIT
 
-# Swift: Erzwinge LF
+# Swift: force LF
 *.swift text eol=lf
 
-# Xcode-Projektdateien: Erzwinge LF
+# Xcode project files: force LF
 *.pbxproj text eol=lf
 *.xcworkspacedata text eol=lf
+*.xcscheme text eol=lf
+*.xcconfig text eol=lf
 
-# String-Kataloge (JSON): Erzwinge LF
+# String catalogs (JSON): force LF
 *.xcstrings text eol=lf
 
-# Shell-Skripte: Erzwinge LF
+# Shell scripts: force LF
 *.sh text eol=lf
