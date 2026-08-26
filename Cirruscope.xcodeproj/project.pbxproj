@@ -9,6 +9,11 @@
 /* Begin PBXBuildFile section */
 		AA059CBF2FE407BA00DE3094 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA059CBE2FE407BA00DE3094 /* WebKit.framework */; };
 		AA059CE32FE42E5500DE3094 /* Rainmaker in Frameworks */ = {isa = PBXBuildFile; productRef = AA059CE22FE42E5500DE3094 /* Rainmaker */; };
+		AA89B73E303EC1B600C5D5D9 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA89B73D303EC1B600C5D5D9 /* WidgetKit.framework */; };
+		AA89B740303EC1B600C5D5D9 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA89B73F303EC1B600C5D5D9 /* SwiftUI.framework */; };
+		AA89B74B303EC1B700C5D5D9 /* Widgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AA89B73C303EC1B600C5D5D9 /* Widgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		AA89B755303EC8F600C5D5D9 /* Widgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AA89B73C303EC1B600C5D5D9 /* Widgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		AA89B75A303EC90900C5D5D9 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA89B759303EC90900C5D5D9 /* WebKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -19,6 +24,20 @@
 			remoteGlobalIDString = AA059CA22FE407A700DE3094;
 			remoteInfo = Cirruscope;
 		};
+		AA89B749303EC1B700C5D5D9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA059C9B2FE407A700DE3094 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA89B73B303EC1B600C5D5D9;
+			remoteInfo = WidgetsExtension;
+		};
+		AA89B756303EC8F600C5D5D9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA059C9B2FE407A700DE3094 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA89B73B303EC1B600C5D5D9;
+			remoteInfo = Widgets;
+		};
 		AAE7F45D303D7457001A7B02 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = AA059C9B2FE407A700DE3094 /* Project object */;
@@ -28,6 +47,31 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		AA89B74C303EC1B700C5D5D9 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				AA89B74B303EC1B700C5D5D9 /* Widgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA89B758303EC8F600C5D5D9 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				AA89B755303EC8F600C5D5D9 /* Widgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		AA059CA32FE407A700DE3094 /* Cirruscope.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cirruscope.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA059CBE2FE407BA00DE3094 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
@@ -35,6 +79,10 @@
 		AA059CC92FE414EB00DE3094 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		AA059CFA2FE558BD00DE3094 /* AGENTS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = AGENTS.md; sourceTree = "<group>"; };
 		AA2AC5D530189B11002A0C28 /* macOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = macOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA89B73C303EC1B600C5D5D9 /* Widgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Widgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA89B73D303EC1B600C5D5D9 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		AA89B73F303EC1B600C5D5D9 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		AA89B759303EC90900C5D5D9 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk/System/Library/Frameworks/WebKit.framework; sourceTree = DEVELOPER_DIR; };
 		AA8A9A90300522C20098151F /* Cirruscope.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Cirruscope.xcconfig; sourceTree = "<group>"; };
 		AAE675CC301CEB10007853C0 /* DECISIONS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = DECISIONS.md; sourceTree = "<group>"; };
 		AAE675CD301CEB20007853C0 /* CODE_OF_CONDUCT.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CODE_OF_CONDUCT.md; sourceTree = "<group>"; };
@@ -45,6 +93,21 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		AA89B750303EC1B700C5D5D9 /* Exceptions for "Widgets" folder in "Widgets" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+				Widgets.xcconfig,
+			);
+			target = AA89B73B303EC1B600C5D5D9 /* Widgets */;
+		};
+		AA89BAF0303ECAD800C5D5D9 /* Exceptions for "Cirruscope" folder in "Widgets" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AppGroup.swift,
+			);
+			target = AA89B73B303EC1B600C5D5D9 /* Widgets */;
+		};
 		AAE7FF44303D7EF4001A7B02 /* Exceptions for "macOS" folder in "macOS" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -74,6 +137,7 @@
 			exceptions = (
 				AAE7FF49303D82EF001A7B02 /* Exceptions for "Cirruscope" folder in "macOS" target */,
 				AAE7FF4A303D82EF001A7B02 /* Exceptions for "Cirruscope" folder in "iOS" target */,
+				AA89BAF0303ECAD800C5D5D9 /* Exceptions for "Cirruscope" folder in "Widgets" target */,
 			);
 			path = Cirruscope;
 			sourceTree = "<group>";
@@ -81,6 +145,14 @@
 		AA2AC5D630189B11002A0C28 /* macOSTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = macOSTests;
+			sourceTree = "<group>";
+		};
+		AA89B741303EC1B600C5D5D9 /* Widgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				AA89B750303EC1B700C5D5D9 /* Exceptions for "Widgets" folder in "Widgets" target */,
+			);
+			path = Widgets;
 			sourceTree = "<group>";
 		};
 		AAE67F6530231586007853C0 /* Website */ = {
@@ -130,10 +202,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AA89B739303EC1B600C5D5D9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA89B740303EC1B600C5D5D9 /* SwiftUI.framework in Frameworks */,
+				AA89B73E303EC1B600C5D5D9 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AAE7F44D303D7455001A7B02 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA89B75A303EC90900C5D5D9 /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -160,6 +242,7 @@
 				AA8A9A90300522C20098151F /* Cirruscope.xcconfig */,
 				AAE70077303DB197001A7B02 /* .github */,
 				AA059CA52FE407A700DE3094 /* Cirruscope */,
+				AA89B741303EC1B600C5D5D9 /* Widgets */,
 				AAE7F477303D75FE001A7B02 /* macOS */,
 				AA2AC5D630189B11002A0C28 /* macOSTests */,
 				AAE7F451303D7455001A7B02 /* iOS */,
@@ -177,6 +260,7 @@
 				AA2AC5D530189B11002A0C28 /* macOSTests.xctest */,
 				AAE7F450303D7455001A7B02 /* Cirruscope.app */,
 				AAE7F45C303D7457001A7B02 /* iOSTests.xctest */,
+				AA89B73C303EC1B600C5D5D9 /* Widgets.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -185,6 +269,9 @@
 			isa = PBXGroup;
 			children = (
 				AA059CBE2FE407BA00DE3094 /* WebKit.framework */,
+				AA89B759303EC90900C5D5D9 /* WebKit.framework */,
+				AA89B73D303EC1B600C5D5D9 /* WidgetKit.framework */,
+				AA89B73F303EC1B600C5D5D9 /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -199,10 +286,12 @@
 				AA059C9F2FE407A700DE3094 /* Sources */,
 				AA059CA02FE407A700DE3094 /* Frameworks */,
 				AA059CA12FE407A700DE3094 /* Resources */,
+				AA89B74C303EC1B700C5D5D9 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				AA89B74A303EC1B700C5D5D9 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				AA059CA52FE407A700DE3094 /* Cirruscope */,
@@ -239,6 +328,28 @@
 			productReference = AA2AC5D530189B11002A0C28 /* macOSTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		AA89B73B303EC1B600C5D5D9 /* Widgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA89B74F303EC1B700C5D5D9 /* Build configuration list for PBXNativeTarget "Widgets" */;
+			buildPhases = (
+				AA89B738303EC1B600C5D5D9 /* Sources */,
+				AA89B739303EC1B600C5D5D9 /* Frameworks */,
+				AA89B73A303EC1B600C5D5D9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				AA89B741303EC1B600C5D5D9 /* Widgets */,
+			);
+			name = Widgets;
+			packageProductDependencies = (
+			);
+			productName = Widgets;
+			productReference = AA89B73C303EC1B600C5D5D9 /* Widgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		AAE7F44F303D7455001A7B02 /* iOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AAE7F474303D7457001A7B02 /* Build configuration list for PBXNativeTarget "iOS" */;
@@ -246,10 +357,12 @@
 				AAE7F44C303D7455001A7B02 /* Sources */,
 				AAE7F44D303D7455001A7B02 /* Frameworks */,
 				AAE7F44E303D7455001A7B02 /* Resources */,
+				AA89B758303EC8F600C5D5D9 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				AA89B757303EC8F600C5D5D9 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				AA059CA52FE407A700DE3094 /* Cirruscope */,
@@ -302,6 +415,9 @@
 						CreatedOnToolsVersion = 26.6;
 						TestTargetID = AA059CA22FE407A700DE3094;
 					};
+					AA89B73B303EC1B600C5D5D9 = {
+						CreatedOnToolsVersion = 26.6;
+					};
 					AAE7F44F303D7455001A7B02 = {
 						CreatedOnToolsVersion = 26.6;
 					};
@@ -335,6 +451,7 @@
 				AA2AC5D430189B11002A0C28 /* macOSTests */,
 				AAE7F44F303D7455001A7B02 /* iOS */,
 				AAE7F45B303D7457001A7B02 /* iOSTests */,
+				AA89B73B303EC1B600C5D5D9 /* Widgets */,
 			);
 		};
 /* End PBXProject section */
@@ -348,6 +465,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		AA2AC5D330189B11002A0C28 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA89B73A303EC1B600C5D5D9 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -385,6 +509,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AA89B738303EC1B600C5D5D9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AAE7F44C303D7455001A7B02 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -406,6 +537,16 @@
 			isa = PBXTargetDependency;
 			target = AA059CA22FE407A700DE3094 /* macOS */;
 			targetProxy = AA2AC5D930189B11002A0C28 /* PBXContainerItemProxy */;
+		};
+		AA89B74A303EC1B700C5D5D9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA89B73B303EC1B600C5D5D9 /* Widgets */;
+			targetProxy = AA89B749303EC1B700C5D5D9 /* PBXContainerItemProxy */;
+		};
+		AA89B757303EC8F600C5D5D9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA89B73B303EC1B600C5D5D9 /* Widgets */;
+			targetProxy = AA89B756303EC8F600C5D5D9 /* PBXContainerItemProxy */;
 		};
 		AAE7F45E303D7457001A7B02 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -565,7 +706,6 @@
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Grant access to your camera to show yourself during video calls.";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Iva Horn";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Grant access to allow connections to servers in your local network.";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Grant access to your microphone to speak freely during video calls.";
@@ -614,7 +754,6 @@
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Grant access to your camera to show yourself during video calls.";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Iva Horn";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Grant access to allow connections to servers in your local network.";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Grant access to your microphone to speak freely during video calls.";
@@ -660,6 +799,46 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Cirruscope.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Cirruscope";
+			};
+			name = Release;
+		};
+		AA89B74D303EC1B700C5D5D9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = AA89B741303EC1B600C5D5D9 /* Widgets */;
+			baseConfigurationReferenceRelativePath = Widgets.xcconfig;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				ENABLE_APP_SANDBOX = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Widgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "$(CIRRUSCOPE_BUNDLE_NAME)";
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+			};
+			name = Debug;
+		};
+		AA89B74E303EC1B700C5D5D9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = AA89B741303EC1B600C5D5D9 /* Widgets */;
+			baseConfigurationReferenceRelativePath = Widgets.xcconfig;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				ENABLE_APP_SANDBOX = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Widgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "$(CIRRUSCOPE_BUNDLE_NAME)";
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 			};
 			name = Release;
 		};
@@ -765,6 +944,15 @@
 			buildConfigurations = (
 				AA2AC5DB30189B11002A0C28 /* Debug */,
 				AA2AC5DC30189B11002A0C28 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA89B74F303EC1B700C5D5D9 /* Build configuration list for PBXNativeTarget "Widgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA89B74D303EC1B700C5D5D9 /* Debug */,
+				AA89B74E303EC1B700C5D5D9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

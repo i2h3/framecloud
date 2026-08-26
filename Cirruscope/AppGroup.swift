@@ -5,7 +5,6 @@ import Foundation
 
 /// `AppGroup` resolves the shared App Group container declared in `Cirruscope.entitlements`, so `AssetCache` and `Settings` can persist assets and preferences somewhere a future app extension could also reach.
 ///
-/// No extension target exists yet. Whoever adds one should add this file to it rather than re-deriving the identifier.
 enum AppGroup {
     /// `InfoPlistKey` collects the string keys under which `AppGroup` reads statically configured values from the app's `Info.plist`.
     private enum InfoPlistKey {

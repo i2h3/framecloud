@@ -1,0 +1,31 @@
+// SPDX-FileCopyrightText: 2026 Iva Horn
+// SPDX-License-Identifier: MIT
+
+// Configuration settings file format documentation can be found at:
+// https://developer.apple.com/documentation/xcode/adding-a-build-configuration-file-to-your-project
+
+#include "../Cirruscope.xcconfig"
+
+// An app extension sits at a different depth inside an iOS `.app` than inside a macOS `.app/Contents`, so the two
+// runpaths differ. Both values are Apple's own, taken from the multiplatform app extension template. Neither side is
+// written unconditionally: `$(inherited)` in a qualified assignment picks up the unqualified one from this same file,
+// so a macOS build would otherwise resolve to both sets of paths at once.
+LD_RUNPATH_SEARCH_PATHS[sdk=iphone*] = $(inherited) @executable_path/Frameworks @executable_path/../../Frameworks
+LD_RUNPATH_SEARCH_PATHS[sdk=macosx*] = $(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks
+PRODUCT_BUNDLE_IDENTIFIER = $(CIRRUSCOPE_BASE_BUNDLE_IDENTIFIER).widgets
+
+// Qualified to macOS because "Cirruscope Widgets" is a macOS profile. iOS widget development happens in the
+// Simulator, which signs ad-hoc without consulting a profile, so naming this one there would only ever be wrong: an
+// unresolvable name fails as if somebody had deleted it. iOS/iOS.xcconfig carries the long form of that reasoning.
+// Add an `[sdk=iphoneos*]` specifier in the same change that registers an iOS App ID for this extension.
+PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*] = Cirruscope Widgets
+
+// `auto` is what lets a single extension target serve both apps: the SDK follows whichever platform is being built,
+// instead of the project-wide `macosx`. The platform and device family lists are trimmed from the template's
+// `xros xrsimulator` and `1,2,7`, because no visionOS app embeds this extension and a platform nothing builds is a
+// platform that rots.
+SDKROOT = auto
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx
+TARGETED_DEVICE_FAMILY = 1,2
+
+#include? "Local.xcconfig"
