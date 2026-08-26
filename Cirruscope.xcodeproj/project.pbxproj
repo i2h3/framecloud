@@ -101,13 +101,6 @@
 			);
 			target = AA89B73B303EC1B600C5D5D9 /* Widgets */;
 		};
-		AA89BAF0303ECAD800C5D5D9 /* Exceptions for "Cirruscope" folder in "Widgets" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				AppGroup.swift,
-			);
-			target = AA89B73B303EC1B600C5D5D9 /* Widgets */;
-		};
 		AAE7FF44303D7EF4001A7B02 /* Exceptions for "macOS" folder in "macOS" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -137,9 +130,13 @@
 			exceptions = (
 				AAE7FF49303D82EF001A7B02 /* Exceptions for "Cirruscope" folder in "macOS" target */,
 				AAE7FF4A303D82EF001A7B02 /* Exceptions for "Cirruscope" folder in "iOS" target */,
-				AA89BAF0303ECAD800C5D5D9 /* Exceptions for "Cirruscope" folder in "Widgets" target */,
 			);
 			path = Cirruscope;
+			sourceTree = "<group>";
+		};
+		AA89BB01303ECC0000C5D5D9 /* Core */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Core;
 			sourceTree = "<group>";
 		};
 		AA2AC5D630189B11002A0C28 /* macOSTests */ = {
@@ -242,6 +239,7 @@
 				AA8A9A90300522C20098151F /* Cirruscope.xcconfig */,
 				AAE70077303DB197001A7B02 /* .github */,
 				AA059CA52FE407A700DE3094 /* Cirruscope */,
+				AA89BB01303ECC0000C5D5D9 /* Core */,
 				AA89B741303EC1B600C5D5D9 /* Widgets */,
 				AAE7F477303D75FE001A7B02 /* macOS */,
 				AA2AC5D630189B11002A0C28 /* macOSTests */,
@@ -295,6 +293,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				AA059CA52FE407A700DE3094 /* Cirruscope */,
+				AA89BB01303ECC0000C5D5D9 /* Core */,
 				AAE7F477303D75FE001A7B02 /* macOS */,
 			);
 			name = macOS;
@@ -342,6 +341,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				AA89B741303EC1B600C5D5D9 /* Widgets */,
+				AA89BB01303ECC0000C5D5D9 /* Core */,
 			);
 			name = Widgets;
 			packageProductDependencies = (
@@ -366,6 +366,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				AA059CA52FE407A700DE3094 /* Cirruscope */,
+				AA89BB01303ECC0000C5D5D9 /* Core */,
 				AAE7F451303D7455001A7B02 /* iOS */,
 			);
 			name = iOS;

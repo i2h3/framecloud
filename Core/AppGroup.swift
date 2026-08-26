@@ -3,8 +3,9 @@
 
 import Foundation
 
-/// `AppGroup` resolves the shared App Group container declared in `Cirruscope.entitlements`, so `AssetCache` and `Settings` can persist assets and preferences somewhere a future app extension could also reach.
+/// `AppGroup` resolves the shared App Group container declared in `Cirruscope.entitlements`, so `AssetCache` and `Settings` can persist assets and preferences somewhere the `Widgets` extension also reaches.
 ///
+/// It lives in `Core/` rather than beside its callers because all three targets that need it — both apps and the extension — are members of that folder. Re-deriving the identifier in the extension instead is how two copies of one string drift apart.
 enum AppGroup {
     /// `InfoPlistKey` collects the string keys under which `AppGroup` reads statically configured values from the app's `Info.plist`.
     private enum InfoPlistKey {
@@ -30,5 +31,7 @@ enum AppGroup {
     /// A build signed with a real, provisioned certificate always resolves it. An ad-hoc build cannot: ad-hoc signing embeds no entitlements (see AGENTS.md → Building and Signing), so the app runs sandboxed without membership in the group, and the container is out of reach even though the sandbox itself is active. That is the state a fresh clone, a fork, and CI all run in, so it is a legitimate degraded state to tolerate — trapping here instead, as an earlier version did, made an app that everyone could build but only the maintainer could actually launch.
     ///
     /// Being unreachable is not always visible as a `nil`, either: the container path can resolve while the sandbox still refuses to create anything under it. Callers therefore treat a non-`nil` value as a candidate rather than a guarantee, and fall back on a location private to the build — `AssetCache.assetsDirectory()` for cached assets, `AppDatabase.container` for the store.
+    ///
+    /// For the `Widgets` extension this is the normal state on iOS rather than a degraded one, and will be until an iOS App ID carrying the App Group exists: `Widgets/Widgets.xcconfig` names a provisioning profile for macOS only, so an iOS build signs without entitlements even when the maintainer's `Local.xcconfig` is in place.
     static let containerURL: URL? = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: identifier)
 }
