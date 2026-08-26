@@ -36,16 +36,22 @@ SPDX-FileCopyrightText = "2026 Iva Horn"
 SPDX-License-Identifier = "MIT"
 
 # Asset catalog root manifest: present since 2025, continuously carried
-# through the Framecloud-to-Cirruscope rename without being replaced.
+# through the Framecloud-to-Cirruscope rename and the move into Core/ without
+# being replaced.
 [[annotations]]
-path = "Cirruscope/Assets.xcassets/Contents.json"
+path = "Core/Assets.xcassets/Contents.json"
 precedence = "override"
 SPDX-FileCopyrightText = "2025 Iva Horn"
 SPDX-License-Identifier = "MIT"
 
 # Asset catalog contents added in 2026, owned by Xcode's Asset Catalog editor.
+# WidgetBackground came from the widget extension's own catalog, folded into
+# this one so the accent colour has a single definition.
 [[annotations]]
-path = "Cirruscope/Assets.xcassets/AccentColor.colorset/Contents.json"
+path = [
+    "Core/Assets.xcassets/AccentColor.colorset/Contents.json",
+    "Core/Assets.xcassets/WidgetBackground.colorset/Contents.json",
+]
 precedence = "override"
 SPDX-FileCopyrightText = "2026 Iva Horn"
 SPDX-License-Identifier = "MIT"
@@ -75,8 +81,9 @@ SPDX-License-Identifier = "MIT"
 
 # Miscellaneous Xcode-GUI-editable or generated files, all added in 2026:
 # Interface Builder storyboard, the Privacy Manifest editor's file, the
-# Info tab's file, the five String Catalogs (JSON: one for each app target's own
-# Swift and SwiftUI strings, one for storyboard strings since migrating off
+# Info tab's files for the macOS app and the widget extension, the six String
+# Catalogs (JSON: one for each app target's own Swift and SwiftUI strings, one
+# for the widget extension's, one for storyboard strings since migrating off
 # per-locale Main.strings files, one for the Info.plist usage descriptions, and
 # one for App Shortcut phrases), the bare version file SwiftFormat itself
 # parses, and the root LICENSE text.
@@ -93,6 +100,8 @@ path = [
     "macOS/InfoPlist.xcstrings",
     "macOS/Localizable.xcstrings",
     "macOS/mul.lproj/Main.xcstrings",
+    "Widgets/Info.plist",
+    "Widgets/Localizable.xcstrings",
 ]
 precedence = "override"
 SPDX-FileCopyrightText = "2026 Iva Horn"

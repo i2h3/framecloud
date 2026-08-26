@@ -62,7 +62,21 @@ Focus. Cirruscope's value is deep, macOS-specific native integration, and doing 
 
 The project does now build an iOS app target, which is scaffolding rather than a product: no iOS build is shipped, and the app it produces is a placeholder. It exists for two reasons. Xcode cannot render a widget extension in its Previews canvas from a macOS target — Apple's own documentation says previews support iOS and watchOS widgets and points macOS widgets at the debugger instead — so designing widgets at all needs an active iOS target, and widgets are wanted on the Mac. And having a second target compile the same folders is the only thing that keeps `Cirruscope/` honest about what is genuinely platform-neutral; without it, "shared" is an assertion nothing checks. It is built for the Simulator on every pull request for exactly that reason.
 
-That the two apps share one bundle identifier is deliberate too, and is what App Store Connect requires to offer them as a single app record rather than two unrelated listings. Provisioning profiles are per-platform even so, which is why only the macOS targets name one.
+That the two apps share one bundle identifier is deliberate too, and is what App Store Connect requires to offer them as a single app record rather than two unrelated listings. Provisioning profiles are per-platform even so, which is why a profile is named only where the build is for macOS: the two macOS targets name theirs outright, and the widget extension names its own behind an `[sdk=macosx*]` qualifier.
+
+## Why one widget extension for both platforms, and not one per platform?
+
+Because there is nothing platform-specific to separate. A widget is WidgetKit and SwiftUI on both platforms, and Apple ships a multiplatform app-extension template built for exactly this: one target with `SDKROOT = auto` and both platforms in `SUPPORTED_PLATFORMS`, which each app then embeds built against its own SDK. Even `#Preview(as:widget:)` compiles on macOS — what macOS lacks is the canvas rendering it, which is what the iOS app target is for.
+
+The alternative was two targets, and the argument against it is the one this project already learned the expensive way: two near-identical targets drift. Xcode writes its template's build settings into each target rather than into an xcconfig, so a second copy is a second set of settings to keep aligned, a second bundle identifier and App ID to register, a second asset catalog and String Catalog, and a second set of `REUSE.toml` annotations. The iOS app target had drifted on five settings within days of being created, one of which would have failed App Store validation.
+
+The trade-off accepted is that genuine platform differences now live inside one target instead of being separated by construction: `[sdk=…]`-qualified assignments in `Widgets/Widgets.xcconfig` for build settings, and `#if os(…)` in source for anything WidgetKit exposes on only one platform. That is a smaller cost than it looks, because those differences are rare — so far only the runpath search paths and the provisioning profile — and a qualified assignment states the difference in one place, where a duplicated target leaves it implicit in two.
+
+## Why is there a `Core/` folder as well as `Cirruscope/`?
+
+Because Xcode's synchronized folders are all-or-nothing, and an app extension wants less than an app. A folder listed by a target contributes every file it holds to that target; the only lever is `membershipExceptions`, which is a deny list. So if the widget extension listed `Cirruscope/`, every file later migrated there — as macOS code is generalized for iOS reuse — would silently join the extension too, and each one not wanted would need an exclusion added by hand. Forgetting one either bloats the extension or breaks its build, with no warning either way.
+
+`Core/` inverts that default: it holds only what genuinely has no UI-framework dependency and is therefore safe in an app extension, and all three targets list it. `Cirruscope/` keeps the narrower job of bundle identity and configuration for the two apps. The cost is that a new shared file has two plausible homes and putting it in the wrong one is a silent mistake; the alternative shapes — a deny list that grows forever, or a local Swift package with `public` annotations on every shared symbol — were both worse for a shared surface this small. A package remains the right answer if that surface grows to hold the models and the store.
 
 ## Why Apple platforms only (no Windows or Linux)?
 
