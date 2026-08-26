@@ -14,6 +14,7 @@
 		AA89B74B303EC1B700C5D5D9 /* Widgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AA89B73C303EC1B600C5D5D9 /* Widgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		AA89B755303EC8F600C5D5D9 /* Widgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AA89B73C303EC1B600C5D5D9 /* Widgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		AA89B75A303EC90900C5D5D9 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA89B759303EC90900C5D5D9 /* WebKit.framework */; };
+		AA89BFCC303F3C6B00C5D5D9 /* Rainmaker in Frameworks */ = {isa = PBXBuildFile; productRef = AA89BFCB303F3C6B00C5D5D9 /* Rainmaker */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -101,6 +102,13 @@
 			);
 			target = AA89B73B303EC1B600C5D5D9 /* Widgets */;
 		};
+		AA89BFCE303F3CA300C5D5D9 /* Exceptions for "iOS" folder in "iOS" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = AAE7F44F303D7455001A7B02 /* iOS */;
+		};
 		AAE7FF44303D7EF4001A7B02 /* Exceptions for "macOS" folder in "macOS" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -134,11 +142,6 @@
 			path = Cirruscope;
 			sourceTree = "<group>";
 		};
-		AA89BB01303ECC0000C5D5D9 /* Core */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Core;
-			sourceTree = "<group>";
-		};
 		AA2AC5D630189B11002A0C28 /* macOSTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = macOSTests;
@@ -150,6 +153,11 @@
 				AA89B750303EC1B700C5D5D9 /* Exceptions for "Widgets" folder in "Widgets" target */,
 			);
 			path = Widgets;
+			sourceTree = "<group>";
+		};
+		AA89BB01303ECC0000C5D5D9 /* Core */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Core;
 			sourceTree = "<group>";
 		};
 		AAE67F6530231586007853C0 /* Website */ = {
@@ -164,6 +172,9 @@
 		};
 		AAE7F451303D7455001A7B02 /* iOS */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				AA89BFCE303F3CA300C5D5D9 /* Exceptions for "iOS" folder in "iOS" target */,
+			);
 			path = iOS;
 			sourceTree = "<group>";
 		};
@@ -205,6 +216,7 @@
 			files = (
 				AA89B740303EC1B600C5D5D9 /* SwiftUI.framework in Frameworks */,
 				AA89B73E303EC1B600C5D5D9 /* WidgetKit.framework in Frameworks */,
+				AA89BFCC303F3C6B00C5D5D9 /* Rainmaker in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -345,6 +357,7 @@
 			);
 			name = Widgets;
 			packageProductDependencies = (
+				AA89BFCB303F3C6B00C5D5D9 /* Rainmaker */,
 			);
 			productName = Widgets;
 			productReference = AA89B73C303EC1B600C5D5D9 /* Widgets.appex */;
@@ -811,6 +824,16 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				ENABLE_APP_SANDBOX = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Widgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "$(CIRRUSCOPE_BUNDLE_NAME)";
@@ -831,6 +854,16 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				ENABLE_APP_SANDBOX = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Widgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "$(CIRRUSCOPE_BUNDLE_NAME)";
@@ -852,6 +885,8 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = iOS/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Iva Horn";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -875,6 +910,8 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = iOS/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Iva Horn";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -991,6 +1028,11 @@
 
 /* Begin XCSwiftPackageProductDependency section */
 		AA059CE22FE42E5500DE3094 /* Rainmaker */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA059CE12FE42E5500DE3094 /* XCRemoteSwiftPackageReference "rainmaker" */;
+			productName = Rainmaker;
+		};
+		AA89BFCB303F3C6B00C5D5D9 /* Rainmaker */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = AA059CE12FE42E5500DE3094 /* XCRemoteSwiftPackageReference "rainmaker" */;
 			productName = Rainmaker;
