@@ -14,10 +14,7 @@ LD_RUNPATH_SEARCH_PATHS[sdk=iphone*] = $(inherited) @executable_path/Frameworks 
 LD_RUNPATH_SEARCH_PATHS[sdk=macosx*] = $(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks
 PRODUCT_BUNDLE_IDENTIFIER = $(CIRRUSCOPE_BASE_BUNDLE_IDENTIFIER).widgets
 
-// Qualified to macOS because "Cirruscope Widgets" is a macOS profile. iOS widget development happens in the
-// Simulator, which signs ad-hoc without consulting a profile, so naming this one there would only ever be wrong: an
-// unresolvable name fails as if somebody had deleted it. iOS/iOS.xcconfig carries the long form of that reasoning.
-// Add an `[sdk=iphoneos*]` specifier in the same change that registers an iOS App ID for this extension.
+PROVISIONING_PROFILE_SPECIFIER[sdk=iphone*] = Cirruscope Widgets for iOS
 PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*] = Cirruscope Widgets
 
 // `auto` is what lets a single extension target serve both apps: the SDK follows whichever platform is being built,

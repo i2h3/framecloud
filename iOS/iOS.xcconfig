@@ -6,6 +6,7 @@
 
 #include "../Cirruscope/Cirruscope.xcconfig"
 
+PROVISIONING_PROFILE_SPECIFIER = Cirruscope for iOS
 SDKROOT = iphoneos
 SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO
 TARGETED_DEVICE_FAMILY = 1,2

@@ -4,6 +4,8 @@
 import SwiftUI
 
 struct ServerAddressView: View {
+    @Environment(Store.self) private var store
+
     @State
     private var enteredServerAddress = ""
     @State
@@ -46,7 +48,7 @@ struct ServerAddressView: View {
                             .progressViewStyle(.circular)
                     } else {
                         Button {
-                            //
+                            store.account = Account(host: URL(string: "http://localhost:56827")!, name: "admin", password: "admin") // TODO: Replace this with the actual initiation of the web authentication session
                         } label: {
                             Label("Connect", systemImage: "arrow.right.circle.fill")
                                 .imageScale(.large)
@@ -64,9 +66,9 @@ struct ServerAddressView: View {
             Spacer()
 
             HStack {
-                Link("Privacy Policy", destination: URL(string: "https://cirruscope.app")!) // TODO: Settings.privacyPolicy
+                Link("Privacy Policy", destination: InfoPlist.privacyPolicy)
                 Spacer()
-                Link("Support", destination: URL(string: "https://cirruscope.app")!) // TODO: Settings.support
+                Link("Support", destination: InfoPlist.support)
             }
             .font(.footnote)
         }

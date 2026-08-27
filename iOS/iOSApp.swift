@@ -5,9 +5,12 @@ import SwiftUI
 
 @main
 struct iOSApp: App {
+    let store = Store()
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(store)
         }
     }
 }

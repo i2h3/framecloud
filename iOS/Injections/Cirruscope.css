@@ -1,0 +1,17 @@
+html,
+body {
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+#header,
+app-navigation-toggle-wrapper {
+    display: none !important;
+}
+
+#content-vue {
+    top: 0 !important;
+    height: 100% !important;
+    padding: 0 !important;
+    margin-top: 0 !important;
+}

@@ -15,6 +15,7 @@
 		AA89B755303EC8F600C5D5D9 /* Widgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AA89B73C303EC1B600C5D5D9 /* Widgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		AA89B75A303EC90900C5D5D9 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA89B759303EC90900C5D5D9 /* WebKit.framework */; };
 		AA89BFCC303F3C6B00C5D5D9 /* Rainmaker in Frameworks */ = {isa = PBXBuildFile; productRef = AA89BFCB303F3C6B00C5D5D9 /* Rainmaker */; };
+		AA89BFF3304057CA00C5D5D9 /* Rainmaker in Frameworks */ = {isa = PBXBuildFile; productRef = AA89BFF2304057CA00C5D5D9 /* Rainmaker */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -225,6 +226,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA89B75A303EC90900C5D5D9 /* WebKit.framework in Frameworks */,
+				AA89BFF3304057CA00C5D5D9 /* Rainmaker in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -384,6 +386,7 @@
 			);
 			name = iOS;
 			packageProductDependencies = (
+				AA89BFF2304057CA00C5D5D9 /* Rainmaker */,
 			);
 			productName = iOS;
 			productReference = AAE7F450303D7455001A7B02 /* Cirruscope.app */;
@@ -1033,6 +1036,11 @@
 			productName = Rainmaker;
 		};
 		AA89BFCB303F3C6B00C5D5D9 /* Rainmaker */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA059CE12FE42E5500DE3094 /* XCRemoteSwiftPackageReference "rainmaker" */;
+			productName = Rainmaker;
+		};
+		AA89BFF2304057CA00C5D5D9 /* Rainmaker */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = AA059CE12FE42E5500DE3094 /* XCRemoteSwiftPackageReference "rainmaker" */;
 			productName = Rainmaker;

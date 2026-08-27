@@ -4,17 +4,13 @@
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
-    }
-}
+    @Environment(Store.self) private var store
 
-#Preview {
-    ContentView()
+    var body: some View {
+        if store.account == nil {
+            ServerAddressView()
+        } else {
+            NextcloudView()
+        }
+    }
 }
