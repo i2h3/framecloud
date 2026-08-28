@@ -48,8 +48,13 @@ struct NextcloudView: View {
     private static let logger = Logger(for: NextcloudView.self)
 
     init() {
-        let configuration = WebPage.Configuration()
+        var configuration = WebPage.Configuration()
         let appNavigation = AppNavigationBridge()
+
+        // Completes the user agent into one Safari sends, so Nextcloud does not warn about an unrecognized browser.
+        // It has to be set here for the same reason as the handler below, and stays set for the whole session: the
+        // Cirruscope name the server associates a login with belongs to the sign-in request, not to this web view.
+        configuration.applicationNameForUserAgent = SafariUserAgent.applicationName
 
         // The handler has to be on the configuration before the page is built: `WebPage.Configuration` is a struct the
         // page copies at initialization, so one registered afterwards would never reach it. User scripts are not
