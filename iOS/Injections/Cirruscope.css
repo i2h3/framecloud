@@ -5,7 +5,7 @@ body {
 }
 
 #header,
-app-navigation-toggle-wrapper {
+.app-navigation-toggle-wrapper {
     display: none !important;
 }
 

@@ -1,3 +1,4 @@
+import os
 import SwiftUI
 import WebKit
 
@@ -8,8 +9,31 @@ struct NextcloudView: View {
     @State
     private var page: WebPage
 
+    ///
+    /// Carries what the loaded page reports about its app-navigation toggle, which is what decides whether the toolbar control is on screen and how it renders.
+    ///
+    @State
+    private var appNavigation: AppNavigationBridge
+
+    ///
+    /// Records this screen's activity under the `NextcloudView` category.
+    ///
+    /// Static because a `View` is a value rebuilt on every parent body evaluation, and one logger per screen is enough.
+    ///
+    private static let logger = Logger(for: NextcloudView.self)
+
     init() {
         let configuration = WebPage.Configuration()
+        let appNavigation = AppNavigationBridge()
+
+        // Both have to be on the configuration before the page is built: `WebPage.Configuration` is a struct the
+        // page copies at initialization, so a handler or script registered afterwards would never reach it.
+        configuration.userContentController.add(appNavigation, name: AppNavigationBridge.messageName)
+
+        if let source = Script.sidebarToggleState.source {
+            let script = WKUserScript(source: source, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
+            configuration.userContentController.addUserScript(script)
+        }
 
         if
             let url = Bundle.main.url(forResource: "Cirruscope", withExtension: "css"),
@@ -35,14 +59,34 @@ struct NextcloudView: View {
         page.isInspectable = true
 
         _page = State(initialValue: page)
+        _appNavigation = State(initialValue: appNavigation)
     }
 
     var body: some View {
         NavigationStack {
             WebView(page)
+                .ignoresSafeArea()
                 .webViewMagnificationGestures(.disabled)
                 .webViewBackForwardNavigationGestures(.disabled)
                 .toolbar {
+                    // Not every Nextcloud app offers an app navigation, so the control leaves the toolbar rather
+                    // than greying out. `ToolbarContent.hidden(_:)` would say that more directly but is macOS-only —
+                    // it belongs to toolbar customization, which iOS has no equivalent of — so the item is built
+                    // conditionally instead.
+                    if appNavigation.isAvailable {
+                        // A `Toggle` rather than a `Button` so the toolbar renders its on state as the selected
+                        // glass background: `sidebar.left` has no filled variant to swap to, so reflecting the state
+                        // through the symbol would have been a silent no-op. The setter ignores its argument and
+                        // only asks the page to toggle — `isExpanded` then follows what the page actually did,
+                        // rather than what the tap assumed it would do.
+                        ToolbarItem(placement: .navigation) {
+                            Toggle(isOn: Binding(get: { appNavigation.isExpanded }, set: { _ in toggleAppNavigation() })) {
+                                Label("App Navigation", systemImage: "sidebar.left")
+                            }
+                            .toggleStyle(.button)
+                        }
+                    }
+
                     ToolbarTitleMenu {
                         ForEach(store.apps) { app in
                             Button {
@@ -75,6 +119,25 @@ struct NextcloudView: View {
 
             page.load(authenticatedRequest(for: account.server))
             store.updateApps()
+        }
+    }
+
+    ///
+    /// Ask the page to show or hide Nextcloud's app navigation, by clicking the toggle the web interface offers.
+    ///
+    /// The same script backs macOS's "Show/Hide Sidebar" menu item, so both platforms drive the web interface through one click target. Nothing is assumed about the outcome: `AppNavigationBridge` reports the resulting state back, and the toolbar control renders from that.
+    ///
+    private func toggleAppNavigation() {
+        guard let source = Script.sidebarToggle.source else {
+            return
+        }
+
+        Task {
+            do {
+                _ = try await page.callJavaScript(source)
+            } catch {
+                Self.logger.error("Could not toggle the app navigation: \(error.localizedDescription)")
+            }
         }
     }
 

@@ -458,7 +458,7 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
 
     private func installWindowDragBridge() {
         webView.configuration.userContentController.add(self, name: ScriptMessageName.windowDrag.rawValue)
-        installUserScript(.windowDrag, injectionTime: .atDocumentEnd)
+        installUserScript(WebViewScript.windowDrag.source, injectionTime: .atDocumentEnd)
     }
 
     // MARK: - Sidebar
@@ -475,7 +475,7 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
 
     private func installSidebarToggleBridge() {
         webView.configuration.userContentController.add(self, name: ScriptMessageName.sidebarToggleState.rawValue)
-        installUserScript(.sidebarToggleState, injectionTime: .atDocumentEnd)
+        installUserScript(Script.sidebarToggleState.source, injectionTime: .atDocumentEnd)
     }
 
     /// `installSidebarShortcutBridge()` registers the `sidebarShortcut` message handler and injects `WebViewScript.sidebarShortcut`, which claims ⌃⌘S from inside the page for every case in which no `WebWindow` is offered the key equivalent.
@@ -484,7 +484,7 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
     /// `WebWindow.performKeyEquivalent(with:)` remains the ordinary path and is the reason this one is a supplement rather than a replacement: while one of the app's own windows is key, AppKit offers it the key equivalent before the page is ever asked, the window claims it, and this script never runs. Element fullscreen is the case it exists for. There WebKit hosts the web view in a window of its own, so no `WebWindow` sees the event and the "Show/Hide Sidebar" menu item is disabled as well — its action targets the first responder, and the responder chain of WebKit's window does not lead back to this controller, so nothing implements `toggleSidebar(_:)` and AppKit disables the item without even asking `WebViewController+NSMenuItemValidation`. That left the keystroke to Nextcloud Talk's own handling, which swallows it and starts a bogus download (issue #59) — the very misbehaviour the window override was written to prevent, back again for as long as a call was fullscreen. A listener in the page is offered the event wherever the page is, which is what makes it the right place for the exception.
     private func installSidebarShortcutBridge() {
         webView.configuration.userContentController.add(self, name: ScriptMessageName.sidebarShortcut.rawValue)
-        installUserScript(.sidebarShortcut, injectionTime: .atDocumentStart)
+        installUserScript(WebViewScript.sidebarShortcut.source, injectionTime: .atDocumentStart)
     }
 
     /// `isSidebarToggleShortcut(_:)` is `true` when `event` is the ⌃⌘S keystroke Cirruscope claims for "Show/Hide Sidebar" ahead of the loaded page.
@@ -498,7 +498,7 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
 
     @IBAction
     func toggleSidebar(_: Any?) {
-        guard let source = WebViewScript.sidebarToggle.source else {
+        guard let source = Script.sidebarToggle.source else {
             return
         }
 
@@ -510,7 +510,7 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
     private func installNotificationBridge() {
         UserNotifier.shared.requestAuthorization()
         webView.configuration.userContentController.add(self, name: ScriptMessageName.notification.rawValue)
-        installUserScript(.notificationBridge, injectionTime: .atDocumentStart)
+        installUserScript(WebViewScript.notificationBridge.source, injectionTime: .atDocumentStart)
     }
 
     // MARK: - Web View Styling
@@ -658,11 +658,11 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
         case notification
     }
 
-    /// `installUserScript(_:injectionTime:)` loads `script` from its bundled resource and registers it on the web view's `WKUserContentController` so it runs at `injectionTime` on every page load, doing nothing if the resource cannot be read.
+    /// `installUserScript(_:injectionTime:)` registers `source` on the web view's `WKUserContentController` so it runs at `injectionTime` on every page load, doing nothing if the resource behind it could not be read.
     ///
-    /// `installWindowDragBridge()` and `installSidebarToggleBridge()` call this after registering the script-message handlers their scripts post back to.
-    private func installUserScript(_ script: WebViewScript, injectionTime: WKUserScriptInjectionTime) {
-        guard let source = script.source else {
+    /// `installWindowDragBridge()` and `installSidebarToggleBridge()` call this after registering the script-message handlers their scripts post back to. It takes the loaded source rather than a `WebViewScript` so it can install a shared `Script` just as readily — the two enumerations name different resources but produce the same JavaScript text.
+    private func installUserScript(_ source: String?, injectionTime: WKUserScriptInjectionTime) {
+        guard let source else {
             return
         }
 
