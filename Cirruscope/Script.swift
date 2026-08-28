@@ -8,7 +8,7 @@ import os
 /// `Script` enumerates the JavaScript both apps inject into their web view, and loads it from the bundle on demand.
 ///
 /// Each case's raw value is the name of the resource behind it, so the JavaScript and CSS stay standalone files that can be edited with their own tooling instead of being embedded as string literals in Swift source. Lookup is by name against the flat bundle, which is why moving those resources between source folders does not disturb either app.
-/// It lives here rather than in `Core/` because only the two apps drive a web view; the widget extension has none. macOS's own `WebViewScript` enumerates the four scripts that are macOS-only — window dragging, the ⌃⌘S claim, the appearance attributes, and the notification bridge — and this holds what turned out to be the same job on both platforms.
+/// It lives here rather than in `Core/` because only the two apps drive a web view; the widget extension has none. macOS's own `macOSScript` enumerates the four scripts that are macOS-only — window dragging, the ⌃⌘S claim, the appearance attributes, and the notification bridge — and this holds what turned out to be the same job on both platforms.
 ///
 enum Script: String {
     ///
@@ -29,7 +29,7 @@ enum Script: String {
     /// `styleSheet` appends the app's bundled `Cirruscope.css` to the document as a `<style>` element.
     ///
     /// It is the one case whose resource is not itself JavaScript: `source` reads the stylesheet and wraps it in the script that installs it, so the caller handles it exactly like the others. Both apps install it as a user script that runs at the *start* of every document load, early enough that the page never paints unstyled.
-    /// Each app bundles its own `Cirruscope.css` — `macOS/Cirruscope.css` and `iOS/Injections/Cirruscope.css` — and they are deliberately different stylesheets for two very different windows. Only the loading is shared, and it can be because each target's bundle holds exactly one resource by that name.
+    /// Each app bundles its own `Cirruscope.css` — `macOS/Cirruscope.css` and `iOS/Cirruscope.css` — and they are deliberately different stylesheets for two very different windows. Only the loading is shared, and it can be because each target's bundle holds exactly one resource by that name.
     ///
     case styleSheet = "Cirruscope"
 

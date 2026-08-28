@@ -4,12 +4,12 @@
 import Foundation
 import os
 
-/// `WebViewScript` enumerates the JavaScript resources bundled with the app that `WebViewController` injects into or evaluates within its `WKWebView`.
+/// `macOSScript` enumerates the JavaScript resources bundled with the app that `WebViewController` injects into or evaluates within its `WKWebView`.
 ///
 /// Each case maps to a `.js` file of the same name in `macOS/Scripts/`, which keeps the scripts in standalone files that can be edited with JavaScript tooling instead of being embedded as string literals in Swift source.
 /// These are the scripts only macOS runs. The two both apps share — the app-navigation toggle and the state it reports — are `Script` cases in `Cirruscope/`.
 /// `WebViewController` reads `source` at the moment it needs a script, either to install it as a `WKUserScript` via `installUserScript(_:injectionTime:)` or to evaluate it on demand with `WKWebView.evaluateJavaScript(_:)`.
-enum WebViewScript: String {
+enum macOSScript: String {
     /// `windowDrag` forwards `mousedown` events that land on Nextcloud's header to the `windowDrag` message handler so the host window can begin a drag.
     ///
     /// `WebViewController.installWindowDragBridge()` installs it as a user script that runs at the end of every document load.
@@ -30,8 +30,8 @@ enum WebViewScript: String {
     /// Unlike the other cases its resource is a function expression rather than a self-invoking script: `WebViewController.appearanceAttributeScript()` invokes it with the account's current appearance settings and the app's effective accent color, both to install it as a document-start user script and to re-apply it on demand with `WKWebView.evaluateJavaScript(_:)`.
     case appearanceAttributes = "AppearanceAttributes"
 
-    /// `logger` records failures to load a bundled script under the `WebViewScript` category.
-    private static let logger = Logger(for: WebViewScript.self)
+    /// `logger` records failures to load a bundled script under the `macOSScript` category.
+    private static let logger = Logger(for: macOSScript.self)
 
     /// `source` is the JavaScript text of the bundled `.js` resource backing this case, or `nil` if the resource is missing from the bundle or cannot be decoded as UTF-8.
     ///

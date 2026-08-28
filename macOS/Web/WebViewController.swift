@@ -8,7 +8,7 @@ import WebKit
 /// `WebViewController` backs the storyboard scene that hosts the embedded `WKWebView` Cirruscope uses to display Nextcloud.
 ///
 /// `AppDelegate` presents it on launch when `AccountStore.serverAddress` is non-`nil`, and `ServerAddressViewController` transitions to it after persisting a freshly validated server address.
-/// It injects the bundled `Cirruscope.css` stylesheet, bridges custom title-bar drag behaviour, and tracks the state of Nextcloud's sidebar so that `WebViewController+NSMenuItemValidation` can drive the "Show/Hide Sidebar" menu item. The drag and sidebar behaviours are driven by the JavaScript resources enumerated in `WebViewScript`, which are loaded from the bundle on demand rather than embedded in this source file.
+/// It injects the bundled `Cirruscope.css` stylesheet, bridges custom title-bar drag behaviour, and tracks the state of Nextcloud's sidebar so that `WebViewController+NSMenuItemValidation` can drive the "Show/Hide Sidebar" menu item. The drag and sidebar behaviours are driven by the JavaScript resources enumerated in `macOSScript`, which are loaded from the bundle on demand rather than embedded in this source file.
 /// The hosted `WKWebView` is hidden in the storyboard and only revealed by `WebViewController+WKNavigationDelegate` once its initial page load completes so the user is not exposed to the unstyled intermediate paint of the Nextcloud interface.
 class WebViewController: NSViewController, WKScriptMessageHandler {
     // MARK: - Outlets
@@ -371,7 +371,7 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
 
     /// `observeFullscreenState()` logs `webView.fullscreenState` on every change, so that a report of a page's fullscreen button doing nothing — the shape issue #84 arrived in — can be answered from a log capture: whether WebKit was asked at all, whether it entered, and whether it came back.
     ///
-    /// `viewDidLoad()` calls this once, right after `enableElementFullscreen()`. `WKWebView` documents the property as the notification channel for the transition, on the expectation that an application adjusts or restores its own interface around it; Cirruscope has nothing to adjust, because the window chrome, `stateOverlay`, and `backgroundImageView` all stay behind in the host window the web view leaves, and the latter two are hidden for as long as a page is on screen anyway. What the app *does* have to keep working across the move is a keyboard shortcut and a stylesheet, and neither is driven from here: `WebViewScript.sidebarShortcut` claims ⌃⌘S inside the page, and `Cirruscope.css` styles the fullscreen element with `:fullscreen`, so both follow the page rather than a state this observation would have to distribute.
+    /// `viewDidLoad()` calls this once, right after `enableElementFullscreen()`. `WKWebView` documents the property as the notification channel for the transition, on the expectation that an application adjusts or restores its own interface around it; Cirruscope has nothing to adjust, because the window chrome, `stateOverlay`, and `backgroundImageView` all stay behind in the host window the web view leaves, and the latter two are hidden for as long as a page is on screen anyway. What the app *does* have to keep working across the move is a keyboard shortcut and a stylesheet, and neither is driven from here: `macOSScript.sidebarShortcut` claims ⌃⌘S inside the page, and `Cirruscope.css` styles the fullscreen element with `:fullscreen`, so both follow the page rather than a state this observation would have to distribute.
     /// The log is therefore all it does — the way `observeWebViewURL()` does — but at `.notice` rather than `.debug`, since only `.notice` and above are persisted for retrieval after the fact and a fullscreen transition is far too rare for that to become noise.
     /// It deliberately does not ask for `.initial` either, which would report `notInFullscreen` once per window at launch and say nothing.
     private func observeFullscreenState() {
@@ -458,7 +458,7 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
 
     private func installWindowDragBridge() {
         webView.configuration.userContentController.add(self, name: ScriptMessageName.windowDrag.rawValue)
-        installUserScript(WebViewScript.windowDrag.source, injectionTime: .atDocumentEnd)
+        installUserScript(macOSScript.windowDrag.source, injectionTime: .atDocumentEnd)
     }
 
     // MARK: - Sidebar
@@ -478,18 +478,18 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
         installUserScript(Script.sidebarToggleState.source, injectionTime: .atDocumentEnd)
     }
 
-    /// `installSidebarShortcutBridge()` registers the `sidebarShortcut` message handler and injects `WebViewScript.sidebarShortcut`, which claims ⌃⌘S from inside the page for every case in which no `WebWindow` is offered the key equivalent.
+    /// `installSidebarShortcutBridge()` registers the `sidebarShortcut` message handler and injects `macOSScript.sidebarShortcut`, which claims ⌃⌘S from inside the page for every case in which no `WebWindow` is offered the key equivalent.
     ///
     /// `viewDidLoad()` calls it alongside `installSidebarToggleBridge()`, whose script and message report whether there is a sidebar toggle to activate at all.
     /// `WebWindow.performKeyEquivalent(with:)` remains the ordinary path and is the reason this one is a supplement rather than a replacement: while one of the app's own windows is key, AppKit offers it the key equivalent before the page is ever asked, the window claims it, and this script never runs. Element fullscreen is the case it exists for. There WebKit hosts the web view in a window of its own, so no `WebWindow` sees the event and the "Show/Hide Sidebar" menu item is disabled as well — its action targets the first responder, and the responder chain of WebKit's window does not lead back to this controller, so nothing implements `toggleSidebar(_:)` and AppKit disables the item without even asking `WebViewController+NSMenuItemValidation`. That left the keystroke to Nextcloud Talk's own handling, which swallows it and starts a bogus download (issue #59) — the very misbehaviour the window override was written to prevent, back again for as long as a call was fullscreen. A listener in the page is offered the event wherever the page is, which is what makes it the right place for the exception.
     private func installSidebarShortcutBridge() {
         webView.configuration.userContentController.add(self, name: ScriptMessageName.sidebarShortcut.rawValue)
-        installUserScript(WebViewScript.sidebarShortcut.source, injectionTime: .atDocumentStart)
+        installUserScript(macOSScript.sidebarShortcut.source, injectionTime: .atDocumentStart)
     }
 
     /// `isSidebarToggleShortcut(_:)` is `true` when `event` is the ⌃⌘S keystroke Cirruscope claims for "Show/Hide Sidebar" ahead of the loaded page.
     ///
-    /// `WebWindow.performKeyEquivalent(with:)` asks it, and `WebViewScript.sidebarShortcut` tests for the same keystroke in JavaScript for the fullscreen case that override cannot cover. Naming it here rather than inline keeps the native half of that pair in one place, and the script's own comment points at this method so the two cannot quietly drift apart on which modifiers count.
+    /// `WebWindow.performKeyEquivalent(with:)` asks it, and `macOSScript.sidebarShortcut` tests for the same keystroke in JavaScript for the fullscreen case that override cannot cover. Naming it here rather than inline keeps the native half of that pair in one place, and the script's own comment points at this method so the two cannot quietly drift apart on which modifiers count.
     /// `.deviceIndependentFlagsMask` also carries incidental flags like `.capsLock` and `.numericPad`; they are narrowed away to just the modifiers a shortcut can meaningfully require — the same two-step intersection `ShortcutRecorderView.handle(keyCode:modifierFlags:charactersIgnoringModifiers:)` applies — so that, for example, having Caps Lock on does not stop this from matching.
     static func isSidebarToggleShortcut(_ event: NSEvent) -> Bool {
         let modifiers = event.modifierFlags.intersection(.deviceIndependentFlagsMask).intersection([.command, .option, .control, .shift])
@@ -510,7 +510,7 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
     private func installNotificationBridge() {
         UserNotifier.shared.requestAuthorization()
         webView.configuration.userContentController.add(self, name: ScriptMessageName.notification.rawValue)
-        installUserScript(WebViewScript.notificationBridge.source, injectionTime: .atDocumentStart)
+        installUserScript(macOSScript.notificationBridge.source, injectionTime: .atDocumentStart)
     }
 
     // MARK: - Web View Styling
@@ -570,11 +570,11 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
 
     /// `appearanceAttributeScript()` builds the JavaScript that mirrors the account's current appearance settings and the app's effective accent color onto `<html>` — as the `data-cirruscope-translucency`, `data-cirruscope-full-width`, `data-cirruscope-accent`, and `data-cirruscope-accent-bright` attributes `Cirruscope.css` scopes its rules to, plus the `--cirruscope-accent-color` custom property it reads the color out of — or `nil` if the bundled `AppearanceAttributes.js` resource is missing.
     ///
-    /// It invokes the bundled `WebViewScript.appearanceAttributes` function expression with the current values as its arguments. The same script backs both the document-start seed (`installAppearanceAttributes()`) and the live re-application (`reapplyAppearance()`), so the two paths never diverge. Translucency defaults off and full-width on until the account records a choice, and the accent argument is `null` when the color cannot be expressed in sRGB, which closes the stylesheet's gate and leaves Nextcloud's own primary color in place.
+    /// It invokes the bundled `macOSScript.appearanceAttributes` function expression with the current values as its arguments. The same script backs both the document-start seed (`installAppearanceAttributes()`) and the live re-application (`reapplyAppearance()`), so the two paths never diverge. Translucency defaults off and full-width on until the account records a choice, and the accent argument is `null` when the color cannot be expressed in sRGB, which closes the stylesheet's gate and leaves Nextcloud's own primary color in place.
     /// The accent color is resolved against `webView.effectiveAppearance` rather than the application's, because that is the appearance the page is rendered under, and it carries the increased-contrast axis as well as light and dark. It is interpolated into a JavaScript string literal without escaping, which is safe because `WebAccentColor.hexString` can only ever be `#` followed by six hexadecimal digits — an invariant `WebAccentColorTests` pins for exactly this reason. Any future value that is not machine-generated in that form would need proper encoding instead.
     /// Note that nothing here consults the translucency setting before resolving the accent color: the value is always forwarded and `Cirruscope.css` decides whether it applies, so switching translucency on picks up the accent that is current at that moment rather than one cached from whenever it was last on.
     private func appearanceAttributeScript() -> String? {
-        guard let function = WebViewScript.appearanceAttributes.source else {
+        guard let function = macOSScript.appearanceAttributes.source else {
             return nil
         }
 
@@ -618,24 +618,24 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
 
     /// `ScriptMessageName` is the central list of script-message names that the injected user scripts post back to `userContentController(_:didReceive:)`.
     ///
-    /// Each raw value is the name a `WebViewScript` uses in `window.webkit.messageHandlers.<name>.postMessage(…)`; the `install…Bridge()` methods register a handler for it on the web view's `WKUserContentController`, and `userContentController(_:didReceive:)` switches on it.
+    /// Each raw value is the name a `macOSScript` uses in `window.webkit.messageHandlers.<name>.postMessage(…)`; the `install…Bridge()` methods register a handler for it on the web view's `WKUserContentController`, and `userContentController(_:didReceive:)` switches on it.
     private enum ScriptMessageName: String {
-        /// `windowDrag` is posted by `WebViewScript.windowDrag` to ask the host window to begin a drag.
+        /// `windowDrag` is posted by `macOSScript.windowDrag` to ask the host window to begin a drag.
         case windowDrag
 
-        /// `sidebarToggleState` is posted by `WebViewScript.sidebarToggleState` to report whether Nextcloud's sidebar toggle is available and expanded.
+        /// `sidebarToggleState` is posted by `macOSScript.sidebarToggleState` to report whether Nextcloud's sidebar toggle is available and expanded.
         case sidebarToggleState
 
-        /// `sidebarShortcut` is posted by `WebViewScript.sidebarShortcut` to report that the page has claimed the ⌃⌘S keystroke on the app's behalf.
+        /// `sidebarShortcut` is posted by `macOSScript.sidebarShortcut` to report that the page has claimed the ⌃⌘S keystroke on the app's behalf.
         case sidebarShortcut
 
-        /// `notification` is posted by `WebViewScript.notificationBridge` to forward a web notification's content to the app.
+        /// `notification` is posted by `macOSScript.notificationBridge` to forward a web notification's content to the app.
         case notification
     }
 
     /// `installUserScript(_:injectionTime:)` registers `source` on the web view's `WKUserContentController` so it runs at `injectionTime` on every page load, doing nothing if the resource behind it could not be read.
     ///
-    /// `installWindowDragBridge()` and `installSidebarToggleBridge()` call this after registering the script-message handlers their scripts post back to. It takes the loaded source rather than a `WebViewScript` so it can install a shared `Script` just as readily — the two enumerations name different resources but produce the same JavaScript text.
+    /// `installWindowDragBridge()` and `installSidebarToggleBridge()` call this after registering the script-message handlers their scripts post back to. It takes the loaded source rather than a `macOSScript` so it can install a shared `Script` just as readily — the two enumerations name different resources but produce the same JavaScript text.
     private func installUserScript(_ source: String?, injectionTime: WKUserScriptInjectionTime) {
         guard let source else {
             return

@@ -1,0 +1,92 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Iva Horn
+ * SPDX-License-Identifier: MIT
+ */
+
+/*
+ * The web view ignores the safe area, so the page paints to the bezel and its
+ * backgrounds and borders reach the edges of the screen. What the page cannot
+ * see is how much of itself the app's own interface covers: the device's safe
+ * area, and the height of the SwiftUI navigation bar floating above it.
+ *
+ * NextcloudView measures that and SafeAreaInsets.js publishes it onto <html> as
+ * four custom properties, in CSS pixels:
+ *
+ *   --cirruscope-safe-area-top     — status bar or notch, plus the toolbar
+ *   --cirruscope-safe-area-right   — bezel, in landscape on a notched device
+ *   --cirruscope-safe-area-bottom  — the home indicator
+ *   --cirruscope-safe-area-left    — bezel, in landscape on a notched device
+ *
+ * The declarations below are the values in force until that happens, and exist
+ * so a rule referring to one is never invalid at computed-value time — which is
+ * what an unset custom property would make it, dropping the whole declaration
+ * rather than falling back to nothing. The script's inline style on <html> wins
+ * over them, and is re-published whenever the geometry changes, so nothing here
+ * is ever specific to one device or one orientation.
+ *
+ * Which elements are inset is the other half of the effect: the containers that
+ * carry a background or a border are left full-bleed, and only what is inside
+ * them is pushed clear.
+ */
+
+:root {
+    --cirruscope-safe-area-top: 0px;
+    --cirruscope-safe-area-right: 0px;
+    --cirruscope-safe-area-bottom: 0px;
+    --cirruscope-safe-area-left: 0px;
+}
+
+html,
+body {
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+#header,
+.app-navigation-toggle-wrapper {
+    display: none !important;
+}
+
+/* The full-bleed container: it must not be inset, or the page stops reaching the edges. */
+#content-vue {
+    top: 0 !important;
+    height: 100% !important;
+    padding: 0 !important;
+    margin-top: 0 !important;
+}
+
+#app-content-vue {
+    padding-top: var(--cirruscope-safe-area-top) !important;
+    padding-right: var(--cirruscope-safe-area-right) !important;
+    padding-bottom: var(--cirruscope-safe-area-bottom) !important;
+}
+
+/* Its right edge is interior — the border between navigation and content — so only three sides are inset. */
+#app-navigation-vue {
+    padding-top: var(--cirruscope-safe-area-top) !important;
+    padding-bottom: var(--cirruscope-safe-area-bottom) !important;
+    padding-left: var(--cirruscope-safe-area-left) !important;
+}
+
+/* in example: opening files settings */
+#modal-container {
+    padding-top: var(--cirruscope-safe-area-top) !important;
+    padding-right: var(--cirruscope-safe-area-right) !important;
+    padding-bottom: var(--cirruscope-safe-area-bottom) !important;
+    padding-left: var(--cirruscope-safe-area-left) !important;
+}
+
+/* in example: the unsupported browser warnings */
+.toastify {
+    top: calc(var(--cirruscope-safe-area-top) + 30px) !important;
+}
+
+.upload-picker {
+    inset-block-end: calc(var(--cirruscope-safe-area-bottom) + 40px);
+    inset-inline-end: 20px;
+}
+
+.app-sidebar,
+.sidebar__close {
+    padding-top: var(--cirruscope-safe-area-top);
+}
