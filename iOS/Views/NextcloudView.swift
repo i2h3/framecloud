@@ -2,10 +2,8 @@ import SwiftUI
 import WebKit
 
 struct NextcloudView: View {
-    @Environment(Store.self) private var store
-
-    @State
-    private var currentAppName = ""
+    @Environment(Store.self)
+    private var store
 
     @State
     private var page: WebPage
@@ -42,26 +40,16 @@ struct NextcloudView: View {
     var body: some View {
         NavigationStack {
             WebView(page)
+                .webViewMagnificationGestures(.disabled)
+                .webViewBackForwardNavigationGestures(.disabled)
                 .toolbar {
-                    ToolbarItem(placement: .navigation) {
-                        Menu {
-                            ForEach(store.apps) { app in
-                                Button {
-                                    navigateToApp(app)
-                                } label: {
-                                    Label(app.name, systemImage: app.systemImage)
-                                }
+                    ToolbarTitleMenu {
+                        ForEach(store.apps) { app in
+                            Button {
+                                navigateToApp(app)
+                            } label: {
+                                Label(app.name, systemImage: app.systemImage)
                             }
-                        } label: {
-                            Label("Apps", systemImage: "square.grid.3x3.fill")
-                        }
-                    }
-
-                    ToolbarItem(placement: .primaryAction) {
-                        Button {
-                            //
-                        } label: {
-                            Label("UnifiedSearch", systemImage: "magnifyingglass")
                         }
                     }
 
@@ -77,22 +65,40 @@ struct NextcloudView: View {
                         }
                     }
                 }
-                .navigationTitle(currentAppName)
+                .navigationTitle(page.title)
                 .navigationBarTitleDisplayMode(.inline)
         }
         .task {
-            guard page.url == nil else {
+            guard let account = store.account, page.url == nil else {
                 return
             }
 
-            page.load(URL(string: "http://localhost:56827"))
+            page.load(authenticatedRequest(for: account.server))
+            store.updateApps()
         }
     }
 
     func navigateToApp(_ app: ServerApp) {
-        let url = URL(string: "http://localhost:56827/apps/\(app.id)/")
-        page.load(url)
-        currentAppName = app.name
+        guard let account = store.account else {
+            return
+        }
+
+        page.load(authenticatedRequest(for: account.server.appending(path: "apps/\(app.id)/")))
+    }
+
+    ///
+    /// Build the request that loads `url`, attaching HTTP Basic authentication derived from the connected account's app password.
+    ///
+    /// Nextcloud accepts the app password as Basic authentication and establishes a web session from it, so the embedded web view is signed in without a second in-page login after the native one. macOS does the same thing in `WebViewController.authenticatedRequest(for:)`; both encode the header through `Credentials.basicAuthorizationValue` so they cannot encode it differently. With no account configured the request goes out unauthenticated and the server presents its normal login page.
+    ///
+    private func authenticatedRequest(for url: URL) -> URLRequest {
+        var request = URLRequest(url: url)
+
+        if let account = store.account {
+            request.setValue(account.credentials.basicAuthorizationValue, forHTTPHeaderField: "Authorization")
+        }
+
+        return request
     }
 }
 
@@ -100,6 +106,6 @@ struct NextcloudView: View {
     NextcloudView()
         .environment(Store(apps: [
             ServerApp(id: "files", name: "Files", systemImage: "folder.fill"),
-            ServerApp(id: "activity", name: "Activity", systemImage: "bolt.fill")
+            ServerApp(id: "activity", name: "Activity", systemImage: "bolt.fill"),
         ]))
 }

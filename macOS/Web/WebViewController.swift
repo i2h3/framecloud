@@ -136,8 +136,7 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
         var request = URLRequest(url: url)
 
         if let serverAddress = AccountStore.shared.serverAddress, let credentials = Keychain.credentials(for: serverAddress) {
-            let encoded = Data("\(credentials.user):\(credentials.appPassword)".utf8).base64EncodedString()
-            request.setValue("Basic \(encoded)", forHTTPHeaderField: "Authorization")
+            request.setValue(credentials.basicAuthorizationValue, forHTTPHeaderField: "Authorization")
         }
 
         return request

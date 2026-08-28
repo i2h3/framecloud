@@ -4,10 +4,11 @@
 import Foundation
 import os
 
-/// `Keychain` stores the `Credentials` obtained from Login Flow v2 in the macOS Keychain, keyed by the address of the server they authenticate against.
 ///
-/// `ServerAddressViewController` writes credentials here after a successful login, `ServerConnection.authenticated(address:)` and `WebViewController` read them back, and `AccountStore.disconnect()` clears them when the user disconnects.
-/// Items use the app's default Keychain access group, so no `keychain-access-groups` entitlement is required under the App Sandbox.
+/// `Keychain` stores the `Credentials` obtained from Login Flow v2, keyed by the address of the server they authenticate against.
+///
+/// Items use the app's default Keychain access group, so no `keychain-access-groups` entitlement is required under the App Sandbox — and the same holds on iOS, where the default group is the app's own.
+///
 enum Keychain {
     /// `service` is the constant `kSecAttrService` value under which every credential item is filed, so the app's items can be enumerated and cleared as a group.
     ///
@@ -80,6 +81,51 @@ enum Keychain {
 
         logger.debug("Retrieved stored credentials for \(server)")
         return credentials
+    }
+
+    /// `accounts()` returns every server the app currently holds credentials for, paired with those credentials; in no particular order, the Keychain imposing none.
+    ///
+    /// It exists because the address a credential was filed under is itself the fact iOS needs to restore its account at launch: `store(_:for:)` writes it as the item's `kSecAttrAccount`, so an item carries both halves of a `ServerAccount` and reading it back recovers the address without a second place to persist it. `Store.restored()` takes the first one. macOS does not use this — `AccountStore` is authoritative there, the Keychain merely follows it, and `credentials(for:)` is the lookup that fits.
+    /// An item whose account attribute is not a parsable URL, or whose data does not decode, is skipped rather than reported: the only way one gets in is a hand-edited Keychain item, and there is nothing useful for a caller to do about it.
+    static func accounts() -> [ServerAccount] {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecReturnAttributes as String: true,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitAll,
+        ]
+
+        var result: CFTypeRef?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+
+        guard status == errSecSuccess, let items = result as? [[String: Any]] else {
+            if status == errSecItemNotFound {
+                logger.debug("No stored credentials at all")
+            } else {
+                logger.error("Keychain enumeration failed: OSStatus \(status)")
+            }
+
+            return []
+        }
+
+        let accounts = items.compactMap { item -> ServerAccount? in
+            guard
+                let account = item[kSecAttrAccount as String] as? String,
+                let server = URL(string: account),
+                let data = item[kSecValueData as String] as? Data,
+                let credentials = try? JSONDecoder().decode(Credentials.self, from: data)
+            else {
+                logger.error("Skipped a stored credential that could not be read back")
+                return nil
+            }
+
+            return ServerAccount(server: server, credentials: credentials)
+        }
+
+        logger.debug("Found stored credentials for \(accounts.count) server(s)")
+
+        return accounts
     }
 
     /// `clearAll()` removes every credential item the app has stored.

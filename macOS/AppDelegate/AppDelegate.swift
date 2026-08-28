@@ -8,7 +8,7 @@ import WebKit
 
 /// `AppDelegate` is the application delegate of Cirruscope and owns the lifecycle of every window the app shows.
 ///
-/// On launch it consults `AccountStore.serverAddress` to decide whether to present `WebViewController` directly or to first show `ServerAddressViewController`. When a server address is already configured it first re-validates the server's capabilities against `Settings.minimumSupportedServerMajorVersion`, falling back to `ServerAddressViewController` only when the stored credentials were revoked or the server runs an unsupported major version; an unreachable server is treated as transient and keeps the web window, which surfaces its own retry UI. It also keeps freshly instantiated `NSWindowController`s alive until their windows close.
+/// On launch it consults `AccountStore.serverAddress` to decide whether to present `WebViewController` directly or to first show `ServerAddressViewController`. When a server address is already configured it first re-validates the server's capabilities against `InfoPlist.minimumSupportedServerMajorVersion`, falling back to `ServerAddressViewController` only when the stored credentials were revoked or the server runs an unsupported major version; an unreachable server is treated as transient and keeps the web window, which surfaces its own retry UI. It also keeps freshly instantiated `NSWindowController`s alive until their windows close.
 @main
 @MainActor
 class AppDelegate: NSObject, NSApplicationDelegate {
@@ -116,7 +116,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBAction
     func openPrivacyPolicy(_: Any?) {
         logger.debug("Opening privacy policy")
-        NSWorkspace.shared.open(Settings.privacyPolicy)
+        NSWorkspace.shared.open(InfoPlist.privacyPolicy)
     }
 
     /// `openSupportPage(_:)` opens Cirruscope's online support page in the user's default browser.
@@ -125,7 +125,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBAction
     func openSupportPage(_: Any?) {
         logger.debug("Opening support page")
-        NSWorkspace.shared.open(Settings.supportURL)
+        NSWorkspace.shared.open(InfoPlist.support)
     }
 
     /// `presentInitialWindow(forLaunch:)` validates the configured server and presents the window the app should show: a `WebViewWindowController` when a supported server is reachable or merely unreachable — in which case the web view shows its own "Server unreachable" retry UI — and a `ServerAddressWindowController` when no server is configured, the stored credentials were revoked, or the server runs an unsupported major version.
@@ -158,7 +158,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         Task {
             do {
-                switch try await ServerConnection.validate(server) {
+                switch try await ServerConnection.validateAndPersist(server) {
                     case let .supported(capabilities):
                         logger.info("Server supported")
                         // At launch the validate round-trip runs after AppKit's local restoration, so any restored
@@ -172,7 +172,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         // Begin (or restart) tracking unread notifications for the Dock badge and banners.
                         NotificationMonitor.shared.start(for: server, capabilities: capabilities)
 
-                    case let .unsupported(version):
+                    case let .unsupported(capabilities):
+                        let version = capabilities.version.string
                         logger.notice("Server at \(serverAddress.absoluteString) runs unsupported version \(version)")
                         NotificationMonitor.shared.stop()
                         // Unconditionally, not only at launch: a window this call presented moments ago must not
@@ -180,7 +181,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         // revoked credentials.
                         closeWebViewWindows()
 
-                        presentAlert(title: String(localized: "Unsupported Server", comment: "Alert title shown at launch when the configured server runs a Nextcloud version older than the app supports."), message: String(localized: "Cirruscope requires Nextcloud version \(Settings.minimumSupportedServerMajorVersion) or later. The server at “\(serverAddress.absoluteString)” is running version \(version).", comment: "Alert message shown at launch when the configured server's Nextcloud version is too old; placeholders are the minimum supported major version, the server address, and the server's version."))
+                        presentAlert(title: String(localized: "Unsupported Server", comment: "Alert title shown at launch when the configured server runs a Nextcloud version older than the app supports."), message: String(localized: "Cirruscope requires Nextcloud version \(InfoPlist.minimumSupportedServerMajorVersion) or later. The server at “\(serverAddress.absoluteString)” is running version \(version).", comment: "Alert message shown at launch when the configured server's Nextcloud version is too old; placeholders are the minimum supported major version, the server address, and the server's version."))
                         presentWindow(withIdentifier: "ServerAddressWindowController")
                 }
             } catch RainmakerError.credentialsRequired, RainmakerError.unexpectedStatus(code: 401) {
@@ -386,7 +387,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         openServerApp(app)
     }
 
-    /// `serverAppsDidChange()` rebuilds the View menu when `Settings` posts that the server apps or their shortcuts changed.
+    /// `serverAppsDidChange()` rebuilds the View menu when `AccountStore` posts that the server apps or their shortcuts changed.
     @objc
     private func serverAppsDidChange() {
         logger.log("Server apps did change")

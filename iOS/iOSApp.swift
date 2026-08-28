@@ -5,7 +5,7 @@ import SwiftUI
 
 @main
 struct iOSApp: App {
-    let store = Store()
+    let store = Store.restored()
 
     var body: some Scene {
         WindowGroup {

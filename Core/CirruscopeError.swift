@@ -15,7 +15,7 @@ enum CirruscopeError: Error, LocalizedError {
     /// `unexpectedStatus` is thrown when a server returns an HTTP status that is neither a 2xx success nor 304 Not Modified.
     case unexpectedStatus(Int)
 
-    /// `keychainFailure` is thrown when the macOS Keychain rejects a write performed by `Keychain`, carrying the underlying `OSStatus`.
+    /// `keychainFailure` is thrown when the Keychain rejects a write performed by `Keychain`, carrying the underlying `OSStatus`.
     case keychainFailure(OSStatus)
 
     /// `loginPresentationFailed` is thrown when the `ASWebAuthenticationSession` that drives Login Flow v2 cannot be presented.
@@ -36,7 +36,7 @@ enum CirruscopeError: Error, LocalizedError {
                 String(localized: "The server returned an unexpected status code (\(code)).", comment: "Error shown when the server returned an unexpected HTTP status; the placeholder is the numeric status code.")
 
             case let .keychainFailure(status):
-                String(localized: "The login credentials could not be stored in the keychain (status \(status)).", comment: "Error shown when storing credentials in the macOS keychain failed; the placeholder is the numeric OSStatus.")
+                String(localized: "The login credentials could not be stored in the keychain (status \(status)).", comment: "Error shown when storing credentials in the keychain failed; the placeholder is the numeric OSStatus.")
 
             case .loginPresentationFailed:
                 String(localized: "The login window could not be opened.", comment: "Error shown when the Login Flow v2 authentication window could not be presented.")

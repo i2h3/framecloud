@@ -4,12 +4,11 @@
 import Foundation
 import Network
 
+///
 /// `ServerAddress` is a Nextcloud instance address the user typed or pasted, normalized into the one canonical form Cirruscope talks to a server with and shows back to them.
 ///
-/// `ServerAddressFormatter` builds one whenever editing in the server-address field ends, so the address the app resolved is what the field displays, and `ServerAddressViewController.open(_:)` builds one again to hand `url` to `ServerConnection.anonymous(address:)`. Every failure mode is a case of `ServerAddressError`, whose `errorDescription` is the message the alert presents.
-/// The canonical form is `scheme://host[:port][/subpath]` with no trailing slash, no query, and no fragment, because that is the only shape `Rainmaker.Server` can derive its endpoints from unharmed: it builds every one of them by appending a path (`/ocs/v2.php/`, `index.php/login/v2`), which ignores a trailing slash on the base and preserves a subpath, but keeps a query — so `https://cloud.example.com/?dir=/x` would send `?dir=/x` along with every OCS request and with the Login Flow v2 POST. `ServerAddressEndpointDerivationTests` measures that behaviour rather than restating it. The form also matches what the app displays later: what `AccountStore.connect(to:)` and `Keychain.store(_:for:)` persist is the address the *server* reports in the Login Flow v2 result, which carries no trailing slash either, and `GeneralSettingsViewController` shows it as a raw `absoluteString`.
-/// Normalization is deliberately visible rather than silent. Reducing a pasted deep link to the instance root, dropping a default port, or defaulting to HTTPS all change what the app will connect to, so the user is shown the result and can correct it before anything is sent — which is also why HTTP is only ever selected by an explicit `http://` and never inferred.
-/// The type is pure and holds no reference to AppKit or Rainmaker, so `macOSTests` can cover every rule without linking either. It is deliberately not `Equatable`: `inferredScheme` is a fact about the input rather than about the server, so two values naming the same instance would compare unequal purely because of how they were typed. Compare `url` where two addresses need to be told apart.
+/// The canonical form is `scheme://host[:port][/subpath]` with no trailing slash, no query, and no fragment, because that is the only shape `Rainmaker.Server` can derive its endpoints from unharmed.
+///
 struct ServerAddress: Sendable {
     /// `url` is the canonical instance address, the value `ServerConnection.anonymous(address:)` is called with.
     ///

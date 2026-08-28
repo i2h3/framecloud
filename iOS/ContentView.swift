@@ -4,7 +4,8 @@
 import SwiftUI
 
 struct ContentView: View {
-    @Environment(Store.self) private var store
+    @Environment(Store.self)
+    private var store
 
     var body: some View {
         if store.account == nil {

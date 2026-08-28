@@ -825,7 +825,7 @@
       }
     },
     "The login credentials could not be stored in the keychain (status %d)." : {
-      "comment" : "Error shown when storing credentials in the macOS keychain failed; the placeholder is the numeric OSStatus.",
+      "comment" : "Error shown when storing credentials in the keychain failed; the placeholder is the numeric OSStatus.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
