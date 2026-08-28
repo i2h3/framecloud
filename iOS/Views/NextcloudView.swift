@@ -35,22 +35,7 @@ struct NextcloudView: View {
             configuration.userContentController.addUserScript(script)
         }
 
-        if
-            let url = Bundle.main.url(forResource: "Cirruscope", withExtension: "css"),
-            let css = try? String(contentsOf: url, encoding: .utf8)
-        {
-            let escaped = css
-                .replacingOccurrences(of: "\\", with: "\\\\")
-                .replacingOccurrences(of: "`", with: "\\`")
-
-            let source = """
-            (function() {
-                var style = document.createElement('style');
-                style.textContent = `\(escaped)`;
-                document.documentElement.appendChild(style);
-            })();
-            """
-
+        if let source = Script.styleSheet.source {
             let script = WKUserScript(source: source, injectionTime: .atDocumentStart, forMainFrameOnly: false)
             configuration.userContentController.addUserScript(script)
         }

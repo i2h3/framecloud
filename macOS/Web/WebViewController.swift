@@ -57,7 +57,7 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
 
     /// `webView` is the `WKWebView` that loads `AccountStore.serverAddress` and renders the Nextcloud web interface.
     ///
-    /// `viewDidLoad()` configures it, installs the user scripts produced by `injectCustomStyleSheet()`, `installWindowDragBridge()`, and `installSidebarToggleBridge()`, and triggers the initial navigation.
+    /// `viewDidLoad()` configures it, installs `Script.styleSheet` and the user scripts produced by `installWindowDragBridge()` and `installSidebarToggleBridge()`, and triggers the initial navigation.
     /// The view is hidden in the storyboard and unhidden by `webView(_:didFinish:)` after the initial navigation has completed.
     @IBOutlet
     var webView: WKWebView!
@@ -156,7 +156,7 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
         makeWebViewBackgroundTransparent()
         observeWebViewTitle()
         observeWebViewURL()
-        injectCustomStyleSheet()
+        installUserScript(Script.styleSheet.source, injectionTime: .atDocumentStart)
         installAppearanceAttributes()
         installWindowDragBridge()
         installSidebarToggleBridge()
@@ -518,35 +518,10 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
     /// `makeWebViewBackgroundTransparent()` stops `webView` from painting an opaque background of its own, so the host window's material shines through wherever the loaded page leaves its background transparent.
     ///
     /// `viewDidLoad()` calls it once while configuring the web view. `WKWebView` on macOS exposes no public equivalent of iOS's `isOpaque`, but its `drawsBackground` property is reachable through key-value coding and is the established way to disable the opaque backing. `underPageBackgroundColor` is cleared as well so the area revealed by rubber-band scrolling beyond the page bounds stays transparent too, instead of falling back to a color derived from the page.
-    /// Note that the page itself still paints whatever background its own styles declare; `Cirruscope.css`, injected by `injectCustomStyleSheet()`, is the place to make page backgrounds transparent where desired.
+    /// Note that the page itself still paints whatever background its own styles declare; `Cirruscope.css`, injected as `Script.styleSheet`, is the place to make page backgrounds transparent where desired.
     private func makeWebViewBackgroundTransparent() {
         webView.setValue(false, forKey: "drawsBackground")
         webView.underPageBackgroundColor = .clear
-    }
-
-    private func injectCustomStyleSheet() {
-        guard
-            let url = Bundle.main.url(forResource: "Cirruscope", withExtension: "css"),
-            let css = try? String(contentsOf: url, encoding: .utf8)
-        else {
-            return
-        }
-
-        let escaped = css
-            .replacingOccurrences(of: "\\", with: "\\\\")
-            .replacingOccurrences(of: "`", with: "\\`")
-
-        let source = """
-        (function() {
-            var style = document.createElement('style');
-            style.textContent = `\(escaped)`;
-            document.documentElement.appendChild(style);
-        })();
-        """
-
-        let script = WKUserScript(source: source, injectionTime: .atDocumentStart, forMainFrameOnly: false)
-
-        webView.configuration.userContentController.addUserScript(script)
     }
 
     // MARK: - Appearance
@@ -558,7 +533,7 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
 
     /// `installAppearanceAttributes()` injects a document-start script that seeds `data-cirruscope-translucency`, `data-cirruscope-full-width`, and the accent-color state on `<html>`, so the injected stylesheet's translucency, full-width, and accent rules apply from the first paint without a flash.
     ///
-    /// `viewDidLoad()` calls it alongside `injectCustomStyleSheet()`. Like every user script it re-runs on each full document load, carrying the values resolved when this controller loaded; `reapplyAppearance()` corrects them should a setting or the macOS accent color change between loads.
+    /// `viewDidLoad()` calls it alongside the `Script.styleSheet` injection. Like every user script it re-runs on each full document load, carrying the values resolved when this controller loaded; `reapplyAppearance()` corrects them should a setting or the macOS accent color change between loads.
     /// That leaves one accepted rough edge. A window that was already open when the accent color changed paints the old color once on its next *full* document load, before `didFinish` re-applies the current one — a window opened after the change is correct from its first paint, and Nextcloud's single-page interface makes full loads after the initial one rare. Removing the flash entirely is not worth its cost: `WKUserContentController` offers only `removeAllUserScripts()`, so re-seeding means re-registering all five scripts, and `add(_:name:)` raises on a duplicate message-handler name, so `viewDidLoad()`'s interleaved script and handler registration would first have to be split into a re-runnable half and a run-once half. The cheap improvement, should it ever matter, is to call `reapplyAppearance()` from a `webView(_:didCommit:)` as well.
     private func installAppearanceAttributes() {
         guard let source = appearanceAttributeScript() else {
