@@ -42,11 +42,12 @@ jobs:
       - name: Build (Release)
         run: xcodebuild -project Cirruscope.xcodeproj -scheme 'Cirruscope for macOS' -configuration Release -destination 'platform=macOS' build
 
-      # The iOS app target is scaffolding — not shipped, and with no tests of its own beyond the template stub — so
-      # CI only proves it still compiles. A generic Simulator destination avoids pinning a device name that changes
-      # with every runner image update. Device destinations are deliberately out of scope: the checked-in ad-hoc
-      # default carries no DEVELOPMENT_TEAM, so an iOS device build fails signing, whereas a Simulator build signs
-      # ad-hoc happily.
+      # The iOS app target has no tests of its own yet beyond the template stub, so CI only proves it still
+      # compiles; these steps become `xcodebuild test` once the first real one lands. A generic Simulator destination
+      # avoids pinning a device name that changes with every runner image update — which is also what running tests
+      # here would require, a concrete device rather than a generic one. Device destinations are deliberately out of
+      # scope: the checked-in ad-hoc default carries no DEVELOPMENT_TEAM, so an iOS device build fails signing,
+      # whereas a Simulator build signs ad-hoc happily.
       - name: Build for iOS Simulator (Debug)
         run: xcodebuild -project Cirruscope.xcodeproj -scheme 'Cirruscope for iOS' -configuration Debug -destination 'generic/platform=iOS Simulator' build
 

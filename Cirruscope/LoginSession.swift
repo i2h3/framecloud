@@ -9,7 +9,7 @@ import Rainmaker
 /// `LoginSession` runs Nextcloud's Login Flow v2 against one server: it presents the grant page in an `ASWebAuthenticationSession` and concurrently polls the login endpoint until the user completes the grant.
 ///
 /// One instance drives one sign-in attempt.
-/// 
+///
 /// The whole flow is platform-agnostic except for the window the sheet is anchored to, which is why that is the one thing the caller supplies. `ASPresentationAnchor` is `NSWindow` on macOS and `UIWindow` on iOS, so the initializer's signature needs no `#if` of its own. The caller resolves it, rather than this type reaching for a key window itself: on macOS the right window is the specific one the sign-in scene is in, not whichever is frontmost, and each caller already knows which that is. A caller with no window to offer cannot sign in and reports `CirruscopeError.loginPresentationFailed` itself, which is why nothing here is optional.
 @MainActor
 final class LoginSession: NSObject {

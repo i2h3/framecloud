@@ -6,7 +6,7 @@ import WidgetKit
 
 /// `PlaceholderWidget` is the scaffolding widget the extension ships while the target is being set up, and the only member of `WidgetsBundle`.
 ///
-/// It exists so both apps have something to embed and so Xcode's canvas has something to render — the reason the iOS app target exists at all, since macOS widgets compile `#Preview(as:widget:)` but do not render it. Replacing it with a real widget means replacing this type and the three `Placeholder…` types it composes, not editing them.
+/// It exists so both apps have something to embed and so Xcode's canvas has something to render, since macOS widgets compile `#Preview(as:widget:)` but do not render it. Replacing it with a real widget means replacing this type and the three `Placeholder…` types it composes, not editing them.
 struct PlaceholderWidget: Widget {
     /// `kind` is the identifier WidgetKit uses to tell this widget's configured instances apart from any other widget in the bundle, and must stay stable for as long as this widget exists or already-placed instances lose their timeline.
     let kind: String = "PlaceholderWidget"
