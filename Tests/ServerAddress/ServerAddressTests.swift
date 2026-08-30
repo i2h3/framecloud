@@ -8,7 +8,7 @@ import Testing
 ///
 /// It is pure input-to-value logic with no server and no text field involved, which is what makes it testable at all, and it is worth pinning case by case because each rule is a decision about someone's data rather than a formatting detail: which scheme an input without one gets, whether an explicit `http://` survives, which part of a pasted deep link is the address of the instance and which part is the instance's own routing, and which inputs are refused outright instead of being turned into a request to somewhere unintended.
 /// Every case that normalizes successfully is also asserted to be idempotent, because the canonical form is written back into the field the user then submits: normalizing it a second time must not move it again.
-/// The messages are not asserted, only that each failure has one. Their text is localized, so asserting it would measure the language the machine running the tests is set to, and `macOSTests` deliberately contributes no localized strings of its own.
+/// The messages are not asserted, only that each failure has one. Their text is localized, so asserting it would measure the language the machine running the tests is set to, and neither test target contributes localized strings of its own.
 struct ServerAddressTests {
     @Test(arguments: [
         // An address without a scheme defaults to HTTPS, which is the visible half of this type: someone who types a bare host is shown that Cirruscope chose HTTPS for them.

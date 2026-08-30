@@ -42,14 +42,29 @@ jobs:
       - name: Build (Release)
         run: xcodebuild -project Cirruscope.xcodeproj -scheme 'Cirruscope for macOS' -configuration Release -destination 'platform=macOS' build
 
-      # The iOS app target has no tests of its own yet beyond the template stub, so CI only proves it still
-      # compiles; these steps become `xcodebuild test` once the first real one lands. A generic Simulator destination
-      # avoids pinning a device name that changes with every runner image update — which is also what running tests
-      # here would require, a concrete device rather than a generic one. Device destinations are deliberately out of
-      # scope: the checked-in ad-hoc default carries no DEVELOPMENT_TEAM, so an iOS device build fails signing,
-      # whereas a Simulator build signs ad-hoc happily.
-      - name: Build for iOS Simulator (Debug)
-        run: xcodebuild -project Cirruscope.xcodeproj -scheme 'Cirruscope for iOS' -configuration Debug -destination 'generic/platform=iOS Simulator' build
+      # A test action has to run somewhere, so unlike the build steps it needs a concrete Simulator rather than a
+      # generic destination. The device is resolved here instead of written into the workflow because the runner
+      # image's device list changes with every update, and a pinned name fails the day one is renamed or dropped —
+      # an available iPhone on the newest installed iOS runtime is whatever that image happens to offer. Device destinations
+      # stay out of scope: the checked-in ad-hoc default carries no DEVELOPMENT_TEAM, so an iOS device build fails
+      # signing, whereas a Simulator build signs ad-hoc happily.
+      - name: Resolve an iOS Simulator
+        id: simulator
+        run: |
+          name=$(xcrun simctl list devices available --json | python3 -c 'import json,sys; d=json.load(sys.stdin)["devices"]; c=[(tuple(int(p) for p in r.rsplit(".",1)[-1].split("-")[1:]), v["name"]) for r,ds in d.items() if "iOS" in r for v in ds if v.get("isAvailable") and "iPhone" in v["name"]]; print(max(c)[1] if c else "")')
+          if [ -z "$name" ]; then
+            echo 'No iOS Simulator available on this runner image.' >&2
+            exit 1
+          fi
+          echo "Using $name"
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+
+      # Runs the iOS suites, which since the shared `Tests/` folder landed are not only iOS-specific ones: every
+      # suite covering `Core/` or `Cirruscope/` runs against this app module too, against a different SDK than the
+      # macOS action compiled it with. Debug for the same reason as the macOS action, and this replaces the former
+      # Debug build step, which a test action performs anyway.
+      - name: Test for iOS Simulator
+        run: xcodebuild test -project Cirruscope.xcodeproj -scheme 'Cirruscope for iOS' -configuration Debug -destination 'platform=iOS Simulator,name=${{ steps.simulator.outputs.name }}' -resultBundlePath TestResultsiOS.xcresult
 
       # Release for iOS for the same reason it is built separately for macOS above: whole-module optimization can
       # fail where a Debug build succeeds.
@@ -61,5 +76,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: TestResults
-          path: TestResults.xcresult
+          path: |
+            TestResults.xcresult
+            TestResultsiOS.xcresult
           retention-days: 7

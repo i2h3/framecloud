@@ -148,6 +148,11 @@
 			path = macOSTests;
 			sourceTree = "<group>";
 		};
+		AA45EF073042D2410092ABFD /* Tests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Tests;
+			sourceTree = "<group>";
+		};
 		AA89B741303EC1B600C5D5D9 /* Widgets */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -254,6 +259,7 @@
 				AAE70077303DB197001A7B02 /* .github */,
 				AA059CA52FE407A700DE3094 /* Cirruscope */,
 				AA89BB01303ECC0000C5D5D9 /* Core */,
+				AA45EF073042D2410092ABFD /* Tests */,
 				AA89B741303EC1B600C5D5D9 /* Widgets */,
 				AAE7F477303D75FE001A7B02 /* macOS */,
 				AA2AC5D630189B11002A0C28 /* macOSTests */,
@@ -333,6 +339,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				AA2AC5D630189B11002A0C28 /* macOSTests */,
+				AA45EF073042D2410092ABFD /* Tests */,
 			);
 			name = macOSTests;
 			packageProductDependencies = (
@@ -406,6 +413,7 @@
 				AAE7F45E303D7457001A7B02 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
+				AA45EF073042D2410092ABFD /* Tests */,
 				AAE7F45F303D7457001A7B02 /* iOSTests */,
 			);
 			name = iOSTests;

@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 import AppIntents
+import CoreGraphics
 import CoreSpotlight
+import Foundation
 
 /// `ServerAppEntity` is the App Intents projection of a Nextcloud server app, exposing it to Spotlight, Siri, and the Shortcuts app as a discoverable, openable entity.
 ///
@@ -27,6 +29,12 @@ struct ServerAppEntity: IndexedEntity {
     /// `app` is the value snapshot this entity projects; `id` and `name` are derived from it.
     var app: ServerAppTransferObject
 
+    /// `iconData` is the app's own icon as PNG bytes, or `nil` if none has been downloaded for it.
+    ///
+    /// It is carried rather than looked up, because an entity is read where the app's stores cannot be: `displayRepresentation` and `attributeSet` are reached from outside the main actor, and the entity itself travels out of the process into Spotlight and Shortcuts. Rendering it once, where the entity is built, is both the only place the lookup is available and the only place it happens per entity rather than per read.
+    /// Unlike the menus this has no placeholder to fall back on, deliberately: an entity with no image is drawn by Spotlight and Shortcuts with their own generic one, which is a better answer than this app inventing a second.
+    var iconData: Data?
+
     /// `id` is the Nextcloud app id (e.g. `"files"`): stable across relaunches and the store's rebuild-recovery, identical to `ServerAppTransferObject.id`, and the key `AppDelegate.openServerApp(_:)` matches on — so it is safe to donate to Spotlight and to persist inside a saved Shortcut.
     var id: String {
         app.id
@@ -41,19 +49,34 @@ struct ServerAppEntity: IndexedEntity {
     /// `displayRepresentation` is how a single entity appears in Spotlight results, the Shortcuts parameter picker, and Siri.
     ///
     /// The subtitle names the server product rather than repeating the word "app": the title is already an app name, and in Spotlight — where a result carries no other context — "Nextcloud" is the one piece of information that says what the entry actually is. It deliberately does not say "Cirruscope": these are the connected server's apps, not this app's own.
+    /// The image is the app's own icon where one has been downloaded. It travels as bytes rather than as an image because these representations cross out of the process into Spotlight and Shortcuts, which is also why it is rendered larger than any menu wants it: this one is scaled down by whatever displays it, at a size this app does not choose.
     var displayRepresentation: DisplayRepresentation {
-        DisplayRepresentation(title: "\(name)", subtitle: "Nextcloud")
+        guard let icon = iconData else {
+            return DisplayRepresentation(title: "\(name)", subtitle: "Nextcloud")
+        }
+
+        return DisplayRepresentation(title: "\(name)", subtitle: "Nextcloud", image: DisplayRepresentation.Image(data: icon))
     }
 
-    /// `attributeSet` is the Spotlight metadata donated for this entity: it starts from `defaultAttributeSet` so it keeps the `displayRepresentation`'s title and subtitle, and adds `keywords` so a search such as "Nextcloud Notes" matches even though the title is only the bare app name.
+    /// `attributeSet` is the Spotlight metadata donated for this entity: it starts from `defaultAttributeSet` so it keeps the `displayRepresentation`'s title and subtitle, adds `keywords` so a search such as "Nextcloud Notes" matches even though the title is only the bare app name, and carries the app's icon as the result's thumbnail.
     var attributeSet: CSSearchableItemAttributeSet {
         let attributes = defaultAttributeSet
         attributes.keywords = ["Nextcloud", name]
+        attributes.thumbnailData = iconData
         return attributes
     }
 
     /// `init(_:)` bridges a `ServerAppTransferObject` snapshot into an entity, keeping the DTO itself free of any App Intents dependency.
+    ///
+    /// It is main-actor-bound because it renders the app's icon on the way through, and both the connected account and the icons are read on that actor. Every producer of an entity — `ServerAppEntityQuery` and `ServerAppIndexer` — is already there.
+    @MainActor
     init(_ app: ServerAppTransferObject) {
         self.app = app
+
+        guard let serverAddress = AccountStore.shared.serverAddress else {
+            return
+        }
+
+        iconData = ServerAppIcons.shared.pngData(forAppID: app.id, serverAddress: serverAddress, size: CGSize(width: 64, height: 64), scale: 1)
     }
 }

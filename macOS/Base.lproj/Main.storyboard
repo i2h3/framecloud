@@ -1018,8 +1018,13 @@
                                                             <rect key="frame" x="8" y="0.0" width="238" height="24"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
+                                                                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ic1-Ap-Pi7">
+                                                                    <rect key="frame" x="0.0" y="4" width="16" height="16"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                                                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="Ic2-Ap-Pi8"/>
+                                                                </imageView>
                                                                 <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cUw-Sm-bMk">
-                                                                    <rect key="frame" x="0.0" y="4" width="238" height="16"/>
+                                                                    <rect key="frame" x="24" y="4" width="214" height="16"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="App Name" id="rCU-Tq-mzw">
                                                                         <font key="font" usesAppearanceFont="YES"/>
@@ -1029,6 +1034,7 @@
                                                                 </textField>
                                                             </subviews>
                                                             <connections>
+                                                                <outlet property="imageView" destination="Ic1-Ap-Pi7" id="Ic3-Ap-Pi9"/>
                                                                 <outlet property="textField" destination="cUw-Sm-bMk" id="Igu-0x-lzd"/>
                                                             </connections>
                                                         </tableCellView>

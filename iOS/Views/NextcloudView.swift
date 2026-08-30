@@ -15,6 +15,12 @@ struct NextcloudView: View {
     @Environment(\.layoutDirection)
     private var layoutDirection
 
+    ///
+    /// How many pixels this screen draws to the point, which is the resolution an icon has to be rendered at to look sharp on it.
+    ///
+    @Environment(\.displayScale)
+    private var displayScale
+
     @State
     private var page: WebPage
 
@@ -109,7 +115,11 @@ struct NextcloudView: View {
                         Button {
                             navigateToApp(app)
                         } label: {
-                            Label(app.name, systemImage: app.systemImage)
+                            Label {
+                                Text(app.name)
+                            } icon: {
+                                icon(for: app)
+                            }
                         }
                     }
                 }
@@ -262,12 +272,38 @@ struct NextcloudView: View {
         }
     }
 
-    func navigateToApp(_ app: ServerApp) {
+    ///
+    /// The image one server app is listed with: its own, when one has been downloaded, and a generic placeholder when it has not.
+    ///
+    /// Reading `store.iconGeneration` is what subscribes this menu to icons arriving: they live in files shared with the Mac rather than on the apps themselves, so nothing about `store.apps` changes when one lands and observation would otherwise never notice.
+    ///
+    @ViewBuilder
+    private func icon(for app: ServerAppTransferObject) -> some View {
+        let _ = store.iconGeneration
+
+        if let account = store.account, let icon = UIImage.serverAppIcon(forAppID: app.id, serverAddress: account.server, scale: displayScale) {
+            Image(uiImage: icon)
+        } else {
+            Image(systemName: "app.grid")
+        }
+    }
+
+    ///
+    /// Load one server app into the web view.
+    ///
+    /// The path comes from the server, and `authenticatedRequest(for:)` attaches the app password to whatever it resolves to, so it is proven to stay on the connected server first. macOS resolves the same value the same way, through the same type.
+    ///
+    func navigateToApp(_ app: ServerAppTransferObject) {
         guard let account = store.account else {
             return
         }
 
-        page.load(authenticatedRequest(for: account.server.appending(path: "apps/\(app.id)/")))
+        guard let target = SameOriginURL(path: app.href, relativeTo: account.server) else {
+            Self.logger.error("The path offered for server app \(app.id) does not stay on the connected server; refusing to open it")
+            return
+        }
+
+        page.load(authenticatedRequest(for: target.url))
     }
 
     ///
@@ -289,7 +325,7 @@ struct NextcloudView: View {
 #Preview {
     NextcloudView()
         .environment(Store(apps: [
-            ServerApp(id: "files", name: "Files", systemImage: "folder.fill"),
-            ServerApp(id: "activity", name: "Activity", systemImage: "bolt.fill"),
+            ServerAppTransferObject(id: "files", order: 0, href: "/apps/files/", name: "Files"),
+            ServerAppTransferObject(id: "activity", order: 1, href: "/apps/activity/", name: "Activity"),
         ]))
 }

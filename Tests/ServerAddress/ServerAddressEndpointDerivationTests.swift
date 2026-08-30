@@ -7,7 +7,7 @@ import Testing
 
 /// `ServerAddressEndpointDerivationTests` measures the Foundation behaviour `ServerAddress` is built on, rather than restating what `ServerAddress` does.
 ///
-/// Every rule about the canonical form rests on an assumption about somebody else's code, and this project has a scar from encoding such an assumption twice instead of measuring it once. Two assumptions are load-bearing here. The first is `Rainmaker.Server`'s: it derives every endpoint by appending a path to the address it was given, so the canonical form may drop a trailing slash but must not carry a query — the paths below are the ones `Server.init` appends, spelled out as literals because `macOSTests` deliberately does not link Rainmaker. The second is `URL(string:)`'s: it normalizes far less than its name suggests, and each thing it leaves alone or accepts is a check `ServerAddress` has to perform itself.
+/// Every rule about the canonical form rests on an assumption about somebody else's code, and this project has a scar from encoding such an assumption twice instead of measuring it once. Two assumptions are load-bearing here. The first is `Rainmaker.Server`'s: it derives every endpoint by appending a path to the address it was given, so the canonical form may drop a trailing slash but must not carry a query — the paths below are the ones `Server.init` appends, spelled out as literals because neither test target links Rainmaker. The second is `URL(string:)`'s: it normalizes far less than its name suggests, and each thing it leaves alone or accepts is a check `ServerAddress` has to perform itself.
 struct ServerAddressEndpointDerivationTests {
     @Test(arguments: [
         "https://cloud.example.com",

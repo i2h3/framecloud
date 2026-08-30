@@ -129,13 +129,14 @@ final class AccountStore {
         save()
     }
 
-    /// `disconnect()` deletes the account — cascading to its apps and their shortcuts — then empties `AssetCache` and clears the stored Login Flow v2 credentials, so nothing describing the old server remains.
+    /// `disconnect()` deletes the account — cascading to its apps and their shortcuts — then empties `AssetCache` and the app icons already drawn from it, and clears the stored Login Flow v2 credentials, so nothing describing the old server remains.
     ///
     /// `AppDelegate.logOut()` calls it; this reproduces the old `Settings.serverAddress = nil` cascade in one place. The announcement now happens in `deleteAccount()`, ahead of the two clears rather than after them, which is unobservable: the post is delivered on the next main-thread turn, while both clears are synchronous and finish inside the current one.
     func disconnect() {
         deleteAccount()
 
         AssetCache.shared.clear()
+        ServerAppIcons.shared.clear()
         Keychain.clearAll()
     }
 
@@ -252,7 +253,7 @@ final class AccountStore {
     ///
     /// The sort is applied here rather than left to each caller for two reasons. SwiftData does not preserve the order of a to-many relationship, so the records arrive in no meaningful order and something has to impose one; and sorting once, at the single read every surface shares, is what keeps the View menu, the Dock menu (both built by `AppDelegate`), the Apps settings tab (`ServerAppsViewController`), the Shortcuts and Siri lists (`ServerAppEntityQuery`), the Spotlight index (`ServerAppIndexer`), and `storedShortcuts` — which walks this list — from being able to disagree about where an app sits. Each of those consumers arrived without having to know the rule, which is the point of the sort living at the read rather than in any of them. The server's own position for an app, `ServerAppTransferObject.order`, deliberately decides nothing here: it arranges the web interface's app menu, where it reads as a layout the admin chose, while a macOS menu is scanned for a name.
     ///
-    /// `localizedStandardCompare(_:)` is the comparison rather than `<`, because `<` orders Swift strings by Unicode scalar and this list is read by a person: it files every lowercase name behind every uppercase one ("Files" ahead of "deck"), a French "Éditeur" behind "Zoom", and reads "Talk 10" as preceding "Talk 2". This is the collation Finder lists names with — case- and diacritic-insensitive and numeric-aware — in the user's own locale, which is the locale the server localized these names into. The identifier fallback is what makes the ordering total, since `sorted(by:)` promises no stability: two apps a server offers under one name would otherwise be free to swap places between two menu rebuilds, taking which of them a duplicate shortcut reaches with them, `appHolding(_:)` reading the first match.
+    /// The comparison itself is `sortedByName()`, shared with iOS, which lists the same apps and must not be able to list them differently; its own documentation says why the collation is `localizedStandardCompare(_:)` and why the identifier settles a tie. That totality matters here specifically: two apps a server offers under one name would otherwise be free to swap places between two menu rebuilds, taking which of them a duplicate shortcut reaches with them, `appHolding(_:)` reading the first match.
     var serverApps: [ServerAppTransferObject] {
         guard let account = currentAccount(createIfNeeded: false) else {
             return []
@@ -260,10 +261,7 @@ final class AccountStore {
 
         return account.apps
             .map { ServerAppTransferObject(id: $0.appID, order: $0.order, href: $0.href, name: $0.name) }
-            .sorted { one, other in
-                let comparison = one.name.localizedStandardCompare(other.name)
-                return comparison == .orderedSame ? one.id < other.id : comparison == .orderedAscending
-            }
+            .sortedByName()
     }
 
     /// `serverApp(forID:)` is the connected server's app with `appID` as a value snapshot, or `nil` when the account offers no such app.

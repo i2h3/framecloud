@@ -3,7 +3,7 @@
 
 import Cocoa
 
-/// `ServerAppsViewController`'s conformance to `NSTableViewDelegate` builds each row's views: the app name in the first column and a `ShortcutRecorderView` bound to the app's shortcut in `AccountStore` in the second, including the lookup that keeps the row from recording a combination another app already uses.
+/// `ServerAppsViewController`'s conformance to `NSTableViewDelegate` builds each row's views: the app's icon and name in the first column and a `ShortcutRecorderView` bound to the app's shortcut in `AccountStore` in the second, including the lookup that keeps the row from recording a combination another app already uses.
 extension ServerAppsViewController: NSTableViewDelegate {
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         guard let tableColumn,
@@ -20,6 +20,7 @@ extension ServerAppsViewController: NSTableViewDelegate {
                 // back to a plain label if no prototype is registered for the column.
                 let cell = tableView.makeView(withIdentifier: tableColumn.identifier, owner: self) as? NSTableCellView
                 cell?.textField?.stringValue = app.name
+                cell?.imageView?.image = AppDelegate.icon(for: app)
                 return cell ?? NSTextField(labelWithString: app.name)
 
             case 1:

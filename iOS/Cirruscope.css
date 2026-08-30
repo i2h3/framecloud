@@ -38,7 +38,7 @@
 
 html,
 body {
-    background-color: transparent !important;
+    background-color: var(--color-main-background) !important;
     background-image: none !important;
 }
 
@@ -58,13 +58,11 @@ body {
 #app-content-vue {
     padding-top: var(--cirruscope-safe-area-top) !important;
     padding-right: var(--cirruscope-safe-area-right) !important;
-    padding-bottom: var(--cirruscope-safe-area-bottom) !important;
 }
 
 /* Its right edge is interior — the border between navigation and content — so only three sides are inset. */
 #app-navigation-vue {
     padding-top: var(--cirruscope-safe-area-top) !important;
-    padding-bottom: var(--cirruscope-safe-area-bottom) !important;
     padding-left: var(--cirruscope-safe-area-left) !important;
 }
 
@@ -89,4 +87,21 @@ body {
 .app-sidebar,
 .sidebar__close {
     padding-top: var(--cirruscope-safe-area-top);
+}
+
+/* TODO: restrict scope to files app */
+.files-list {
+    padding-bottom: var(--cirruscope-safe-area-bottom) !important;
+}
+
+/* TODO: restrict scope to files app */
+.upload-picker {
+    inset-block-end: calc(var(--default-grid-baseline) + var(--cirruscope-safe-area-bottom)) !important;
+    inset-inline-end: calc(var(--default-grid-baseline) + var(--cirruscope-safe-area-right)) !important;
+}
+
+/* TODO: restrict scope to files app */
+/* TODO: reconsider whether this is not too invasive */
+.files-list__header {
+    margin-inline-start: var(--app-navigation-padding, 4px);
 }

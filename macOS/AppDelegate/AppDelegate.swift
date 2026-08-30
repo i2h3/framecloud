@@ -302,12 +302,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
-        guard let url = URL(string: app.href, relativeTo: serverAddress)?.absoluteURL else {
+        // The server chooses this path, and `WebViewController.authenticatedRequest(for:)` will attach the app
+        // password to whatever it resolves to, so it has to be proven to stay on the server before it is loaded.
+        guard let target = SameOriginURL(path: app.href, relativeTo: serverAddress) else {
+            logger.error("The path offered for server app \(app.id) does not stay on the connected server; refusing to open it")
             return
         }
 
         logger.log("Failed to find existing window for server app \(app.id) to bring to front, opening a new web view window")
-        presentWebViewWindow(targetURL: url)
+        presentWebViewWindow(targetURL: target.url)
     }
 
     /// `logOut()` performs a full app-level logout: fires off a best-effort revocation of the stored Login Flow v2 app password on the server, closes every window, clears the web view's stored cookies and site data so no session for the old server lingers, disconnects the account via `AccountStore.disconnect()` (which deletes the account — cascading into its cached theme, version, apps, and shortcuts — empties `AssetCache`, and clears the stored Login Flow v2 credentials), and presents a fresh `ServerAddressWindowController`.
@@ -422,11 +425,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         logger.log("Completed server app menu rebuilding")
     }
 
-    /// `menuItem(for:)` builds a menu item that opens `app` via `performServerApp(_:)`, applying the user's configured keyboard shortcut for it when one exists.
+    /// `menuItem(for:)` builds a menu item that opens `app` via `performServerApp(_:)`, carrying the app's own icon and applying the user's configured keyboard shortcut for it when one exists.
+    ///
+    /// The icon is looked up rather than awaited, because this same factory builds the Dock menu, which AppKit asks for and draws immediately. A miss is ordinary — nothing has been downloaded on a first launch — and answers with the placeholder instead, so the list never mixes rows that have an image with rows that have none, which AppKit does not necessarily align to the same left edge.
+    /// The Dock menu shows no image whatever is set here, and nothing in this app can change that: the Dock renders that menu itself, out of process, and drops `NSMenuItem.image` entirely — measured against a system symbol, a template bitmap, and a plain bitmap alike, none of which appear. The image is still set on the way past, because this factory also builds the View menu, where it does appear. Do not go looking for a bug in the Dock menu's icons; there is nothing there to find.
     private func menuItem(for app: ServerAppTransferObject) -> NSMenuItem {
         let item = NSMenuItem(title: app.name, action: #selector(performServerApp(_:)), keyEquivalent: "")
         item.target = self
         item.representedObject = app.id
+        item.image = Self.icon(for: app)
 
         if let shortcut = AccountStore.shared.shortcut(forAppID: app.id) {
             item.keyEquivalent = shortcut.keyEquivalent
@@ -434,6 +441,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         return item
+    }
+
+    /// `icon(for:)` is the image a server app is listed with: its own, when one has been downloaded, and a generic placeholder when it has not.
+    ///
+    /// Not private, because the Apps settings tab lists the same apps and has to reach the same answer; a second copy of this decision is how two lists of the same thing start looking different.
+    static func icon(for app: ServerAppTransferObject) -> NSImage? {
+        guard let serverAddress = AccountStore.shared.serverAddress else {
+            return NSImage(systemSymbolName: "app.grid", accessibilityDescription: nil)
+        }
+
+        return NSImage.serverAppIcon(forAppID: app.id, serverAddress: serverAddress) ?? NSImage(systemSymbolName: "app.grid", accessibilityDescription: nil)
     }
 
     private func presentWindow(withIdentifier identifier: String) {
