@@ -85,6 +85,7 @@ body {
 }
 
 .navigation-bottom {
+    /* bottom items in app navigation respect bottom safe area */
     padding-bottom: var(--cirruscope-safe-area-bottom);
 }
 
@@ -128,3 +129,6 @@ body {
     min-width: initial !important;
 }
 
+.new-message-form {
+    padding-bottom: var(--cirruscope-safe-area-bottom) !important;
+}
