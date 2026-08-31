@@ -9,7 +9,7 @@ import UniformTypeIdentifiers
 /// `SVGGlyphRasterizer` draws an `SVGGlyph` into a bitmap, and encodes one as PNG for the places that take image bytes rather than an image.
 ///
 /// A raster rather than a vector is what crosses from the work that produces an icon to the work that shows one: `CGPath` is not `Sendable` and `CGImage` is, so ending here is what lets a glyph be parsed off the main actor and handed to a menu on it without an unchecked escape hatch. It is also what the surfaces themselves want — an `NSMenuItem` takes an image, and App Intents and Spotlight take PNG bytes.
-/// Glyphs are drawn as opaque black on nothing. Nothing reads those pixels as a colour: every consumer marks the result a template image, which uses only its alpha and tints it to suit whatever is showing it.
+/// Glyphs are drawn as opaque black on nothing, and the colour is immaterial: every consumer of this marks the result a template image, which reads only the alpha and tints it to suit whatever is drawing it. A caller that needs the glyph in some other colour — as the Spotlight artwork does — takes `SVGGlyph`'s shapes and fills them itself rather than asking for a second ink here.
 enum SVGGlyphRasterizer {
     /// `dimensionLimit` is the largest bitmap edge, in pixels, this will allocate.
     ///

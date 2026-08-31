@@ -7,7 +7,7 @@ import Foundation
 /// `SVGGlyph` is one monochrome vector icon read out of an SVG document: the coordinate system it was drawn in, and the shapes that make up its silhouette.
 ///
 /// It exists because a Nextcloud server names each of its apps' icons as an SVG and neither platform will decode one for the app. macOS does have a decoder behind `NSImage(data:)`, but it is a private image representation and iOS has no equivalent at all, so leaning on it would mean one platform showing icons and the other not.
-/// What it reads is deliberately a subset — enough for the icons Nextcloud ships, which are single-path white glyphs — and it returns `nil` rather than approximating anything outside it. No gradients, no `<use>`, no CSS stylesheets, no text. Colour is discarded entirely, because every place these are shown wants a template that takes the tint of whatever is showing it.
+/// What it reads is deliberately a subset — enough for the icons Nextcloud ships, which are single-path white glyphs — and it returns `nil` rather than approximating anything outside it. No gradients, no `<use>`, no CSS stylesheets, no text. The document's own colours are discarded entirely, because most places these appear want a template that takes the tint of whatever is showing it. What a glyph is filled with is decided by whoever draws it: `SVGGlyphRasterizer` fills black for that template, and a caller wanting another colour fills `shapes` itself.
 struct SVGGlyph {
     /// `viewBox` is the rectangle of the coordinate system `shapes` are expressed in.
     ///

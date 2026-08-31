@@ -13,7 +13,7 @@ extension NSImage {
 
     /// `serverAppIcon(forAppID:serverAddress:size:)` is the icon of one Nextcloud app, ready to be handed to a menu item, or `nil` if none has been cached for it yet.
     ///
-    /// It comes back as a template image, so AppKit tints it for the appearance it is drawn in and inverts it when its row is highlighted — which is what makes a downloaded icon behave like one of the system's own symbols rather than like a picture pasted into a menu. The glyphs Nextcloud ships are monochrome, so nothing is lost by discarding their colour.
+    /// It comes back as a template image, so AppKit tints it for the appearance it is drawn in and inverts it when its row is highlighted — which is what makes a downloaded icon behave like one of the system's own symbols rather than like a picture pasted into a menu. The glyphs Nextcloud ships are monochrome, so nothing is lost by discarding their colour, and the ink asked for is immaterial here for the same reason: a template reads only the alpha. `ServerAppIconThumbnail` is the one place where the ink matters, because what it draws is not a template.
     /// Two pixels to the point is the highest backing scale any Mac has, so rendering at that scale is exact rather than a compromise.
     static func serverAppIcon(forAppID appID: String, serverAddress: URL, size: CGFloat = NSImage.serverAppIconSize) -> NSImage? {
         let bounds = CGSize(width: size, height: size)

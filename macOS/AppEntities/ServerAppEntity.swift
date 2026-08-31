@@ -33,6 +33,7 @@ struct ServerAppEntity: IndexedEntity {
     ///
     /// It is carried rather than looked up, because an entity is read where the app's stores cannot be: `displayRepresentation` and `attributeSet` are reached from outside the main actor, and the entity itself travels out of the process into Spotlight and Shortcuts. Rendering it once, where the entity is built, is both the only place the lookup is available and the only place it happens per entity rather than per read.
     /// Unlike the menus this has no placeholder to fall back on, deliberately: an entity with no image is drawn by Spotlight and Shortcuts with their own generic one, which is a better answer than this app inventing a second.
+    /// These bytes are `ServerAppIconThumbnail`'s plated artwork rather than the bare glyph the menus show, because both surfaces draw them literally rather than as a template — see that type for why the plate is what makes one bitmap right in both appearances.
     var iconData: Data?
 
     /// `id` is the Nextcloud app id (e.g. `"files"`): stable across relaunches and the store's rebuild-recovery, identical to `ServerAppTransferObject.id`, and the key `AppDelegate.openServerApp(_:)` matches on — so it is safe to donate to Spotlight and to persist inside a saved Shortcut.
@@ -50,6 +51,7 @@ struct ServerAppEntity: IndexedEntity {
     ///
     /// The subtitle names the server product rather than repeating the word "app": the title is already an app name, and in Spotlight — where a result carries no other context — "Nextcloud" is the one piece of information that says what the entry actually is. It deliberately does not say "Cirruscope": these are the connected server's apps, not this app's own.
     /// The image is the app's own icon where one has been downloaded. It travels as bytes rather than as an image because these representations cross out of the process into Spotlight and Shortcuts, which is also why it is rendered larger than any menu wants it: this one is scaled down by whatever displays it, at a size this app does not choose.
+    /// It is deliberately *not* marked a template. `DisplayRepresentation.Image` offers an `isTemplate` flag and it would be the right answer for a bare glyph, but these bytes are a coloured plate: flattening one to a silhouette would throw away the very thing that makes it legible in both appearances.
     var displayRepresentation: DisplayRepresentation {
         guard let icon = iconData else {
             return DisplayRepresentation(title: "\(name)", subtitle: "Nextcloud")
@@ -59,6 +61,7 @@ struct ServerAppEntity: IndexedEntity {
     }
 
     /// `attributeSet` is the Spotlight metadata donated for this entity: it starts from `defaultAttributeSet` so it keeps the `displayRepresentation`'s title and subtitle, adds `keywords` so a search such as "Nextcloud Notes" matches even though the title is only the bare app name, and carries the app's icon as the result's thumbnail.
+    /// `thumbnailData` is the only one of the three thumbnail members that Spotlight actually draws. Its siblings `thumbnailURL` and `darkThumbnailURL` are left unset because setting them does nothing at all — measured, not assumed; `DECISIONS.md` records the probe.
     var attributeSet: CSSearchableItemAttributeSet {
         let attributes = defaultAttributeSet
         attributes.keywords = ["Nextcloud", name]
@@ -77,6 +80,6 @@ struct ServerAppEntity: IndexedEntity {
             return
         }
 
-        iconData = ServerAppIcons.shared.pngData(forAppID: app.id, serverAddress: serverAddress, size: CGSize(width: 64, height: 64), scale: 1)
+        iconData = ServerAppIconThumbnail.pngData(forAppID: app.id, serverAddress: serverAddress)
     }
 }

@@ -59,17 +59,21 @@ final class ServerAppIcons: Sendable {
         return image
     }
 
-    /// `pngData(forAppID:serverAddress:size:scale:)` is the same icon encoded as PNG, for the interfaces that take image bytes rather than an image.
-    func pngData(forAppID appID: String, serverAddress: URL, size: CGSize, scale: CGFloat) -> Data? {
+    /// `glyph(forAppID:serverAddress:)` is the icon of one app as vector shapes, or `nil` if none has been downloaded or it cannot be read.
+    ///
+    /// The bitmap above is what a menu wants, since a template image is tinted by AppKit and only its alpha is ever read. Artwork that composes the glyph with something else needs the shapes instead: filling them takes a colour, where recolouring a drawn bitmap would mean masking it. `ServerAppIconThumbnail` is the caller, and the reason this exists.
+    /// Nothing is memoized here. Parsing is well under a millisecond and this is asked once per entity, where the bitmap is asked for on every menu rebuild.
+    func glyph(forAppID appID: String, serverAddress: URL) -> SVGGlyph? {
         guard let data = cache.data(forKey: Self.cacheKey(appID: appID, serverAddress: serverAddress)) else {
             return nil
         }
 
         guard let glyph = SVGGlyph(data: data) else {
+            logger.notice("The icon cached for '\(appID, privacy: .public)' is not an SVG this can draw")
             return nil
         }
 
-        return SVGGlyphRasterizer.pngData(of: glyph, size: size, scale: scale)
+        return glyph
     }
 
     /// `refresh(_:serverAddress:credentials:)` downloads the icon of every app in `items`, and reports whether any of them changed what a menu would draw.
