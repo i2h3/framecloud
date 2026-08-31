@@ -84,6 +84,10 @@ body {
     inset-inline-end: 20px;
 }
 
+.navigation-bottom {
+    padding-bottom: var(--cirruscope-safe-area-bottom);
+}
+
 .app-sidebar,
 .sidebar__close {
     padding-top: var(--cirruscope-safe-area-top);
