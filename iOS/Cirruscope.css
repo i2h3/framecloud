@@ -103,5 +103,24 @@ body {
 /* TODO: restrict scope to files app */
 /* TODO: reconsider whether this is not too invasive */
 .files-list__header {
-    margin-inline-start: var(--app-navigation-padding, 4px);
+    margin-inline-start: var(--app-navigation-padding, 4px) !important;
 }
+
+/* MARK: - Talk */
+/* TODO: restrict scope to spreed app */
+
+.top-bar {
+    /* remove unnecessary padding to the right */
+    padding-inline-end: calc(2*var(--default-grid-baseline)) !important;
+}
+
+.top-bar__icon-wrapper {
+    /* remove unnecessary padding to the left */
+    margin-inline-start: inherit !important;
+}
+
+.conversation-header {
+    /* prevent unnecessary flex row break */
+    min-width: initial !important;
+}
+
