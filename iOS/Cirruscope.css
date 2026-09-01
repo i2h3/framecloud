@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
+/* MARK: Safe Area Insets */
+
 /*
  * The web view ignores the safe area, so the page paints to the bezel and its
  * backgrounds and borders reach the edges of the screen. What the page cannot
@@ -36,16 +38,24 @@
     --cirruscope-safe-area-left: 0px;
 }
 
+/* MARK: - Backgrounds */
+
+/*
 html,
 body {
     background-color: var(--color-main-background) !important;
     background-image: none !important;
 }
+*/
+
+/* MARK: - Header */
 
 #header,
 .app-navigation-toggle-wrapper {
     display: none !important;
 }
+
+/* MARK: - App Content */
 
 /* The full-bleed container: it must not be inset, or the page stops reaching the edges. */
 #content-vue {
@@ -60,11 +70,27 @@ body {
     padding-right: var(--cirruscope-safe-area-right) !important;
 }
 
+/* MARK: - App Navigation */
+
 /* Its right edge is interior — the border between navigation and content — so only three sides are inset. */
 #app-navigation-vue {
     padding-top: var(--cirruscope-safe-area-top) !important;
     padding-left: var(--cirruscope-safe-area-left) !important;
 }
+
+.navigation-bottom {
+    /* bottom items in app navigation respect bottom safe area */
+    padding-bottom: var(--cirruscope-safe-area-bottom);
+}
+
+/* MARK: - App Sidebar */
+
+.app-sidebar,
+.sidebar__close {
+    padding-top: var(--cirruscope-safe-area-top);
+}
+
+/* MARK: - Modals */
 
 /* in example: opening files settings */
 #modal-container {
@@ -74,61 +100,57 @@ body {
     padding-left: var(--cirruscope-safe-area-left) !important;
 }
 
+/* MARK: - Toasts */
+
 /* in example: the unsupported browser warnings */
 .toastify {
     top: calc(var(--cirruscope-safe-area-top) + 30px) !important;
 }
 
-.upload-picker {
+/* MARK: - Dashboard App */
+
+#app-dashboard {
+    padding-bottom: var(--cirruscope-safe-area-bottom);
+}
+
+/* MARK: - Files App */
+
+.app-files .upload-picker {
     inset-block-end: calc(var(--cirruscope-safe-area-bottom) + 40px);
     inset-inline-end: 20px;
 }
 
-.navigation-bottom {
-    /* bottom items in app navigation respect bottom safe area */
-    padding-bottom: var(--cirruscope-safe-area-bottom);
-}
-
-.app-sidebar,
-.sidebar__close {
-    padding-top: var(--cirruscope-safe-area-top);
-}
-
-/* TODO: restrict scope to files app */
-.files-list {
+.app-files .files-list {
     padding-bottom: var(--cirruscope-safe-area-bottom) !important;
 }
 
-/* TODO: restrict scope to files app */
 .upload-picker {
     inset-block-end: calc(var(--default-grid-baseline) + var(--cirruscope-safe-area-bottom)) !important;
     inset-inline-end: calc(var(--default-grid-baseline) + var(--cirruscope-safe-area-right)) !important;
 }
 
-/* TODO: restrict scope to files app */
-/* TODO: reconsider whether this is not too invasive */
-.files-list__header {
+.app-files .files-list__header {
     margin-inline-start: var(--app-navigation-padding, 4px) !important;
 }
 
-/* MARK: - Talk */
-/* TODO: restrict scope to spreed app */
+/* MARK: - Talk App */
 
-.top-bar {
+.app-spreed .top-bar {
     /* remove unnecessary padding to the right */
     padding-inline-end: calc(2*var(--default-grid-baseline)) !important;
 }
 
-.top-bar__icon-wrapper {
+.app-spreed .top-bar__icon-wrapper {
     /* remove unnecessary padding to the left */
     margin-inline-start: inherit !important;
 }
 
-.conversation-header {
+.app-spreed .conversation-header {
     /* prevent unnecessary flex row break */
     min-width: initial !important;
 }
 
-.new-message-form {
+.app-spreed .new-message-form {
+    /* make the message form respect the bottom safe area */
     padding-bottom: var(--cirruscope-safe-area-bottom) !important;
 }
