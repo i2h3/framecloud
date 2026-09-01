@@ -6,7 +6,7 @@ import Foundation
 /// This extension answers which of the apps a server offers a given page belongs to, so a surface showing that page can name it.
 ///
 /// One rule serves both platforms, for the reason `sortedByName()` does: the Mac reuses a window by asking which app it already shows, the iPhone titles its navigation bar with the app's name, and the two must not disagree about what a URL means.
-extension Collection where Element == ServerAppTransferObject {
+extension Collection<ServerAppTransferObject> {
     /// `app(for:on:)` is the app whose pages `url` belongs to, or `nil` when it belongs to none of them.
     ///
     /// Two rules, in order. First the app whose `href` is a prefix of the URL — path component by path component, never as a string, since `/apps/files/` is not a prefix of `/apps/files_sharing/` however the two read — taking the longest such match, so a nested `href` beats its parent and a page deep inside an app still resolves to it. Then, failing that, the identifier in the URL's own `/apps/<id>/` matched against `id`.
