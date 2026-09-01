@@ -108,6 +108,20 @@ class Store {
     }
 
     ///
+    /// The server app a page belongs to, or `nil` when it belongs to none of them.
+    ///
+    /// The rule is the shared one in `ServerAppTransferObject+Resolution.swift`, so this and the Mac's window reuse cannot come to different conclusions about the same address. It answers `nil` with no account configured, there being no server to resolve against.
+    /// Expect `nil` for a short while after every launch as well: `apps` is empty until `updateApps()` has heard back from the server, so nothing resolves until it has. A caller wanting to name the current app therefore needs something to say in the meantime.
+    ///
+    func app(for url: URL) -> ServerAppTransferObject? {
+        guard let account else {
+            return nil
+        }
+
+        return apps.app(for: url, on: account.server)
+    }
+
+    ///
     /// Log out the current user from the connected server.
     ///
     /// The app password is revoked on the server first, so the credential this device is about to forget is invalidated rather than left standing in the account's device list. That request is fire-and-forget: revocation is fail-open — an unreachable server must not be able to keep someone signed in locally — which is the same bargain `AppDelegate.logOut()` strikes on macOS. The web view's site data goes with it, so a later account does not inherit a session from this one.

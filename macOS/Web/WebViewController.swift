@@ -421,37 +421,20 @@ class WebViewController: NSViewController, WKScriptMessageHandler {
 
     // MARK: - Server App
 
-    /// `currentAppID` is the Nextcloud app id of the page the web view currently shows, derived from its URL, or `nil` when the URL does not address a recognizable app on the configured server.
+    /// `currentApp` is the Nextcloud app whose page the web view currently shows, or `nil` when it shows something that is not one of the server's apps.
     ///
-    /// Until the web view reports a URL it falls back to the app id of the host window controller's `targetURL`, so a window opened for an app is recognized before its first load completes. `AppDelegate.openServerApp(_:)` reads this to focus an existing window instead of opening a duplicate.
-    var currentAppID: String? {
-        guard let url = webView.url else {
-            return webWindowController?.targetURL.flatMap { Self.appID(fromPath: $0.path) }
-        }
-
-        guard let host = url.host,
-              let serverHost = AccountStore.shared.serverAddress?.host,
-              host.caseInsensitiveCompare(serverHost) == .orderedSame
-        else {
+    /// It reads `restorableURL` rather than `webView.url`, which is what makes a window opened for an app recognizable before its first load has committed: that property already falls back to the host window controller's `targetURL`. `AppDelegate.openServerApp(_:)` reads this to focus such a window instead of opening a duplicate.
+    /// The URL is turned into an app by the shared rule in `ServerAppTransferObject+Resolution.swift`, which is also what titles the iPhone's navigation bar, so the two platforms cannot disagree about what an address means. Answering with the app rather than with its identifier is the point of asking `AccountStore` at all: a caller comparing an identifier it parsed out of a path against one the navigation endpoint reported is comparing two things that are usually equal and not guaranteed to be.
+    var currentApp: ServerAppTransferObject? {
+        guard let url = restorableURL else {
             return nil
         }
 
-        return Self.appID(fromPath: url.path)
-    }
-
-    /// `appID(fromPath:)` extracts the Nextcloud app id from a URL path of the form `/apps/<id>/…` or `/index.php/apps/<id>/…`, or returns `nil` when the path does not address an app.
-    static func appID(fromPath path: String) -> String? {
-        var components = path.split(separator: "/", omittingEmptySubsequences: true).map(String.init)
-
-        if components.first == "index.php" {
-            components.removeFirst()
-        }
-
-        guard components.count >= 2, components[0] == "apps" else {
+        guard let serverAddress = AccountStore.shared.serverAddress else {
             return nil
         }
 
-        return components[1]
+        return AccountStore.shared.serverApps.app(for: url, on: serverAddress)
     }
 
     // MARK: - Window Dragging

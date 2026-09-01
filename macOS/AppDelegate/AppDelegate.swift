@@ -287,7 +287,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     /// `openServerApp(_:)` brings the web window already showing `app` to the front, or opens a new window loading the app when none is open.
     ///
-    /// The currently shown app of each window is reported by `WebViewController.currentAppID`. It does nothing when no server address is configured.
+    /// The currently shown app of each window is reported by `WebViewController.currentApp`. It does nothing when no server address is configured.
     func openServerApp(_ app: ServerAppTransferObject) {
         logger.log("Opening server app…")
 
@@ -295,7 +295,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
-        if let existing = windowControllers.first(where: { ($0.contentViewController as? WebViewController)?.currentAppID == app.id }) {
+        if let existing = windowControllers.first(where: { ($0.contentViewController as? WebViewController)?.currentApp?.id == app.id }) {
             logger.log("Found existing window for server app \(app.id) to bring to front")
             existing.window?.makeKeyAndOrderFront(nil)
             NSApp.activate()

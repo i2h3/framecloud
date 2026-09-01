@@ -16,7 +16,9 @@ struct ServerAppTransferObject: Codable, Identifiable, Sendable {
     /// `order` is the position the server assigns the app in the web interface's own app menu, recorded as reported on every refresh but not what any of Cirruscope's lists are sorted by — see `AccountStore.serverApps` for the order they use instead and why.
     let order: Int
 
-    /// `href` is the server-relative path of the app (e.g. `"/apps/files/"`), appended to the connected server address to form the URL a window loads.
+    /// `href` is where the server says the app lives (e.g. `"/apps/files/"`), resolved against the connected server address to form the URL a window loads.
+    ///
+    /// Usually a server-relative path, and not reliably one: Talk reports its entry as a full URL where every other app on the same instance reports a path. So it is only ever resolved through `SameOriginURL`, which takes either and proves the result stays on the server that named it.
     let href: String
 
     /// `name` is the localized display name of the app, used as its menu item label.

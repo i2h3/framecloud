@@ -136,7 +136,7 @@ struct NextcloudView: View {
                     }
                 }
             }
-            .navigationTitle(page.title)
+            .navigationTitle(navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
         }
         .task(id: insets) {
@@ -158,6 +158,25 @@ struct NextcloudView: View {
         .task {
             await republishInsetsOnNavigation()
         }
+    }
+
+    ///
+    /// What the navigation bar is titled with: the name of the Nextcloud app on screen, or the page's own title where the app cannot be told.
+    ///
+    /// The app's name is the shorter of the two by some way — "Files" against "Files - Nextcloud" — and this title is also the button that opens the app menu, so the space it does not take is space the app-navigation toggle and the account menu get to keep.
+    /// Reading `page.url` here is what subscribes this view to it, `WebPage` being observable, exactly as reading `page.title` subscribes it to that. Nothing else in the app reads the URL from a view body, so it is worth naming the mechanism.
+    /// The fallback is reached by more than a failure, so it has to read as a title in its own right rather than as an error, which is what `PageTitle.withoutSiteName(_:)` makes it. It covers the moment after launch before the app list has arrived, and the pages that genuinely belong to no app the server lists — its settings and a user's profile among them. A page that merely leaves its app's own path does not land here: a Talk conversation at `/call/<token>` resolves to Talk, the rule knowing the routes an app registers at the server's root.
+    ///
+    private var navigationTitle: String {
+        guard let url = page.url else {
+            return PageTitle.withoutSiteName(page.title)
+        }
+
+        guard let app = store.app(for: url) else {
+            return PageTitle.withoutSiteName(page.title)
+        }
+
+        return app.name
     }
 
     ///
