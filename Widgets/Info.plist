@@ -4,6 +4,14 @@
 <dict>
 	<key>AppGroupIdentifier</key>
 	<string>group.$(CIRRUSCOPE_BASE_BUNDLE_IDENTIFIER)</string>
+    <key>KeychainServiceIdentifier</key>
+    <string>$(CIRRUSCOPE_KEYCHAIN_SERVICE_IDENTIFIER)</string>
+    <key>MinimumSupportedNextcloudMajorVersion</key>
+    <string>$(CIRRUSCOPE_MINIMUM_SUPPORTED_NEXTCLOUD_MAJOR_VERSION)</string>
+    <key>PrivacyPolicy</key>
+    <string>$(CIRRUSCOPE_PRIVACY_POLICY_URL)</string>
+    <key>SupportURL</key>
+    <string>$(CIRRUSCOPE_SUPPORT_URL)</string>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionPointIdentifier</key>

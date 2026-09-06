@@ -5,7 +5,9 @@
 // https://developer.apple.com/documentation/xcode/adding-a-build-configuration-file-to-your-project
 
 CIRRUSCOPE_BASE_BUNDLE_IDENTIFIER = de.i2h3.cirruscope
+CIRRUSCOPE_KEYCHAIN_SERVICE_IDENTIFIER = $(CIRRUSCOPE_BASE_BUNDLE_IDENTIFIER)
 CIRRUSCOPE_BUNDLE_NAME = Cirruscope
+CIRRUSCOPE_MINIMUM_SUPPORTED_NEXTCLOUD_MAJOR_VERSION = 34
 CIRRUSCOPE_PRIVACY_POLICY_URL = https:/$()/cirruscope.app/privacy.html
 CIRRUSCOPE_SUPPORT_URL = https:/$()/cirruscope.app/support.html
 CODE_SIGN_IDENTITY = -

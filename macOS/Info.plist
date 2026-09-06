@@ -4,8 +4,10 @@
 <dict>
 	<key>AppGroupIdentifier</key>
 	<string>group.$(CIRRUSCOPE_BASE_BUNDLE_IDENTIFIER)</string>
+    <key>KeychainServiceIdentifier</key>
+    <string>$(CIRRUSCOPE_KEYCHAIN_SERVICE_IDENTIFIER)</string>
 	<key>MinimumSupportedNextcloudMajorVersion</key>
-	<integer>34</integer>
+    <string>$(CIRRUSCOPE_MINIMUM_SUPPORTED_NEXTCLOUD_MAJOR_VERSION)</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
