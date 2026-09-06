@@ -126,6 +126,39 @@ struct NextcloudView: View {
 
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
+                        // TODO: only show this button when there are unread notifications
+                        Button {
+                            // TODO: present scrollable list of unread notifications as a popover (check alternative of just simulating a tap on the hidden notifications button)
+                        } label: {
+                            Label("Notifications", systemImage: "bell.badge.fill")
+                                .symbolRenderingMode(.palette)
+                                .foregroundStyle(.red, .primary)
+                        }
+
+                        Divider()
+
+                        // TODO: only show this button when user profiles are enabled
+                        Button {
+                            // TODO: navigate to "/u/<user-id>"
+                        } label: {
+                            Label("Profile", systemImage: "person.text.rectangle")
+                        }
+
+                        // TODO: only show this button when user theming is enabled
+                        Button {
+                            // TODO: navigate to "/settings/user/theming"
+                        } label: {
+                            Label("Appearance", systemImage: "accessibility")
+                        }
+
+                        Button {
+                            // TODO: navigate to "/settings/user"
+                        } label: {
+                            Label("Settings", systemImage: "gear")
+                        }
+
+                        Divider()
+
                         Button {
                             store.logout()
                         } label: {
@@ -134,6 +167,7 @@ struct NextcloudView: View {
                     } label: {
                         Label("Account", systemImage: "person.fill")
                     }
+                    .badge(3) // TODO: show total count only, if there are unread notifications.
                 }
             }
             .navigationTitle(navigationTitle)
